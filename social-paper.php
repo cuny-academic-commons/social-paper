@@ -111,7 +111,7 @@ class Social_Paper {
 		 */
 		$register_cpt = (bool) apply_filters( 'sp_register_cpt', true );
 		if ( true === $register_cpt ) {
-			require dirname( __FILE__ ) . '/includes/hooks-cpt.php';
+			require dirname( __FILE__ ) . '/includes/schema.php';
 		}
 
 		// BuddyPress integration
