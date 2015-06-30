@@ -113,8 +113,8 @@ add_action( 'wp_enqueue_scripts', 'sp_asset_enqueue_handler', 999 );
  * @access private
  */
 function _sp_set_page_marker() {
-	// bail if in admin area
-	if ( is_admin() ) {
+	// bail if not on a single page
+	if ( ! is_single() ) {
 		return;
 	}
 

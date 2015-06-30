@@ -17,7 +17,7 @@ function sp_get_supported_post_types() {
 	 *
 	 * @param type array
 	 */
-	return apply_filters( 'sp_get_supported_post_types', array( 'post' ) );
+	return apply_filters( 'sp_get_supported_post_types', array( 'cacsp_paper' ) );
 }
 
 /**

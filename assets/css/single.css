@@ -555,12 +555,12 @@ a.comment-reply-link {
 	width: 100%;
 }
 
-.post, #comments {
+article, #comments {
 	margin: 0 auto;
 	width: 700px;
 }
 
-#page .post.side-comments-open {
+#page .side-comments-open {
 	position: relative;
 	left: -160px;
 }
