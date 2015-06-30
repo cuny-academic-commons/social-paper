@@ -99,6 +99,7 @@ class Social_Paper {
 	 */
 	protected function includes() {
 		require dirname( __FILE__ ) . '/includes/functions.php';
+		require dirname( __FILE__ ) . '/includes/class-cacsp-paper.php';
 		require dirname( __FILE__ ) . '/includes/hooks-template.php';
 
 		/**
