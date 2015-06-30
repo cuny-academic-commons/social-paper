@@ -103,7 +103,7 @@ function sp_asset_enqueue_handler() {
 	);
 
 	// enqueue our styles
-	wp_enqueue_style( 'social-paper-single', Social_Paper::$URL . '/assets/single.css' );
+	wp_enqueue_style( 'social-paper-single', Social_Paper::$URL . '/assets/css/single.css' );
 }
 add_action( 'wp_enqueue_scripts', 'sp_asset_enqueue_handler', 999 );
 
