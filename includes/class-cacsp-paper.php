@@ -22,6 +22,13 @@ class CACSP_Paper {
 		}
 	}
 
+	/**
+	 * Populate object for a specific paper.
+	 *
+	 * @since 1.0
+	 *
+	 * @param int|WP_Post $paper Optional. Pass the ID or object of a cacsp_paper post to populate the object.
+	 */
 	protected function populate( $paper ) {
 		if ( $paper instanceof WP_Post ) {
 			$post_id = $paper->ID;
@@ -38,6 +45,11 @@ class CACSP_Paper {
 		}
 	}
 
+	/**
+	 * Save changes to the database.
+	 *
+	 * @return bool True on success, false on failure.
+	 */
 	public function save() {
 		$update_post_args = array();
 		foreach ( $this->post_obj as $key => $value ) {
@@ -53,7 +65,7 @@ class CACSP_Paper {
 			$this->populate( $this->id );
 		}
 
-		return $saved;
+		return (bool) $saved;
 	}
 
 	public function __get( $key ) {
