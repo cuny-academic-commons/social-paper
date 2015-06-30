@@ -35,11 +35,13 @@ require_once $wp_develop_dir . '/tests/phpunit/includes/bootstrap.php';
 
 // We use a different testcase for BuddyPress vs non-BuddyPress.
 if ( $do_buddypress ) {
-	// Require the BP testcase.
 	require BP_TESTS_DIR . '/includes/testcase.php';
 	require dirname( __FILE__ ) . '/testcase-base-bp.php';
+	require dirname( __FILE__ ) . '/factory-base-bp.php';
 } else {
+	require dirname( __FILE__ ) . '/factory-base.php';
 	require dirname( __FILE__ ) . '/testcase-base.php';
 }
 
+require dirname( __FILE__ ) . '/factory.php';
 require dirname( __FILE__ ) . '/testcase.php';
