@@ -37,4 +37,18 @@ class CACSP_Tests_ClassCacspPaper extends CACSP_UnitTestCase {
 
 		$this->assertSame( 0, $paper->id );
 	}
+
+	public function test_save_should_update_wp_post_properties() {
+		$p = $this->factory->paper->create();
+		$paper = new CACSP_Paper( $p );
+
+		$paper->post_title = 'Foo';
+		$paper->post_content = 'Bar';
+
+		$saved = $paper->save();
+
+		$this->assertNotEmpty( $saved );
+		$this->assertSame( 'Foo', $paper->post_title );
+		$this->assertSame( 'Bar', $paper->post_content );
+	}
 }
