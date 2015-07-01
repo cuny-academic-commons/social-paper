@@ -14,15 +14,15 @@
  * @param  string $retval Absolute path to found template or empty string.
  * @return string
  */
-function sp_single_template_loader( $retval = '' ) {
-	if ( ! sp_is_page() ) {
+function cacsp_single_template_loader( $retval = '' ) {
+	if ( ! cacsp_is_page() ) {
 		return $retval;
 	}
 
 	$post = get_queried_object();
 
 	// locate template
-	$new_template = sp_locate_template( array(
+	$new_template = cacsp_locate_template( array(
 		// maybe open the doors to post types having different templates?
 		//"single-social-paper-{$post->post_type}.php"
 		'single-social-paper.php'
@@ -35,12 +35,12 @@ function sp_single_template_loader( $retval = '' ) {
 		 *
 		 * @param type string
 		 */
-		return apply_filters( 'sp_single_template', $new_template );
+		return apply_filters( 'cacsp_single_template', $new_template );
 	}
 
 	return $retval;
 }
-add_filter( 'single_template', 'sp_single_template_loader' );
+add_filter( 'single_template', 'cacsp_single_template_loader' );
 
 /**
  * Comments template loader.
@@ -51,15 +51,15 @@ add_filter( 'single_template', 'sp_single_template_loader' );
  * @param  string $retval Absolute path to found template or empty string.
  * @return string
  */
-function sp_comments_template_loader( $retval = '' ) {
-	if ( ! sp_is_page() ) {
+function cacsp_comments_template_loader( $retval = '' ) {
+	if ( ! cacsp_is_page() ) {
 		return $retval;
 	}
 
 	$post = get_queried_object();
 
 	// locate template
-	$new_template = sp_locate_template( array(
+	$new_template = cacsp_locate_template( array(
 		// maybe open the doors to post types having different templates?
 		//"comments-social-paper-{$post->post_type}.php"
 		'comments-social-paper.php'
@@ -72,12 +72,12 @@ function sp_comments_template_loader( $retval = '' ) {
 		 *
 		 * @param type string
 		 */
-		return apply_filters( 'sp_comments_template', $new_template );
+		return apply_filters( 'cacsp_comments_template', $new_template );
 	}
 
 	return $retval;
 }
-add_filter( 'comments_template', 'sp_comments_template_loader' );
+add_filter( 'comments_template', 'cacsp_comments_template_loader' );
 
 /**
  * Asset enqueue handler on single social paper pages.
@@ -86,8 +86,8 @@ add_filter( 'comments_template', 'sp_comments_template_loader' );
  *
  * @todo maybe do the same for scripts?
  */
-function sp_asset_enqueue_handler() {
-	if ( ! sp_is_page() ) {
+function cacsp_asset_enqueue_handler() {
+	if ( ! cacsp_is_page() ) {
 		return;
 	}
 
@@ -105,14 +105,14 @@ function sp_asset_enqueue_handler() {
 	// enqueue our styles
 	wp_enqueue_style( 'social-paper-single', Social_Paper::$URL . '/assets/css/single.css' );
 }
-add_action( 'wp_enqueue_scripts', 'sp_asset_enqueue_handler', 999 );
+add_action( 'wp_enqueue_scripts', 'cacsp_asset_enqueue_handler', 999 );
 
 /**
  * Set our page marker to determine if we're on a Social Paper page.
  *
  * @access private
  */
-function _sp_set_page_marker() {
+function _cacsp_set_page_marker() {
 	// bail if not on a single page
 	if ( ! is_single() ) {
 		return;
@@ -121,14 +121,14 @@ function _sp_set_page_marker() {
 	$post = get_queried_object();
 
 	// check to see if we support this post type
-	if ( false === in_array( $post->post_type, (array) sp_get_supported_post_types(), true ) ) {
+	if ( false === in_array( $post->post_type, (array) cacsp_get_supported_post_types(), true ) ) {
 		return;
 	}
 
 	// set our marker
 	Social_Paper::$is_page = true;
 }
-add_action( 'wp', '_sp_set_page_marker', 0 );
+add_action( 'wp', '_cacsp_set_page_marker', 0 );
 
 /**
  * Disables the admin bar on single Social Paper pages.
@@ -137,11 +137,11 @@ add_action( 'wp', '_sp_set_page_marker', 0 );
  *
  * @access private
  */
-function _sp_disable_admin_bar_on_social_paper_pages() {
-	if ( ! sp_is_page() ) {
+function _cacsp_disable_admin_bar_on_social_paper_pages() {
+	if ( ! cacsp_is_page() ) {
 		return;
 	}
 
 	show_admin_bar( false );
 }
-add_action( 'admin_bar_init', '_sp_disable_admin_bar_on_social_paper_pages', 1 );
+add_action( 'admin_bar_init', '_cacsp_disable_admin_bar_on_social_paper_pages', 1 );

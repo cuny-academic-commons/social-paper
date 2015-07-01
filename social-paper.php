@@ -109,7 +109,7 @@ class Social_Paper {
 		 *
 		 * @param type bool
 		 */
-		$register_cpt = (bool) apply_filters( 'sp_register_cpt', true );
+		$register_cpt = (bool) apply_filters( 'cacsp_register_cpt', true );
 		if ( true === $register_cpt ) {
 			require dirname( __FILE__ ) . '/includes/schema.php';
 		}
@@ -151,7 +151,7 @@ class Social_Paper {
 		 *
 		 * @param type $retval bool
 		 */
-		return apply_filters( 'sp_get_supported_commenting_plugins', $plugins );
+		return apply_filters( 'cacsp_get_supported_commenting_plugins', $plugins );
 	}
 
 	/**

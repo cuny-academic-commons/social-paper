@@ -11,13 +11,13 @@
  *
  * @return array
  */
-function sp_get_supported_post_types() {
+function cacsp_get_supported_post_types() {
 	/**
 	 * Filters the post types that Social Paper should support.
 	 *
 	 * @param type array
 	 */
-	return apply_filters( 'sp_get_supported_post_types', array( 'cacsp_paper' ) );
+	return apply_filters( 'cacsp_get_supported_post_types', array( 'cacsp_paper' ) );
 }
 
 /**
@@ -28,7 +28,7 @@ function sp_get_supported_post_types() {
  *
  * @see locate_template() for parameter documentation
  */
-function sp_locate_template( $template_names, $load = false, $require_once = true ) {
+function cacsp_locate_template( $template_names, $load = false, $require_once = true ) {
 	// check WP first
 	$located = locate_template( $template_names, false );
 
@@ -59,7 +59,7 @@ function sp_locate_template( $template_names, $load = false, $require_once = tru
  *
  * @return bool
  */
-function sp_is_page() {
+function cacsp_is_page() {
 	return (bool) Social_Paper::$is_page;
 }
 
