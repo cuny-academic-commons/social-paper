@@ -111,27 +111,31 @@ function cacsp_asset_enqueue_handler() {
 add_action( 'wp_enqueue_scripts', 'cacsp_asset_enqueue_handler', 999 );
 
 /**
- * Set our page marker to determine if we're on a Social Paper page.
+ * Set our page markers to determine if we're on a Social Paper page.
  *
  * @access private
+ *
+ * @param WP_Query $q
  */
-function _cacsp_set_page_marker() {
-	// bail if not on a single page
-	if ( ! is_single() ) {
+function _cacsp_set_markers( $q ) {
+	// bail if this is not the main query
+	if ( false === $q->is_main_query() ) {
 		return;
 	}
-
-	$post = get_queried_object();
 
 	// check to see if we support this post type
-	if ( false === in_array( $post->post_type, (array) cacsp_get_supported_post_types(), true ) ) {
+	if ( false === in_array( $q->query['post_type'], (array) cacsp_get_supported_post_types(), true ) ) {
 		return;
 	}
 
-	// set our marker
-	Social_Paper::$is_page = true;
+	// set our markers
+	if ( $q->is_archive ) {
+		Social_Paper::$is_archive = true;
+	} elseif ( $q->is_single ) {
+		Social_Paper::$is_page = true;
+	}
 }
-add_action( 'wp', '_cacsp_set_page_marker', 0 );
+add_action( 'pre_get_posts', '_cacsp_set_markers' );
 
 /**
  * Disables the admin bar on single Social Paper pages.

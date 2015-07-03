@@ -49,6 +49,15 @@ class Social_Paper {
 	public static $is_page = false;
 
 	/**
+	 * Marker to determine if we're on the social paper archive page.
+	 *
+	 * Otherwise known as the directory page.
+	 *
+	 * @var bool
+	 */
+	public static $is_archive = false;
+
+	/**
 	 * Static initializer.
 	 */
 	public static function init() {
