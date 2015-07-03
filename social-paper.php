@@ -58,6 +58,15 @@ class Social_Paper {
 	public static $is_archive = false;
 
 	/**
+	 * Marker to determine if object buffering is on.
+	 *
+	 * Done during template injection overrides.
+	 *
+	 * @var bool
+	 */
+	public static $is_buffer = false;
+
+	/**
 	 * Static initializer.
 	 */
 	public static function init() {

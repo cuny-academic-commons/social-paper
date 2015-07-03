@@ -152,3 +152,49 @@ function _cacsp_disable_admin_bar_on_social_paper_pages() {
 	show_admin_bar( false );
 }
 add_action( 'admin_bar_init', '_cacsp_disable_admin_bar_on_social_paper_pages', 1 );
+
+/**
+ * Start the buffer for content replacement on the Social Paper archive page.
+ *
+ * @access private
+ *
+ * @param WP_Query $q
+ */
+function _cacsp_archive_ob_start( $q ) {
+	if ( false === cacsp_is_archive() ) {
+		return;
+	}
+
+	if ( true === Social_Paper::$is_buffer ) {
+		return;
+	}
+
+	Social_Paper::$is_buffer = true;
+
+	ob_start();
+}
+add_action( 'loop_start', '_cacsp_archive_ob_start', -999 );
+
+/**
+ * Clears the buffer for content replacement on the Social Paper archive page.
+ *
+ * This is also where we call our custom directory template.
+ *
+ * @access private
+ *
+ * @param WP_Query $q
+ */
+function _cacsp_archive_ob_end( $q ) {
+	if ( false === Social_Paper::$is_buffer ) {
+		return;
+	}
+
+	if ( false === cacsp_is_archive() ) {
+		return;
+	}
+
+	ob_end_clean();
+
+	cacsp_locate_template( 'content-directory-social-paper.php', true );
+}
+add_action( 'loop_end', '_cacsp_archive_ob_end', 999 );
