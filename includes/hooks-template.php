@@ -171,6 +171,8 @@ function _cacsp_archive_ob_start( $q ) {
 
 	Social_Paper::$is_buffer = true;
 
+	remove_action( 'loop_start', '_cacsp_archive_ob_start', -999 );
+
 	ob_start();
 }
 add_action( 'loop_start', '_cacsp_archive_ob_start', -999 );
@@ -194,6 +196,10 @@ function _cacsp_archive_ob_end( $q ) {
 	}
 
 	ob_end_clean();
+
+	remove_action( 'loop_end', '_cacsp_archive_ob_end', 999 );
+
+	$q->rewind_posts();
 
 	cacsp_locate_template( 'content-directory-social-paper.php', true );
 }
