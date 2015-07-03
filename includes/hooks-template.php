@@ -41,6 +41,7 @@ function cacsp_single_template_loader( $retval = '' ) {
 	return $retval;
 }
 add_filter( 'single_template', 'cacsp_single_template_loader' );
+add_filter( 'page_template',   'cacsp_single_template_loader' );
 
 /**
  * Comments template loader.
@@ -123,15 +124,28 @@ function _cacsp_set_markers( $q ) {
 		return;
 	}
 
+	$post_type = isset( $q->query['post_type'] ) ? $q->query['post_type'] : '';
+
+	if ( empty( $post_type ) ) {
+		if ( $q->is_page ) {
+			$post_type = 'page';
+
+		// kind of a catch-all... we don't support the 'attachment' post type
+		} else {
+			$post_type = 'post';
+		}
+	}
+
 	// check to see if we support this post type
-	if ( false === in_array( $q->query['post_type'], (array) cacsp_get_supported_post_types(), true ) ) {
+	if ( false === in_array( $post_type, (array) cacsp_get_supported_post_types(), true ) ) {
 		return;
 	}
 
 	// set our markers
-	if ( $q->is_archive ) {
+	if ( $q->is_archive && 'cacsp_paper' === $post_type ) {
 		Social_Paper::$is_archive = true;
-	} elseif ( $q->is_single ) {
+
+	} elseif ( $q->is_singular ) {
 		Social_Paper::$is_page = true;
 	}
 }
