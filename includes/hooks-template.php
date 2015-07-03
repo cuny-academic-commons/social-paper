@@ -99,7 +99,10 @@ function cacsp_asset_enqueue_handler() {
 
 		// wp-side-comments
 		'side-comments-style',
-		'side-comments-theme'
+		'side-comments-theme',
+
+		// inline-comments
+		'incom-style'
 	);
 
 	// enqueue our styles

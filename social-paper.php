@@ -136,13 +136,19 @@ class Social_Paper {
 	protected function get_supported_commenting_plugins() {
 		$plugins = array();
 
+		// WP Side Comments
+		// Note: This is *not* the same plugin as the one on wp.org
 		$plugins['wp-side-comments'] = array();
 		$plugins['wp-side-comments']['name']   = 'WP Side Comments';
 		$plugins['wp-side-comments']['exists'] = class_exists( 'CTLT_WP_Side_Comments' );
 		$plugins['wp-side-comments']['link']   = 'https://github.com/richardtape/wp-side-comments';
 
-		// @todo investigate Inline Comments
+		// Inline Comments
 		// https://github.com/kevinweber/inline-comments
+		$plugins['inline-comments'] = array();
+		$plugins['inline-comments']['name']   = 'Inline Comments';
+		$plugins['inline-comments']['exists'] = function_exists( 'incom_frontend_init' );
+		$plugins['inline-comments']['link']   = 'https://wordpress.org/plugins/inline-comments/';
 
 		/**
 		 * Allow plugins to filter if a commenting plugin is enabled.
