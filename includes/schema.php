@@ -38,7 +38,8 @@ function cacsp_register_post_types() {
 			'slug' => 'paper',
 			'with_front' => false,
 		),
-		'supports' => array( 'title', 'editor', 'comments' )
+		'supports' => array( 'title', 'editor', 'comments' ),
+		'has_archive' => true
 	) );
 }
 
