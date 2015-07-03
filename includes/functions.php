@@ -63,6 +63,15 @@ function cacsp_is_page() {
 	return (bool) Social_Paper::$is_page;
 }
 
+/**
+ * Determine whether we're on the Social Paper archive page
+ *
+ * @return bool
+ */
+function cacsp_is_archive() {
+	return (bool) Social_Paper::$is_archive;
+}
+
 if ( ! function_exists( 'wp_styles' ) ) :
 /**
  * Abstraction of {@link wp_styles()} function
