@@ -111,6 +111,8 @@ function cacsp_create_template_loader( $retval = '' ) {
 		 	*/
 			return apply_filters( 'cacsp_create_template', $new_template );
 		}
+	} else {
+		return;
 	}
 }
 add_filter( 'template_include', 'cacsp_create_template_loader' );
