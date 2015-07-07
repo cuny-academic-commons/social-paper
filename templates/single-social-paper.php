@@ -41,7 +41,8 @@ while ( have_posts() ) : the_post();
 				) );
 			?>
 		</div><!-- .entry-content -->
-	
+
+		<?php if ( false === is_single( 'new' ) ) : ?>
 		<footer class="entry-footer">
 			<div class="entry-author">
 				<a href="<?php the_author_meta( 'url' ); ?>"><?php echo get_avatar( $post->post_author, 50, 'mm', '', array(
@@ -71,9 +72,10 @@ while ( have_posts() ) : the_post();
 					);
 				?>
 			</div>
-	
+
 			<?php //edit_post_link( __( 'Edit', 'social-paper' ), '<span class="edit-link">', '</span>' ); ?>
 		</footer><!-- .entry-footer -->
+		<?php endif; ?>
 
 		<?php
 		// If comments are open or we have at least one comment, load up the comment template.
