@@ -86,7 +86,7 @@ function cacsp_create_template_loader( $retval = '' ) {
 	$requested_uri_parts = explode( '/', $requested_uri_clean );
 
 	if ( $requested_uri_parts[1] != 'new' ) {
-		return;
+		return $retval;
 	}
 
 	$post_types = (array) cacsp_get_supported_post_types();
