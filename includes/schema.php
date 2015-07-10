@@ -35,7 +35,7 @@ function cacsp_register_post_types() {
 		'labels' => $labels,
 		'public' => true,
 		'rewrite' => array(
-			'slug' => 'paper',
+			'slug' => 'papers',
 			'with_front' => false,
 		),
 		'supports' => array( 'title', 'editor', 'comments' ),
