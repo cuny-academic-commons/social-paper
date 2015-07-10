@@ -148,8 +148,56 @@ function _cacsp_set_markers( $q ) {
 	} elseif ( $q->is_singular ) {
 		Social_Paper::$is_page = true;
 	}
+
+	// add marker if we're on the 'new' page slug
+	if ( 'new' === $q->query['cacsp_paper'] ) {
+		Social_Paper::$is_new = true;
+	}
 }
 add_action( 'pre_get_posts', '_cacsp_set_markers' );
+
+/**
+ * Set up virtual pages for use with Social Paper.
+ *
+ * Some of our pages do not exist in WordPress.  In order to render content,
+ * we have to do some tomfoolery to get WP to see our page as a "real" page.
+ *
+ * Currently supports the 'new' page slug.
+ *
+ * @see _cacsp_set_markers()
+ *
+ * @param  array $p Current queried posts.
+ * @return array
+ */
+function _cacsp_set_virtual_page( $p ) {
+	// 'new' page slug
+	if ( true === Social_Paper::$is_new ) {
+		$content = '';
+
+		// locate our special template
+		$template = cacsp_locate_template( 'form-new-social-paper.php', false );
+		if ( ! empty( $template ) ) {
+			ob_start();
+			load_template( $template );
+			$content = ob_get_contents();
+			ob_end_clean();
+		}
+
+		// dummy time!
+		$p = array();
+		$p[] = new WP_Post( (object) array(
+			'post_content'          => $content,
+			'post_title'            => 'New Paper',
+			'post_name'             => 'new',
+			'comment_status'        => 'closed',
+			'comment_count'         => 0,
+			'filter'                => 'raw',
+		) );
+	}
+
+	return $p;
+}
+add_filter( 'the_posts', '_cacsp_set_virtual_page' );
 
 /**
  * Disables the admin bar on single Social Paper pages.

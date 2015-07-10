@@ -58,6 +58,13 @@ class Social_Paper {
 	public static $is_archive = false;
 
 	/**
+	 * Marker to determine if we're on the social paper create page.
+	 *
+	 * @var bool
+	 */
+	public static $is_new = false;
+
+	/**
 	 * Marker to determine if object buffering is on.
 	 *
 	 * Done during template injection overrides.
