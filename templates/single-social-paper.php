@@ -25,13 +25,13 @@ while ( have_posts() ) : the_post();
 ?>
 
 	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	
+
 		<header class="entry-header">
 			<?php
 				the_title( '<h1 class="entry-title">', '</h1>' );
 			?>
 		</header><!-- .entry-header -->
-	
+
 		<div class="entry-content">
 			<?php
 				/* translators: %s: Name of current post */
@@ -59,12 +59,12 @@ while ( have_posts() ) : the_post();
 
 				<?php
 					$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
-			
+
 					$time_string = sprintf( $time_string,
 						esc_attr( get_the_date( 'c' ) ),
 						get_the_date()
 					);
-			
+
 					printf( '<span class="posted-on">%1$s <a href="%2$s" rel="bookmark">%3$s</a></span>',
 						_x( 'Published on', 'Used before publish date.', 'social-paper' ),
 						esc_url( get_permalink() ),
