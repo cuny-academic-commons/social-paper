@@ -103,7 +103,21 @@ function cacsp_asset_enqueue_handler() {
 		'side-comments-theme',
 
 		// inline-comments
-		'incom-style'
+		'incom-style',
+
+		// wp-front-end-editor
+		#'wp-core-ui',
+		'wp-core-ui-colors',
+		'buttons',
+		'wp-auth-check',
+		'fee-modal',
+		'fee-link-modal',
+		'tinymce-core',
+		'tinymce-view',
+		'fee',
+		'dashicons',
+		'admin-bar',
+		'fee-adminbar',
 	);
 
 	// enqueue our styles
@@ -186,12 +200,14 @@ function _cacsp_set_virtual_page( $p ) {
 		// dummy time!
 		$p = array();
 		$p[] = new WP_Post( (object) array(
+			'ID'					=> -1,
 			'post_content'          => $content,
 			'post_title'            => 'New Paper',
 			'post_name'             => 'new',
 			'comment_status'        => 'closed',
 			'comment_count'         => 0,
 			'filter'                => 'raw',
+			'post_type'				=> 'cacsp_paper',
 		) );
 	}
 
