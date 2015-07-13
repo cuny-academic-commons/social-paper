@@ -164,7 +164,7 @@ function _cacsp_set_markers( $q ) {
 	}
 
 	// add marker if we're on the 'new' page slug
-	if ( 'new' === $q->query['cacsp_paper'] ) {
+	if ( ! empty( $q->query['cacsp_paper'] ) && 'new' === $q->query['cacsp_paper'] ) {
 		Social_Paper::$is_new = true;
 	}
 }
