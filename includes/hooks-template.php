@@ -186,6 +186,12 @@ add_action( 'pre_get_posts', '_cacsp_set_markers' );
 function _cacsp_set_virtual_page( $p ) {
 	// 'new' page slug
 	if ( true === Social_Paper::$is_new ) {
+		// redirect non-authenticated users back to paper directory
+		if ( false === is_user_logged_in() ) {
+			wp_redirect( home_url( '/papers/' ) );
+			die();
+		}
+
 		$content = '';
 
 		// locate our special template
