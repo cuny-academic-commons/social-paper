@@ -232,6 +232,30 @@ function _cacsp_disable_admin_bar_on_social_paper_pages() {
 add_action( 'admin_bar_init', '_cacsp_disable_admin_bar_on_social_paper_pages', 1 );
 
 /**
+ * Show the "Enable Editing" link when WP Frontend Editor is enabled.
+ *
+ * Currently, we disable the WP admin bar from being shown on social paper
+ * pages.  When the admin bar is disabled, FEE's "Edit" link doesn't show up.
+ * Thus, we manually add the link back.
+ *
+ * @access private
+ */
+function _cacsp_show_fee_edit_link() {
+	// see if FEE exists
+	if ( false === class_exists( 'FEE' ) ) {
+		return;
+	}
+
+	// check to see if we're on our social paper page
+	if ( false === cacsp_is_page() ) {
+		return;
+	}
+
+	echo '<a id="wp-admin-bar-edit" href="#fee-edit-link"><span>Enable Editing</span></a>';
+}
+add_action( 'wp_footer', '_cacsp_show_fee_edit_link' );
+
+/**
  * Start the buffer for content replacement on the Social Paper archive page.
  *
  * @access private

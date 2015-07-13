@@ -549,6 +549,34 @@ a.comment-reply-link {
 	padding-bottom: 1.5em;
 }
 
+/** WP FRONTEND EDITOR **/
+
+#wp-admin-bar-edit {
+	background: #eee;
+	border-radius: 6px;
+	color: #0091cd;
+	font-family: sans-serif;
+	padding: 1px 15px;
+	position: fixed;
+	right: 10px;
+	text-decoration: none;
+	top: 10px;
+}
+
+/* yes, this is ugly... temporary until this is done by JS */
+#wp-admin-bar-edit.active span {
+	display: none;
+}
+#wp-admin-bar-edit.active:after {
+	content: 'Disable Editing';
+}
+
+/* always show the FEE toolbar */
+.fee-toolbar {
+	bottom: 0 !important;
+}
+
+
 /** WP SIDE COMMENTS **/
 
 #page p.commentable-section.active {
