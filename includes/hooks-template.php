@@ -192,28 +192,15 @@ function _cacsp_set_virtual_page( $p ) {
 			die();
 		}
 
-		$content = '';
-
-		// locate our special template
-		$template = cacsp_locate_template( 'form-new-social-paper.php', false );
-		if ( ! empty( $template ) ) {
-			ob_start();
-			load_template( $template );
-			$content = ob_get_contents();
-			ob_end_clean();
-		}
-
 		// dummy time!
 		$p = array();
 		$p[] = new WP_Post( (object) array(
-			'ID'					=> -1,
-			'post_content'          => $content,
-			'post_title'            => 'New Paper',
-			'post_name'             => 'new',
-			'comment_status'        => 'closed',
-			'comment_count'         => 0,
-			'filter'                => 'raw',
-			'post_type'				=> 'cacsp_paper',
+			'ID'              => 0,
+			'post_content'    => __( 'Loading new paper.  Please wait...', 'social-paper' ),
+			'post_title'      => '',
+			'post_name'       => 'new',
+			'filter'          => 'raw',
+			'post_type'	  => 'cacsp_paper',
 		) );
 	}
 
@@ -238,15 +225,15 @@ function _cacsp_disable_admin_bar_on_social_paper_pages() {
 add_action( 'admin_bar_init', '_cacsp_disable_admin_bar_on_social_paper_pages', 1 );
 
 /**
- * Show the "Enable Editing" link when WP Frontend Editor is enabled.
+ * Enable FEE on social paper pages.
  *
- * Currently, we disable the WP admin bar from being shown on social paper
- * pages.  When the admin bar is disabled, FEE's "Edit" link doesn't show up.
- * Thus, we manually add the link back.
+ * When we're on the 'New' page, we toggle FEE's 'New Mode' with JS.  When
+ * we're on a published social paper page, we show an "Enable Editing" link in
+ * the top-right corner of the page.
  *
  * @access private
  */
-function _cacsp_show_fee_edit_link() {
+function _cacsp_enable_fee() {
 	// see if FEE exists
 	if ( false === class_exists( 'FEE' ) ) {
 		return;
@@ -257,9 +244,24 @@ function _cacsp_show_fee_edit_link() {
 		return;
 	}
 
-	echo '<a id="wp-admin-bar-edit" href="#fee-edit-link"><span>Enable Editing</span></a>';
+	// automatically toggle FEE into new mode
+	if ( 'new' === get_query_var( 'name' ) ) {
+		echo '<a id="cascp-new-paper-link" href="' . admin_url( "/post-new.php?post_type=cacsp_paper" ) . '">&nbsp;</a>';
+	?>
+
+		<script type="text/javascript">
+		jQuery( function($) {
+			$( '#cascp-new-paper-link' ).hide().trigger( 'click' );
+		});
+		</script>
+
+	<?php
+	// show edit link if not on a draft page
+	} elseif ( 'auto-draft' !== get_queried_object()->post_status ) {
+		echo '<a id="wp-admin-bar-edit" href="#fee-edit-link"><span>Enable Editing</span></a>';
+	}
 }
-add_action( 'wp_footer', '_cacsp_show_fee_edit_link' );
+add_action( 'wp_footer', '_cacsp_enable_fee', 999 );
 
 /**
  * Start the buffer for content replacement on the Social Paper archive page.
