@@ -57,7 +57,7 @@ function cacsp_locate_template( $template_names, $load = false, $require_once = 
 /**
  * Load a Social Paper template part into a template.
  *
- * Essentially a wrapper function for {@link get_template_part()} but supports
+ * Essentially a duplicate of {@link get_template_part()} but supports
  * our custom template directory.
  *
  * @see get_template_part() for parameter documentation
