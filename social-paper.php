@@ -142,7 +142,11 @@ class Social_Paper {
 		// BuddyPress integration
 		if ( function_exists( 'buddypress' ) ) {
 			require dirname( __FILE__ ) . '/includes/hooks-buddypress-profile.php';
-			require dirname( __FILE__ ) . '/includes/hooks-buddypress-group.php';
+
+			if ( bp_is_active( 'groups' ) ) {
+				require dirname( __FILE__ ) . '/includes/hooks-buddypress-group.php';
+			}
+
 			//require dirname( __FILE__ ) . '/includes/hooks-buddypress-activity.php';
 			//require dirname( __FILE__ ) . '/includes/hooks-buddypress-directory.php';
 		}
