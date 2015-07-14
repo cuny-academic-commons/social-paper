@@ -10,8 +10,7 @@ if ( ! $wp_develop_dir ) {
 require_once $wp_develop_dir . '/tests/phpunit/includes/functions.php';
 
 function _bootstrap_cacsp() {
-	// Make sure BP is installed and loaded first.
-	require dirname( __FILE__ ) . '/../../../cac-social-paper.php';
+	require dirname( __FILE__ ) . '/../../../social-paper.php';
 }
 tests_add_filter( 'muplugins_loaded', '_bootstrap_cacsp', 20 );
 
@@ -23,10 +22,13 @@ $do_buddypress = file_exists( BP_TESTS_DIR . '/bootstrap.php' );
 define( 'CACSP_TESTS_DO_BUDDYPRESS', $do_buddypress );
 
 function _bootstrap_test_requirements() {
+	// Make sure BP is installed and loaded first.
 	if ( CACSP_TESTS_DO_BUDDYPRESS ) {
-		// Make sure BP is installed and loaded first.
 		require BP_TESTS_DIR . '/includes/loader.php';
 	}
+
+	// We need a compatible commenting plugin. Prefer inline-comments.
+	require dirname( __FILE__ ) . '/../../../../inline-comments/inline-comments.php';
 }
 tests_add_filter( 'muplugins_loaded', '_bootstrap_test_requirements' );
 
