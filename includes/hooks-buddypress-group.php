@@ -89,3 +89,14 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 // register our class
 bp_register_group_extension( 'CACSP_Group_Extension' );
 
+/**
+ * Register group connection taxonomy.
+ *
+ * Fires at init:15 to ensure we have a chance to register the 'cacsp_paper' post type first.
+ */
+function cacsp_register_group_connection_taxonomy() {
+	register_taxonomy( 'cacsp_paper_group', 'cacsp_paper', array(
+		'public' => false,
+	) );
+}
+add_action( 'init', 'cacsp_register_group_connection_taxonomy', 15 );
