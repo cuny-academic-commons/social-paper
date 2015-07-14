@@ -55,6 +55,29 @@ function cacsp_locate_template( $template_names, $load = false, $require_once = 
 }
 
 /**
+ * Load a Social Paper template part into a template.
+ *
+ * Essentially a wrapper function for {@link get_template_part()} but supports
+ * our custom template directory.
+ *
+ * @see get_template_part() for parameter documentation
+ */
+function cacsp_get_template_part( $slug, $name = null ) {
+	/** This action is documented in wp-includes/general-template.php */
+	do_action( "get_template_part_{$slug}", $slug, $name );
+
+	$templates = array();
+	$name = (string) $name;
+	if ( '' !== $name ) {
+		$templates[] = "{$slug}-{$name}.php";
+	}
+
+	$templates[] = "{$slug}.php";
+
+	cascp_locate_template( $templates, true, false );
+}
+
+/**
  * Determine whether we're on a Social Paper page
  *
  * @return bool
