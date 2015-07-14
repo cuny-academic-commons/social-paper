@@ -15,7 +15,7 @@ class FEE {
 		}
 
 		$this->package = json_decode( file_get_contents( $package ), true );
-		
+
 		/** @TODO - Add support for other post types? **/
 		add_post_type_support( 'cacsp_paper', 'front-end-editor' );
 
@@ -77,6 +77,7 @@ class FEE {
 			$message = 4;
 		}
 
+		global $post;
 		$post = get_post( $post_id );
 
 		wp_send_json_success( array(
@@ -790,7 +791,8 @@ class FEE {
 			$post &&
 			post_type_supports( $post->post_type, 'front-end-editor' ) &&
 			current_user_can( 'edit_post', $post->ID ) &&
-			$post->ID !== (int) get_option( 'page_for_posts' )
+			$post->ID !== (int) get_option( 'page_for_posts' ) &&
+			( ! function_exists( 'bp_is_blog_page' ) || function_exists( 'bp_is_blog_page' ) &&  bp_is_blog_page() )
 		) {
 			$supports_fee = true;
 		}
@@ -909,6 +911,8 @@ class FEE {
 	function get_sample_permalink( $post ) {
 		$_post = get_post( $post );
 		$_post->post_status = 'published';
+
+		require_once( ABSPATH . '/wp-admin/includes/post.php' );
 
 		$sample = get_sample_permalink( $_post );
 
