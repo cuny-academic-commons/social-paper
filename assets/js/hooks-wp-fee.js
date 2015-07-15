@@ -17,11 +17,11 @@ jQuery(document).ready( function($) {
 	 */
 	$(document).on( 'fee-on', function( event ) {
 
-		console.log( 'fee-on' );
+		//console.log( 'fee-on' );
 
 		// fade out bubbles if Inline Comments present
 		if ( window.incom ) {
-			$( '#incom_wrapper' ).fadeOut();
+			$('#incom_wrapper').fadeOut();
 		}
 
 	});
@@ -31,11 +31,11 @@ jQuery(document).ready( function($) {
 	 */
 	$(document).on( 'fee-off', function( event ) {
 
-		console.log( 'fee-off' );
+		//console.log( 'fee-off' );
 
 		// fade in bubbles if Inline Comments present
 		if ( window.incom ) {
-			$( '#incom_wrapper' ).fadeIn();
+			$('#incom_wrapper').fadeIn();
 		}
 
 	});
@@ -45,19 +45,19 @@ jQuery(document).ready( function($) {
 	 */
 	$(document).on( 'fee-before-save', function( event ) {
 
-		console.log( 'fee-before-save' );
+		//console.log( 'fee-before-save' );
 
 		/*
 		// example additions
 
 		// add nonce
 		wp.fee.post.social_paper_nonce = function() {
-			return $( '#social_paper_nonce' ).val();
+			return $('#social_paper_nonce').val();
 		};
 
 		// add a value
 		wp.fee.post.social_paper_value = function() {
-			return $( '#social_paper_value' ).val();
+			return $('#social_paper_value').val();
 		};
 		*/
 
@@ -68,7 +68,7 @@ jQuery(document).ready( function($) {
 	 */
 	$(document).on( 'fee-after-save', function( event ) {
 
-		console.log( 'fee-after-save' );
+		//console.log( 'fee-after-save' );
 
 	});
 
