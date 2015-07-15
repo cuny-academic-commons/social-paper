@@ -74,7 +74,7 @@ function cacsp_get_template_part( $slug, $name = null ) {
 
 	$templates[] = "{$slug}.php";
 
-	cascp_locate_template( $templates, true, false );
+	cacsp_locate_template( $templates, true, false );
 }
 
 /**
