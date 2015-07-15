@@ -24,6 +24,9 @@ jQuery(document).ready( function($) {
 			$('#incom_wrapper').fadeOut();
 		}
 
+		// always fade out comments and comment form
+		$('#comments, #respond').fadeOut();
+
 	});
 
 	/**
@@ -37,6 +40,9 @@ jQuery(document).ready( function($) {
 		if ( window.incom ) {
 			$('#incom_wrapper').fadeIn();
 		}
+
+		// always fade in comments and comment form
+		$('#comments, #respond').fadeIn();
 
 	});
 
