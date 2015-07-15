@@ -445,6 +445,10 @@ body {
 	overflow-x: hidden;
 }
 
+article {
+	padding-bottom: 2em;
+}
+
 h1, h2, h3, h4, h5,
 .entry-author,
 #comments a.url, #comments .comment-meta a,
