@@ -553,7 +553,13 @@ a.comment-reply-link {
 	padding-bottom: 1.5em;
 }
 
+
 /** WP FRONTEND EDITOR **/
+
+/* use WP default font */
+.wp-core-ui {
+	font-family: 'Open Sans', sans-serif;
+}
 
 #wp-admin-bar-edit {
 	background: #eee;
@@ -578,6 +584,21 @@ a.comment-reply-link {
 /* always show the FEE toolbar */
 .fee-toolbar {
 	bottom: 0 !important;
+	font-family: 'Open Sans', sans-serif;
+}
+
+/* re-apply styles to publish options */
+.fee-publish-options-dropdown {
+	  font-size: 14px;
+}
+
+.wp-core-ui select {
+	padding: 2px;
+	line-height: 28px;
+	height: 28px;
+	vertical-align: middle;
+	background-color: #fff;
+	color: #333;
 }
 
 
