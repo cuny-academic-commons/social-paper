@@ -5,7 +5,6 @@
 @media print {
 
 	/* Elements to hide */
-	.wp-core-ui,
 	#wp-link-backdrop,
 	#wp-link-wrap,
 	#wp-admin-bar-edit,
@@ -21,8 +20,13 @@
 		display: none !important;
 	}
 
-	/* WP FEE's original content */
-	.fee-content-body {
+	/* WP FEE compatibility */
+	.fee-thumbnail-toolbar,
+	.fee-insert-thumbnail,
+	.fee-content-body,
+	.fee-toolbar,
+	.wp-core-ui,
+	.mce-tinymce {
 		display: none !important;
 	}
 
