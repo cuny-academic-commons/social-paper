@@ -63,12 +63,12 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 
 		<?php if ( $group_query->have_posts() ) : ?>
 
-			<p><?php _e( 'Group papers.', 'social-paper' ); ?></p>
+			<?php cacsp_get_template_part( 'group-header', 'social-paper' ); ?>
 
 			<ul>
 
 			<?php while ( $group_query->have_posts() ) : $group_query->the_post(); ?>
-				<li><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></li>
+				<?php cacsp_get_template_part( 'archive-item', 'social-paper' ); ?>
 			<?php endwhile; ?>
 
 			</ul>

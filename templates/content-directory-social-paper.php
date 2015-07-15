@@ -3,7 +3,7 @@
 
 <?php if ( have_posts() ) : ?>
 
-	<p>Here you can view a list of papers written by members of the community.</p>
+	<?php cacsp_get_template_part( 'archive-header', 'social-paper' ); ?>
 
 	<ul>
 
@@ -11,7 +11,7 @@
 	// Start the Loop.
 	while ( have_posts() ) : the_post(); ?>
 
-		<li><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></li>
+		<?php cacsp_get_template_part( 'archive-item', 'social-paper' ); ?>
 
 	<?php
 	// End the loop.
@@ -22,7 +22,7 @@
 
 <?php else : ?>
 
-	<p>No papers have been written yet.  Be the first to write a paper!</p>
+	<p><?php _e( 'No papers have been written yet.  Be the first to write a paper!', 'social-paper' ); ?></p>
 
 <?php endif; ?>
 

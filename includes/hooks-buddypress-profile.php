@@ -130,12 +130,12 @@ function cacsp_profile_screen_published_content() {
 
 	<?php if ( $profile_query->have_posts() ) : ?>
 
-		<p><?php _e( 'Your published papers.', 'social-paper' ); ?></p>
+		<?php cacsp_get_template_part( 'profile-header-publish', 'social-paper' ); ?>
 
 		<ul>
 
 		<?php while ( $profile_query->have_posts() ) : $profile_query->the_post(); ?>
-			<li><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></li>
+			<?php cacsp_get_template_part( 'archive-item', 'social-paper' ); ?>
 		<?php endwhile; ?>
 
 		</ul>
@@ -190,12 +190,12 @@ function cacsp_profile_screen_draft_content() {
 
 	<?php if ( $profile_query->have_posts() ) : ?>
 
-		<p><?php _e( 'Your draft papers.', 'social-paper' ); ?></p>
+		<?php cacsp_get_template_part( 'profile-header-draft', 'social-paper' ); ?>
 
 		<ul>
 
 		<?php while ( $profile_query->have_posts() ) : $profile_query->the_post(); ?>
-			<li><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></li>
+			<?php cacsp_get_template_part( 'archive-item', 'social-paper' ); ?>
 		<?php endwhile; ?>
 
 		</ul>
