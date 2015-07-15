@@ -126,7 +126,14 @@ class Social_Paper {
 		require dirname( __FILE__ ) . '/includes/functions.php';
 		require dirname( __FILE__ ) . '/includes/class-cacsp-paper.php';
 		require dirname( __FILE__ ) . '/includes/hooks-template.php';
-		require dirname( __FILE__ ) . '/lib/wp-front-end-editor/plugin.php';
+
+		// WP FEE integration
+		if ( class_exists( 'FEE' ) ) {
+			require dirname( __FILE__ ) . '/includes/hooks-wp-fee.php';
+		} else {
+			require dirname( __FILE__ ) . '/lib/wp-front-end-editor/plugin.php';
+		}
+
 		/**
 		 * Should we register our custom post type?
 		 *
