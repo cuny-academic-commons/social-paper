@@ -122,6 +122,7 @@ function cacsp_asset_enqueue_handler() {
 
 	// enqueue our styles
 	wp_enqueue_style( 'social-paper-single', Social_Paper::$URL . '/assets/css/single.css' );
+	wp_enqueue_style( 'social-paper-single-print', Social_Paper::$URL . '/assets/css/print.css', array('social-paper-single'), '0.1', 'print' );
 }
 add_action( 'wp_enqueue_scripts', 'cacsp_asset_enqueue_handler', 999 );
 

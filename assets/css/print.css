@@ -1,0 +1,115 @@
+/*
+ * Social Paper print styles
+ */
+
+@media print {
+
+	/* Elements to hide */
+	.wp-core-ui,
+	#wp-link-backdrop,
+	#wp-link-wrap,
+	#wp-admin-bar-edit,
+	#sitewide-notice,
+	#atwho-container,
+	#wp-auth-check-wrap,
+	#incom_wrapper,
+	#respond,
+	.incom-ref,
+	.comment-body .reply,
+	.comment-edit-link,
+	#wp-admin-bar-edit {
+		display: none !important;
+	}
+
+	/* WP FEE's original content */
+	.fee-content-body {
+		display: none !important;
+	}
+
+	/* Set sensible defaults */
+	* {
+		background: white !important;
+	}
+
+	body {
+		background: white;
+		color: #000;
+		font-size: 12pt;
+		/* Text should be "readable" */
+		font-family: Georgia, serif;
+		margin: 24pt !important;
+		padding: 0 !important;
+		right: 0 !important;
+		left: 0 !important;
+	}
+
+	div, h1, h2, h3, h4, h5, h6, p, ol, ul, li {
+		width: auto !important;
+		height: auto !important;
+		min-height: 0 !important;
+		color: #000;
+		position: static !important;
+	}
+
+	/* Link style */
+	a {
+		color: #000 !important;
+		text-decoration: underline;
+	}
+
+	/* Headings should be "legible" */
+	h1, h2, h3, h4, h5, h6,
+	.post h1, .post h2, .post h3, .post h4, .post h5, .post h6 {
+		padding-left: 0;
+		padding-right: 0;
+		color: #000;
+		font-weight: bold;
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		/* Avoid printed page breaks immediately after headers, or in middle of images or blockquotes */
+		page-break-after: avoid;
+		page-break-inside: avoid;
+		text-transform: none;
+	}
+
+	/* Headings as links are superfluous */
+	h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+		color: #000;
+		text-decoration: none;
+	}
+
+	.post p,
+	.post address,
+	.post pre
+	{
+		margin: 1em 0;
+		padding: 0;
+		line-height: 1.5;
+	}
+
+	.post ul,
+	.post ol {
+		width: auto !important;
+		margin: 1em 0 1em 2em;
+		padding: 0;
+		line-height: 1.5;
+	}
+
+	.post ul li,
+	.post ol li {
+		margin-bottom: 2pt;
+		line-height: 1.5;
+	}
+
+	.post dd
+	{
+		line-height: 1.5;
+	}
+
+	.post pre
+	{
+		padding: 1em;
+		white-space: pre-wrap;
+		overflow: visible;
+	}
+
+}
