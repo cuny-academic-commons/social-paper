@@ -641,6 +641,12 @@ a.comment-reply-link {
 	color: #333;
 }
 
+/* FEE notices */
+.single-cacsp_paper #fee-notice-area {
+	/* this prevents fee-toolbar from overlapping it */
+	bottom: 50px;
+}
+
 
 /** WP SIDE COMMENTS **/
 
