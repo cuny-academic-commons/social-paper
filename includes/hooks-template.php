@@ -107,6 +107,7 @@ function cacsp_asset_enqueue_handler() {
 
 		// wp-front-end-editor
 		#'wp-core-ui',
+		'media-views',
 		'wp-core-ui-colors',
 		'buttons',
 		'wp-auth-check',
