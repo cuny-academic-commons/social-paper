@@ -87,10 +87,14 @@
 		text-decoration: none;
 	}
 
-	article p,
+	article p {
+		margin: 1em 0;
+		padding: 0;
+		line-height: 2;
+	}
+
 	article address,
-	article pre
-	{
+	article pre {
 		margin: 1em 0;
 		padding: 0;
 		line-height: 1.5;

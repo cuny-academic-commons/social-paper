@@ -531,7 +531,11 @@ a {
 
 /* Comments styling */
 #comments {
-	font-size: 18px;
+}
+
+/* Comment textarea */
+textarea#comment {
+	width: 99%;
 }
 
 #comments h2 {
@@ -644,10 +648,21 @@ a.comment-reply-link {
 	width: 100%;
 }
 
-article,
-#comments {
+article {
 	margin: 0 auto;
-	width: 700px;
+	width: 60%;
+}
+
+@media all and (max-width: 960px) {
+	article {
+		width: 80%;
+	}
+}
+
+@media all and (max-width: 600px) {
+	article {
+		font-size: 80%;
+	}
 }
 
 #page .side-comments-open {
