@@ -22,7 +22,7 @@ function cacsp_wp_fee_content_type( $supports_fee, $post ) {
 	}
 	return $supports_fee;
 }
-add_filter( 'supports_fee', 'cacsp_wp_fee_content_type' );
+add_filter( 'supports_fee', 'cacsp_wp_fee_content_type', 20, 2 );
 
 /**
  * Add scripts so we can augment WP FEE's behaviour
