@@ -489,6 +489,25 @@ dt {
 	font-weight: bold;
 }
 
+/* Images */
+article img
+{
+	max-width: 100%;
+	height: auto;
+}
+
+article img.alignleft
+{
+	float: left;
+	margin: 0.2em 1em 1em 0;
+}
+
+article img.alignright
+{
+	float: right;
+	margin: 0.2em 0 1em 1em;
+}
+
 /* Tables */
 table {
 	border: 0;
