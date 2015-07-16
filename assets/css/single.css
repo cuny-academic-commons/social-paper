@@ -508,6 +508,29 @@ article img.alignright
 	margin: 0.2em 0 1em 1em;
 }
 
+/* Captioned images */
+article .wp-caption {
+	max-width: 100%;
+}
+
+article .wp-caption.alignleft {
+	float: left;
+	margin: 0.2em 1em 1em 0;
+}
+
+article .wp-caption.alignright {
+	float: right;
+	margin: 0.2em 0 1em 1em;
+}
+
+article .wp-caption-text {
+	color: #757575;
+	font-style: italic;
+	font-size: 80%;
+	line-height: 1.5;
+	margin: 0 0 1em;
+}
+
 /* Tables */
 table {
 	border: 0;
