@@ -451,7 +451,8 @@ article {
 
 h1, h2, h3, h4, h5,
 .entry-author,
-#comments a.url, #comments .comment-meta a,
+#comments a.url,
+#comments .comment-meta a,
 a.comment-reply-link {
 	font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
 }
@@ -477,15 +478,48 @@ h3 {
 	font-size: 18px;
 }
 
+blockquote {
+	margin: 1em 0 1em -1em;
+	padding: 0 0 0 1em;
+	border-left: 1px solid #333;
+	font-style: italic;
+}
+
+dt {
+	font-weight: bold;
+}
+
+/* Tables */
+table {
+	border: 0;
+	border-collapse: collapse;
+	border-spacing: 0;
+	border-bottom: 1px solid #e6e6e6;
+	width: 100%;
+}
+
+table td {
+	border: 0;
+	border-top: 1px solid #e6e6e6;
+}
+
+table th {
+	border: 0;
+	border-top: 1px solid #e6e6e6;
+	font-weight: bold;
+	font-style: normal;
+	text-align: left;
+}
+
 a {
 	color: inherit;
 }
 
+/* Article metadata */
 .entry-author {
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 	font-size: 14px;
-	margin: 2.5em 0 -1em;
 	min-height: 50px;
 	padding: 1em 0;
 }
@@ -495,6 +529,7 @@ a {
 	margin-top: 0;
 }
 
+/* Comments styling */
 #comments {
 	font-size: 18px;
 }
@@ -503,19 +538,23 @@ a {
 	margin: 2em 0 1.5em;
 }
 
-img.avatar, .author-avatar img {
+img.avatar,
+.author-avatar img {
 	border-radius: 32px;
 	float: left;
 	margin-right: 14px;
 }
 
 #comments cite {
-	line-height: .7;
+	line-height: 1;
 	vertical-align: top;
+	display: block;
 }
 
-footer .entry-author a, #comments a.url,
-#comments .comment-meta a, a.comment-reply-link {
+footer .entry-author a,
+#comments a.url,
+#comments .comment-meta a,
+a.comment-reply-link {
 	font-size: .9em;
 	text-decoration: none;
 }
@@ -526,9 +565,14 @@ a.comment-reply-link {
 	font-style: normal;
 }
 
+/* Comment meta */
 #comments .comment-meta {
-	line-height: 0;
-	margin-bottom: 2em;
+	line-height: 1;
+	margin-bottom: 1em;
+}
+
+#comments .comment-meta a {
+	font-size: .7em;
 }
 
 /* Text meant only for screen readers */
@@ -608,7 +652,8 @@ a.comment-reply-link {
 	width: 100%;
 }
 
-article, #comments {
+article,
+#comments {
 	margin: 0 auto;
 	width: 700px;
 }

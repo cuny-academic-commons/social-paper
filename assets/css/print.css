@@ -31,6 +31,12 @@
 	}
 
 	/* Set sensible defaults */
+	@page {
+		size: auto;
+		/* set margin in printer settings */
+		margin: 25mm 25mm 25mm 25mm;
+	}
+
 	* {
 		background: white !important;
 	}
@@ -38,16 +44,16 @@
 	body {
 		background: white;
 		color: #000;
-		font-size: 12pt;
+		font-size: 10pt;
 		/* Text should be "readable" */
 		font-family: Georgia, serif;
-		margin: 24pt !important;
+		margin: 0 !important;
 		padding: 0 !important;
 		right: 0 !important;
 		left: 0 !important;
 	}
 
-	div, h1, h2, h3, h4, h5, h6, p, ol, ul, li {
+	html, div, article, h1, h2, h3, h4, h5, h6, p, ol, ul, li {
 		width: auto !important;
 		height: auto !important;
 		min-height: 0 !important;
@@ -63,7 +69,7 @@
 
 	/* Headings should be "legible" */
 	h1, h2, h3, h4, h5, h6,
-	.post h1, .post h2, .post h3, .post h4, .post h5, .post h6 {
+	article h1, article h2, article h3, article h4, article h5, article h6 {
 		padding-left: 0;
 		padding-right: 0;
 		color: #000;
@@ -81,39 +87,92 @@
 		text-decoration: none;
 	}
 
-	.post p,
-	.post address,
-	.post pre
+	article p,
+	article address,
+	article pre
 	{
 		margin: 1em 0;
 		padding: 0;
 		line-height: 1.5;
 	}
 
-	.post ul,
-	.post ol {
+	article ul,
+	article ol {
 		width: auto !important;
 		margin: 1em 0 1em 2em;
 		padding: 0;
 		line-height: 1.5;
 	}
 
-	.post ul li,
-	.post ol li {
+	article ul li,
+	article ol li {
 		margin-bottom: 2pt;
 		line-height: 1.5;
 	}
 
-	.post dd
+	article dd
 	{
 		line-height: 1.5;
 	}
 
-	.post pre
+	article pre
 	{
 		padding: 1em;
 		white-space: pre-wrap;
 		overflow: visible;
+	}
+
+	/* layout preferences for other elements */
+	img {
+		page-break-inside: avoid;
+		page-break-after: avoid;
+	}
+
+	blockquote,
+	table,
+	pre {
+		page-break-inside: avoid;
+	}
+
+	blockquote {
+		margin: 0;
+		padding-left: 10pt;
+		border-left: 1px solid #aaa;
+		font-style: italic;
+	}
+
+	table {
+		width: auto;
+	}
+
+	table th,
+	.post table th,
+	table td,
+	.post table td {
+		border: 1px solid #ccc;
+	}
+
+	ul,
+	ol,
+	dl {
+		page-break-before: avoid;
+	}
+
+	.entry-footer {
+		page-break-inside: avoid;
+	}
+
+	/* restore min height on article meta */
+	.entry-author {
+		min-height: 50px !important;
+	}
+
+	#comments {
+		font-size: 10pt;
+	}
+
+	.comment-body {
+		padding-bottom: 1em;
 	}
 
 }
