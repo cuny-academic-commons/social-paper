@@ -27,6 +27,14 @@ jQuery(document).ready( function($) {
 		// always fade out comments and comment form
 		$('#comments, #respond').fadeOut();
 
+		// test for our localisation object
+		if ( 'undefined' !== typeof Social_Paper_FEE_i18n ) {
+
+			// switch editing toggle button text
+			$('#wp-admin-bar-edit span').text( Social_Paper_FEE_i18n.button_disable );
+
+		}
+
 	});
 
 	/**
@@ -43,6 +51,14 @@ jQuery(document).ready( function($) {
 
 		// always fade in comments and comment form
 		$('#comments, #respond').fadeIn();
+
+		// test for our localisation object
+		if ( 'undefined' !== typeof Social_Paper_FEE_i18n ) {
+
+			// switch editing toggle button text
+			$('#wp-admin-bar-edit span').text( Social_Paper_FEE_i18n.button_enable );
+
+		}
 
 	});
 

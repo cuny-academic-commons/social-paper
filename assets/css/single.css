@@ -617,14 +617,6 @@ a.comment-reply-link {
 	top: 10px;
 }
 
-/* yes, this is ugly... temporary until this is done by JS */
-#wp-admin-bar-edit.active span {
-	display: none;
-}
-#wp-admin-bar-edit.active:after {
-	content: 'Disable Editing';
-}
-
 /* always show the FEE toolbar */
 .fee-toolbar {
 	bottom: 0 !important;

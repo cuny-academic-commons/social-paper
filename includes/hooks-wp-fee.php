@@ -33,7 +33,16 @@ function cacsp_wp_fee_enqueue_scripts() {
 	}
 
 	if ( is_user_logged_in() ) {
+
+		// enqueue script
 		wp_enqueue_script( 'social-paper-single-fee', Social_Paper::$URL . '/assets/js/hooks-wp-fee.js', array('jquery'), '0.1' );
+
+		// localise
+		wp_localize_script( 'social-paper-single-fee', 'Social_Paper_FEE_i18n', array(
+			'button_enable' => __( 'Enable Editing', 'social-paper' ),
+			'button_disable' => __( 'Disable Editing', 'social-paper' ),
+		) );
+
 	}
 
 }
