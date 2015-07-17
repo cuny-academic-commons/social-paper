@@ -561,6 +561,7 @@ class FEE {
 					<?php if ( in_array( 'category', get_object_taxonomies( $post ) ) ) { ?>
 						<button class="button button-large fee-button-categories"><div class="dashicons dashicons-category"></div></button>
 					<?php } ?>
+					<?php do_action( 'fee_tax_buttons', $post ); ?>
 
 					<?php if ( ! in_array( $post->post_status, array( 'publish', 'future', 'pending' ) ) ) { ?>
 						<button <?php if ( 'private' == $post->post_status ) { ?>style="display:none"<?php } ?> class="button button-large fee-save"><?php _e( 'Save Draft' ); ?></button>
