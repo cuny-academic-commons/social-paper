@@ -273,7 +273,7 @@ class FEE {
 				'title' => apply_filters( 'fee_title_placeholder', __( 'Title' ) )
 			) );
 
-			wp_enqueue_media( array( 'post' => $post ) );
+			wp_enqueue_media( array( 'post' => $post->ID ) );
 
 			wp_deregister_script( 'mce-view' );
 			wp_enqueue_script( 'mce-view', $this->url( '/js/mce-view' . $suffix . '.js' ), array( 'shortcode', 'media-models', 'media-audiovideo', 'wp-playlist' ), $this->package['version'], true );
