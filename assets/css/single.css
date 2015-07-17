@@ -445,7 +445,7 @@ body {
 	overflow-x: hidden;
 }
 
-.entry-title, .entry-content, .entry-footer,
+h1.entry-title, .entry-content, .entry-footer,
 #comments, #comments-and-form,
 .entry-header .fee-url {
 	margin: 0 auto;
@@ -453,7 +453,7 @@ body {
 }
 
 @media all and (max-width: 960px) {
-	.entry-title, .entry-content, .entry-footer,
+	h1.entry-title, .entry-content, .entry-footer,
 	#comments, #comments-and-form,
 	.entry-header .fee-url {
 		width: 80%;
@@ -461,7 +461,7 @@ body {
 }
 
 @media all and (max-width: 600px) {
-	.entry-title, .entry-content, .entry-footer,
+	.entry-content, .entry-footer,
 	#comments, #comments-and-form,
 	.entry-header .fee-url {
 		font-size: 80%;
@@ -498,6 +498,12 @@ h1.entry-title {
 	text-align: center;
 	margin-top: 1em;
 	margin-bottom: 1em;
+}
+
+@media all and (max-width: 600px) {
+	h1.entry-title {
+		font-size: 28px;
+	}
 }
 
 h2 {
