@@ -40,9 +40,16 @@ function cacsp_has_feature_image() {
 }
 
 /**
- * Remove the action which writes styles for the admin bar
+ * Remove the action which writes inline styles for the admin bar
  */
-add_theme_support( 'admin-bar', array( 'callback' => '__return_false' ) );
+function cacsp_prevent_inline_admin_bar_styles() {
+	if ( ! cacsp_is_page() ) {
+		return $retval;
+	}
+
+	add_theme_support( 'admin-bar', array( 'callback' => '__return_false' ) );
+}
+add_action( 'wp', 'cacsp_prevent_inline_admin_bar_styles' );
 
 /**
  * Single template loader.
