@@ -88,6 +88,22 @@ function cacsp_wp_fee_enqueue_scripts() {
 add_action( 'wp_enqueue_scripts', 'cacsp_wp_fee_enqueue_scripts', 999 );
 
 /**
+ * Add button to WP FEE's toolbar
+ *
+ * @param object $post The WordPress post object
+ */
+function cacsp_wp_fee_tax_buttons( $post ) {
+	if ( ! cacsp_is_page() ) {
+		return;
+	}
+
+	if ( in_array( 'cacsp_paper_tag', get_object_taxonomies( $post ) ) ) { ?>
+		<button class="button button-large fee-button-cacsp_paper_tag"><div class="dashicons dashicons-tag dashicons-cacsp_paper_tag"></div></button>
+	<?php }
+}
+add_action( 'fee_tax_buttons', 'cacsp_wp_fee_tax_buttons' );
+
+/**
  * Prevent WP FEE from loading
  *
  * Utility that can be called before 'init' to suppress WP FEE from loading.
