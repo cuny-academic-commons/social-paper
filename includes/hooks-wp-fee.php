@@ -25,6 +25,45 @@ function cacsp_wp_fee_content_type( $supports_fee, $post ) {
 add_filter( 'supports_fee', 'cacsp_wp_fee_content_type', 20, 2 );
 
 /**
+ * Add WP FEE message support for our CPT
+ *
+ * @param array $messages The existing message array
+ * @param array $messages The modified message array
+ */
+function cacsp_wp_fee_messages( $messages ) {
+
+	/**
+	 * We have to declare access to the post global because the WP FEE filter
+	 * does not pass $post or $revision_id along with the message array.
+	 *
+	 * @see FEE::post_updated_messages()
+	 */
+	global $post;
+
+	// sanity check
+	if ( ! isset( $post ) ) {
+		return $messages;
+	}
+
+	$messages['cacsp_paper'] = array(
+		 0 => '', // Unused. Messages start at index 1.
+		 1 => __( 'Paper updated.', 'social-paper' ),
+		 2 => __( 'Custom field updated.', 'social-paper' ),
+		 3 => __( 'Custom field deleted.', 'social-paper' ),
+		 4 => __( 'Paper updated.', 'social-paper' ),
+		 5 => isset( $revision_id ) ? sprintf( __( 'Paper restored to revision from %s', 'social-paper' ), wp_post_revision_title( (int) $revision_id, false ) ) : false,
+		 6 => __( 'Paper published.', 'social-paper' ),
+		 7 => __( 'Paper saved.', 'social-paper' ),
+		 8 => __( 'Paper submitted.', 'social-paper' ),
+		 9 => sprintf( __( 'Paper scheduled for: <strong>%1$s</strong>.', 'social-paper' ), date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) ),
+		10 => __( 'Paper draft updated.', 'social-paper' )
+	);
+
+	return $messages;
+}
+add_filter( 'post_updated_messages', 'cacsp_wp_fee_messages' );
+
+/**
  * Add scripts so we can augment WP FEE's behaviour
  */
 function cacsp_wp_fee_enqueue_scripts() {
