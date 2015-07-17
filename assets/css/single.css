@@ -779,6 +779,10 @@ a.comment-edit-link {
 
 /** INLINE COMMENTS **/
 
+.incom-comments-wrapper #comments-and-form {
+	width: auto;
+}
+
 .incom-ref {
 	font-size: 80%;
 	color: #2980b9;
