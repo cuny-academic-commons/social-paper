@@ -445,19 +445,25 @@ body {
 	overflow-x: hidden;
 }
 
-.entry-title, .entry-content, .entry-footer, #comments, #comments-and-form {
+.entry-title, .entry-content, .entry-footer,
+#comments, #comments-and-form,
+.entry-header .fee-url {
 	margin: 0 auto;
 	width: 60%;
 }
 
 @media all and (max-width: 960px) {
-	.entry-title, .entry-content, .entry-footer, #comments, #comments-and-form {
+	.entry-title, .entry-content, .entry-footer,
+	#comments, #comments-and-form,
+	.entry-header .fee-url {
 		width: 80%;
 	}
 }
 
 @media all and (max-width: 600px) {
-	.entry-title, .entry-content, .entry-footer, #comments, #comments-and-form {
+	.entry-title, .entry-content, .entry-footer,
+	#comments, #comments-and-form,
+	.entry-header .fee-url {
 		font-size: 80%;
 	}
 }
@@ -520,14 +526,12 @@ article img
 	height: auto;
 }
 
-article img.alignleft
-{
+article img.alignleft {
 	float: left;
 	margin: 0.2em 1em 1em 0;
 }
 
-article img.alignright
-{
+article img.alignright {
 	float: right;
 	margin: 0.2em 0 1em 1em;
 }
@@ -537,14 +541,18 @@ article .wp-caption {
 	max-width: 100%;
 }
 
+article .wp-caption.alignnone {
+	margin: 1em 0;
+}
+
 article .wp-caption.alignleft {
 	float: left;
-	margin: 0.2em 1em 1em 0;
+	margin: 0.4em 1em 1em 0;
 }
 
 article .wp-caption.alignright {
 	float: right;
-	margin: 0.2em 0 1em 1em;
+	margin: 0.4em 0 1em 1em;
 }
 
 article .wp-caption-text {
@@ -552,7 +560,7 @@ article .wp-caption-text {
 	font-style: italic;
 	font-size: 80%;
 	line-height: 1.5;
-	margin: 0 0 1em;
+	margin: 0;
 }
 
 /* Feature Image */
@@ -601,11 +609,17 @@ a {
 
 .entry-author h3 {
 	line-height: 1;
-	margin-top: 0;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
 }
 
 /* Comments styling */
 #comments {
+}
+
+.comment_content {
+	clear: left;
+	margin: 1em 0;
 }
 
 /* Comment textarea */
@@ -628,18 +642,19 @@ img.avatar,
 	line-height: 1;
 	vertical-align: top;
 	display: block;
+	margin-bottom: 0.3em;
 }
 
 footer .entry-author a,
 #comments a.url,
 #comments .comment-meta a,
 a.comment-reply-link {
-	font-size: .9em;
 	text-decoration: none;
 }
 
 #comments a.url,
-a.comment-reply-link {
+a.comment-reply-link,
+a.comment-edit-link {
 	color: #2980b9;
 	font-style: normal;
 }
@@ -650,8 +665,10 @@ a.comment-reply-link {
 	margin-bottom: 1em;
 }
 
-#comments .comment-meta a {
-	font-size: .7em;
+.comment-author,
+.comment-meta,
+.comment-body .reply {
+	font-size: 70%;
 }
 
 /* Text meant only for screen readers */
@@ -733,6 +750,10 @@ a.comment-reply-link {
 	}
 }
 
+.fee-slug {
+	background-color: #eee;
+}
+
 /** WP SIDE COMMENTS **/
 
 #page p.commentable-section.active {
@@ -749,3 +770,11 @@ a.comment-reply-link {
 }
 
 #comments .side-comment {display:none;}
+
+/** INLINE COMMENTS **/
+
+.incom-ref {
+	font-size: 80%;
+	color: #2980b9;
+	font-style: normal;
+}

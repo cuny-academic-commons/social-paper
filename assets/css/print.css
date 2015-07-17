@@ -53,7 +53,7 @@
 		left: 0 !important;
 	}
 
-	html, div, article, h1, h2, h3, h4, h5, h6, p, ol, ul, li {
+	html, div, article, h1, h2, h3, h4, h5, h6, p, ol, ul, li, .entry-footer {
 		width: auto !important;
 		height: auto !important;
 		min-height: 0 !important;
@@ -87,6 +87,10 @@
 		text-decoration: none;
 	}
 
+	h1.entry-title {
+		font-size: 20pt;
+	}
+
 	article p {
 		margin: 1em 0;
 		padding: 0;
@@ -114,24 +118,46 @@
 		line-height: 1.5;
 	}
 
-	article dd
-	{
+	article dd {
 		line-height: 1.5;
 	}
 
-	article pre
-	{
+	article pre {
 		padding: 1em;
 		white-space: pre-wrap;
 		overflow: visible;
 	}
 
-	/* layout preferences for other elements */
+	/* Images */
 	img {
 		page-break-inside: avoid;
 		page-break-after: avoid;
 	}
 
+	article img.alignleft {
+		margin: 4pt 18pt 18pt 0;
+	}
+
+	article img.alignright {
+		margin: 4pt 0 18pt 18pt;
+	}
+
+	/* Captioned images */
+	article .wp-caption {
+		page-break-inside: avoid;
+		page-break-after: avoid;
+	}
+
+	article .wp-caption.alignleft {
+		margin: 4pt 18pt 18pt 0;
+	}
+
+	article .wp-caption.alignright {
+		float: right;
+		margin: 4pt 0 18pt 18pt;
+	}
+
+	/* layout preferences for other elements */
 	blockquote,
 	table,
 	pre {
@@ -150,9 +176,9 @@
 	}
 
 	table th,
-	.post table th,
+	article table th,
 	table td,
-	.post table td {
+	article table td {
 		border: 1px solid #ccc;
 	}
 
@@ -171,8 +197,21 @@
 		min-height: 50px !important;
 	}
 
-	#comments {
-		font-size: 10pt;
+	.entry-title, .entry-content, .entry-footer,
+	#comments, #comments-and-form,
+	.entry-header .fee-url {
+		font-size: 100%;
+	}
+
+	.comment-author, .comment-meta, .comment-body .reply
+	{
+		font-size: 8pt;
+	}
+
+	.comment-author a
+	{
+		font-weight: bold;
+		line-height: 1.5;
 	}
 
 	.comment-body {
