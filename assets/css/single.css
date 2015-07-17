@@ -445,6 +445,23 @@ body {
 	overflow-x: hidden;
 }
 
+.entry-title, .entry-content, .entry-footer, #comments, #comments-and-form {
+	margin: 0 auto;
+	width: 60%;
+}
+
+@media all and (max-width: 960px) {
+	.entry-title, .entry-content, .entry-footer, #comments, #comments-and-form {
+		width: 80%;
+	}
+}
+
+@media all and (max-width: 600px) {
+	.entry-title, .entry-content, .entry-footer, #comments, #comments-and-form {
+		font-size: 80%;
+	}
+}
+
 article {
 	padding-bottom: 2em;
 }
@@ -468,6 +485,13 @@ h1, h2, h3 {
 
 h1 {
 	font-size: 36px;
+}
+
+h1.entry-title {
+	font-size: 48px;
+	text-align: center;
+	margin-top: 1em;
+	margin-bottom: 1em;
 }
 
 h2 {
@@ -529,6 +553,15 @@ article .wp-caption-text {
 	font-size: 80%;
 	line-height: 1.5;
 	margin: 0 0 1em;
+}
+
+/* Feature Image */
+article .cacsp_feature_image {
+	margin-bottom: 1em;
+}
+
+article .wp-post-image {
+	width: 100%;
 }
 
 /* Tables */
@@ -689,28 +722,21 @@ a.comment-reply-link {
 	bottom: 50px;
 }
 
+/* Feature image support */
+.entry-header .fee-insert-thumbnail {
+	left: 20%;
+}
+
+@media all and (max-width: 960px) {
+	.entry-header .fee-insert-thumbnail {
+		left: 10%;
+	}
+}
 
 /** WP SIDE COMMENTS **/
 
 #page p.commentable-section.active {
 	width: 100%;
-}
-
-article {
-	margin: 0 auto;
-	width: 60%;
-}
-
-@media all and (max-width: 960px) {
-	article {
-		width: 80%;
-	}
-}
-
-@media all and (max-width: 600px) {
-	article {
-		font-size: 80%;
-	}
 }
 
 #page .side-comments-open {

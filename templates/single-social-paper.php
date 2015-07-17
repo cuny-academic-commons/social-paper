@@ -27,9 +27,12 @@ while ( have_posts() ) : the_post();
 	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 		<header class="entry-header">
-			<?php
-				the_title( '<h1 class="entry-title">', '</h1>' );
-			?>
+			<?php if ( cacsp_has_feature_image() ) : ?>
+				<div class="cacsp_feature_image">
+					<?php echo get_the_post_thumbnail( get_the_ID(), 'cacsp-feature' ); ?>
+				</div>
+			<?php endif; ?>
+			<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 		</header><!-- .entry-header -->
 
 		<div class="entry-content">

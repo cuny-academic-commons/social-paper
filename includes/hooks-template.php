@@ -7,6 +7,39 @@
  */
 
 /**
+ * Set theme capabilities
+ */
+function cacsp_after_setup_theme() {
+
+	// enable Featured Images for papers
+	add_theme_support( 'post-thumbnails', array( 'cacsp_paper' ) );
+
+	// define a custom image size, cropped to fit
+	add_image_size(
+		'cacsp-feature',
+		apply_filters( 'cacsp_feature_image_width', 1200 ),
+		apply_filters( 'cacsp_feature_image_height', 600 ),
+		true // crop
+	);
+
+}
+add_action( 'after_setup_theme', 'cacsp_after_setup_theme' );
+
+/**
+ * Utility to test for feature image, because has_post_thumbnail() fails sometimes
+ * @see http://codex.wordpress.org/Function_Reference/has_post_thumbnail
+ *
+ * @return bool True if post has thumbnail, false otherwise
+ */
+function cacsp_has_feature_image() {
+	if ( '' != get_the_post_thumbnail() ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Single template loader.
  *
  * Overrides the single post template in themes to use our bundled template.
