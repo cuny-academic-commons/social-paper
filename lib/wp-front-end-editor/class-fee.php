@@ -684,7 +684,7 @@ class FEE {
 									<div class="modal-title" id="myModalLabel"><?php echo $taxonomy->labels->name; ?></div>
 								</div>
 								<div class="modal-body">
-									<?php call_user_func( $taxonomy->meta_box_cb, $post, array( 'args' => array( 'taxonomy' => $tax_name ) ) ); ?>
+									<?php call_user_func( $taxonomy->meta_box_cb, $post, array( 'title' => $taxonomy->labels->name, 'args' => array( 'taxonomy' => $tax_name ) ) ); ?>
 								</div>
 								<div class="modal-footer">
 									<button class="button button-primary" data-dismiss="modal"><?php _e( 'Close' ); ?></button>
