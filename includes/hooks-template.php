@@ -40,6 +40,11 @@ function cacsp_has_feature_image() {
 }
 
 /**
+ * Remove the action which writes styles for the admin bar
+ */
+add_theme_support( 'admin-bar', array( 'callback' => '__return_false' ) );
+
+/**
  * Single template loader.
  *
  * Overrides the single post template in themes to use our bundled template.
