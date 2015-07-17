@@ -44,7 +44,7 @@ function cacsp_has_feature_image() {
  */
 function cacsp_prevent_inline_admin_bar_styles() {
 	if ( ! cacsp_is_page() ) {
-		return $retval;
+		return;
 	}
 
 	add_theme_support( 'admin-bar', array( 'callback' => '__return_false' ) );
