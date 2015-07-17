@@ -361,3 +361,20 @@ function _cacsp_archive_ob_end( $q ) {
 	cacsp_locate_template( 'content-directory-social-paper.php', true );
 }
 add_action( 'loop_end', '_cacsp_archive_ob_end', 999 );
+
+/**
+ * Wrap comment content in an identifer div
+ *
+ * @param str $comment_content The comment content
+ * @param object $comment The comment object
+ * @param array $args The comment arguments
+ * @return void
+ */
+function cacsp_comment_text( $comment_content, $comment, $args ) {
+	if ( ! cacsp_is_page() ) {
+		return;
+	}
+
+	return '<div class="comment_content">' . $comment_content . '</div>';
+}
+add_filter( 'get_comment_text', 'cacsp_comment_text', 1000, 3 );
