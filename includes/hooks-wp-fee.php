@@ -25,6 +25,23 @@ function cacsp_wp_fee_content_type( $supports_fee, $post ) {
 add_filter( 'supports_fee', 'cacsp_wp_fee_content_type', 20, 2 );
 
 /**
+ * Disable WP FEE on BuddyPress pages.
+ *
+ * BuddyPress uses virtual pages with the "page" post type, which essentially
+ * confuses FEE.  Here, we bail out of FEE support when on a BP page.
+ *
+ * @see https://github.com/iseulde/wp-front-end-editor/pull/227
+ */
+function cacsp_wp_fee_disable_support_on_bp_pages( $retval ) {
+	if ( function_exists( 'is_buddypress' ) && is_buddypress() ) {
+		return false;
+	}
+
+	return $retval;
+}
+add_filter( 'supports_fee', 'cacsp_wp_fee_disable_support_on_bp_pages' );
+
+/**
  * Add WP FEE message support for our CPT
  *
  * @param array $messages The existing message array
