@@ -6,23 +6,72 @@
  * @subpackage Hooks
  */
 
-// declare support
-add_post_type_support( 'cacsp_paper', 'front-end-editor' );
+/**
+ * Utility function to load our custom version of FEE.
+ *
+ * We extend the regular {@link FEE} class to fix a few issues.
+ */
+function cacsp_wp_fee_load() {
+	require Social_Paper::$PATH . '/includes/class-cacsp-fee.php';
+	Social_Paper::$FEE = new CACSP_FEE;
+
+	// declare FEE support for our CPT
+	add_post_type_support( 'cacsp_paper', 'front-end-editor' );
+
+	// re-run init routine.
+	// we need to manually call FEE's init() method since we're calling this after
+	// the 'init' hook
+	Social_Paper::$FEE->init();
+}
 
 /**
- * Add WP FEE support for our CPT
+ * Load our version of FEE on a frontend Social Paper page.
  *
- * @param bool $supports_fee Whether or not a CPT is supported by WP FEE
- * @param object $post The WordPress post object
- * @return bool
+ * We're running this on 'pre_get_posts' since this is when we've determined
+ * that we're on a Social Paper page.
  */
-function cacsp_wp_fee_content_type( $supports_fee, $post ) {
-	if ( $post->post_type == 'cacsp_paper' ) {
-		$supports_fee = true;
+function cacsp_wp_fee_frontend_load() {
+	if ( false === cacsp_is_page() && false === Social_Paper::$is_new ) {
+		return;
 	}
-	return $supports_fee;
+
+	if ( ! class_exists( 'CACSP_FEE' ) ) {
+		cacsp_wp_fee_load();
+
+		// do not run FEE's 'wp' routine
+		remove_anonymous_object_filter( 'wp', 'FEE', 'wp' );
+	}
 }
-add_filter( 'supports_fee', 'cacsp_wp_fee_content_type', 20, 2 );
+add_action( 'pre_get_posts', 'cacsp_wp_fee_frontend_load', 999 );
+
+/**
+ * Load our version of FEE when a FEE AJAX post is being made.
+ *
+ * This is the only way to override FEE's default AJAX post method.
+ *
+ * @link https://github.com/iseulde/wp-front-end-editor/pull/228
+ */
+function cacsp_wp_fee_ajax_load_on_post() {
+	// we only want to intercept AJAX requests
+	if ( false === defined( 'DOING_AJAX' ) || true !== constant( 'DOING_AJAX' ) ) {
+		return;
+	}
+
+	// check if we're on the 'fee_post' AJAX hook
+	if ( empty( $_REQUEST['action'] ) || 'fee_post' !== $_REQUEST['action'] ) {
+		return;
+	}
+
+	// let's start the show!
+	if ( ! class_exists( 'CACSP_FEE' ) ) {
+		// remove FEE's default post hook
+		remove_all_actions( 'wp_ajax_fee_post' );
+
+		// load our version of FEE
+		cacsp_wp_fee_load();
+	}
+}
+add_action( 'admin_init', 'cacsp_wp_fee_ajax_load_on_post' );
 
 /**
  * Disable WP FEE on BuddyPress pages.
@@ -138,3 +187,45 @@ function cacsp_wp_fee_suppress() {
 	remove_action( 'init', array( $wordpress_front_end_editor, 'init' ) );
 
 }
+
+if ( ! function_exists( 'remove_anonymous_object_filter' ) ) :
+/**
+ * Remove an anonymous object filter.
+ *
+ * @param  string $tag    Hook name.
+ * @param  string $class  Class name
+ * @param  string $method Method name
+ * @param  bool   $strict Whether to check if the calling class matches exactly with $class.  If
+ *                        false, all methods (including parent class) matching $method will be
+ *                        removed.  If true, calling class must match $class in order to be removed.
+ * @return void
+ *
+ * @link http://wordpress.stackexchange.com/a/57088 Tweaked by r-a-y for strict class checks.
+ */
+function remove_anonymous_object_filter( $tag = '', $class = '', $method = '', $strict = true ) {
+	$filters = $GLOBALS['wp_filter'][ $tag ];
+	if ( empty ( $filters ) ) {
+		return;
+	}
+
+	foreach ( $filters as $priority => $filter ) {
+		foreach ( $filter as $identifier => $function ) {
+			if ( is_array( $function )
+				and is_a( $function['function'][0], $class )
+				and $method === $function['function'][1]
+			) {
+				// mod by r-a-y - strict class name checks
+				if ( true === (bool) $strict && $class !== get_class( $function['function'][0] ) ) {
+					continue;
+				}
+
+				remove_filter(
+					$tag,
+					array ( $function['function'][0], $method ),
+					$priority
+				);
+			}
+		}
+	}
+}
+endif;

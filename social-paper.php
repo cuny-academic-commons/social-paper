@@ -42,6 +42,13 @@ class Social_Paper {
 	public static $TEMPLATEPATH = '';
 
 	/**
+	 * Our custom Frontend Editor instance.
+	 *
+	 * @var CACSP_FEE|null
+	 */
+	public static $FEE = null;
+
+	/**
 	 * Marker to determine if we're on a social paper page.
 	 *
 	 * @var bool
