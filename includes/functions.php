@@ -115,3 +115,10 @@ function wp_styles() {
 	return $wp_styles;
 }
 endif;
+
+function cacsp_add_wp_fee_compatibility() {
+	add_post_type_support( 'cacsp_paper', 'front-end-editor' );
+	remove_post_type_support( 'post', 'front-end-editor' );
+	remove_post_type_support( 'page', 'front-end-editor' );
+}
+add_action( 'init', 'cacsp_add_wp_fee_compatibility' );

@@ -137,8 +137,6 @@ class Social_Paper {
 		// WP FEE integration
 		if ( class_exists( 'FEE' ) ) {
 			require dirname( __FILE__ ) . '/includes/hooks-wp-fee.php';
-		} else {
-			require dirname( __FILE__ ) . '/lib/wp-front-end-editor/plugin.php';
 		}
 
 		/**
