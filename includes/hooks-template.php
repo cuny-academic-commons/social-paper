@@ -47,6 +47,7 @@ function cacsp_prevent_inline_admin_bar_styles() {
 		return;
 	}
 
+	show_admin_bar( false );
 	add_theme_support( 'admin-bar', array( 'callback' => '__return_false' ) );
 }
 add_action( 'wp', 'cacsp_prevent_inline_admin_bar_styles' );
@@ -252,22 +253,6 @@ function _cacsp_set_virtual_page( $p ) {
 	return $p;
 }
 add_filter( 'the_posts', '_cacsp_set_virtual_page' );
-
-/**
- * Disables the admin bar on single Social Paper pages.
- *
- * Might bring it back later...
- *
- * @access private
- */
-function _cacsp_disable_admin_bar_on_social_paper_pages() {
-	if ( ! cacsp_is_page() ) {
-		return;
-	}
-
-	show_admin_bar( false );
-}
-add_action( 'admin_bar_init', '_cacsp_disable_admin_bar_on_social_paper_pages', 1 );
 
 /**
  * Start the buffer for content replacement on the Social Paper archive page.
