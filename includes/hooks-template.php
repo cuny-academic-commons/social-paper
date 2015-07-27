@@ -162,8 +162,6 @@ function cacsp_asset_enqueue_handler() {
 		'tinymce-view',
 		'fee',
 		'dashicons',
-		'admin-bar',
-		'fee-adminbar',
 	);
 
 	// enqueue our styles
