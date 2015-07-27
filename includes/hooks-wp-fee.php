@@ -95,12 +95,12 @@ function _cacsp_enable_fee() {
 
 	// automatically toggle FEE into new mode
 	if ( 'new' === get_query_var( 'name' ) ) {
-		echo '<a id="cascp-new-paper-link" href="' . admin_url( "/post-new.php?post_type=cacsp_paper" ) . '">&nbsp;</a>';
+		echo '<a id="cacsp-new-paper-link" href="' . admin_url( "/post-new.php?post_type=cacsp_paper" ) . '">&nbsp;</a>';
 	?>
 
 		<script type="text/javascript">
 		jQuery( function($) {
-			$( '#cascp-new-paper-link' ).hide().trigger( 'click' );
+			$( '#cacsp-new-paper-link' ).hide().trigger( 'click' );
 		});
 		</script>
 
