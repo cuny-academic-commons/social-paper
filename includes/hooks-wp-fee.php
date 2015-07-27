@@ -74,6 +74,45 @@ function cacsp_wp_fee_ajax_load_on_post() {
 add_action( 'admin_init', 'cacsp_wp_fee_ajax_load_on_post' );
 
 /**
+ * Enable FEE on social paper pages.
+ *
+ * When we're on the 'New' page, we toggle FEE's 'New Mode' with JS.  When
+ * we're on a published social paper page, we show an "Enable Editing" link in
+ * the top-right corner of the page.
+ *
+ * @access private
+ */
+function _cacsp_enable_fee() {
+	// see if FEE exists
+	if ( false === class_exists( 'FEE' ) ) {
+		return;
+	}
+
+	// check to see if we're on our social paper page
+	if ( false === cacsp_is_page() ) {
+		return;
+	}
+
+	// automatically toggle FEE into new mode
+	if ( 'new' === get_query_var( 'name' ) ) {
+		echo '<a id="cascp-new-paper-link" href="' . admin_url( "/post-new.php?post_type=cacsp_paper" ) . '">&nbsp;</a>';
+	?>
+
+		<script type="text/javascript">
+		jQuery( function($) {
+			$( '#cascp-new-paper-link' ).hide().trigger( 'click' );
+		});
+		</script>
+
+	<?php
+	// show edit link if not on a draft page
+	} elseif ( current_user_can( 'edit_post', get_queried_object()->ID ) && 'auto-draft' !== get_queried_object()->post_status ) {
+		echo '<a id="wp-admin-bar-edit" href="#fee-edit-link"><span>Enable Editing</span></a>';
+	}
+}
+add_action( 'wp_footer', '_cacsp_enable_fee', 999 );
+
+/**
  * Disable WP FEE on BuddyPress pages.
  *
  * BuddyPress uses virtual pages with the "page" post type, which essentially
