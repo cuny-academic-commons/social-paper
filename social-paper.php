@@ -112,6 +112,16 @@ class Social_Paper {
 			" ) );
 			return;
 		}
+		if ( !class_exists( 'FEE' ) ) {
+			add_action( 'admin_notices', create_function('', '
+				echo "<div class=\"error\">";
+				$notice = __( \'Social Paper requires the plugin WP Front End Editor to work. Please enable it through the plugin repository or by downloading it\', \'social paper\' );
+				echo $notice;
+				echo " <a href=\"https://wordpress.org/plugins/wp-front-end-editor/\">here</a>.";
+				echo "</div>";
+			' ) );
+			return;
+		}
 
 		$this->properties();
 		$this->includes();
