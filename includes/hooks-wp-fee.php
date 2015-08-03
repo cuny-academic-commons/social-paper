@@ -15,14 +15,19 @@ function cacsp_wp_fee_load() {
 	require Social_Paper::$PATH . '/includes/class-cacsp-fee.php';
 	Social_Paper::$FEE = new CACSP_FEE;
 
-	// declare FEE support for our CPT
-	add_post_type_support( 'cacsp_paper', 'front-end-editor' );
-
 	// re-run init routine.
 	// we need to manually call FEE's init() method since we're calling this after
 	// the 'init' hook
 	Social_Paper::$FEE->init();
 }
+
+/**
+ * Register FEE support for our custom post type.
+ */
+function cacsp_add_wp_fee_compatibility() {
+	add_post_type_support( 'cacsp_paper', 'front-end-editor' );
+}
+add_action( 'init', 'cacsp_add_wp_fee_compatibility' );
 
 /**
  * Load our version of FEE on a frontend Social Paper page.
