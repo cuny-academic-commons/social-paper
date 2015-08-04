@@ -95,6 +95,48 @@ function cacsp_is_archive() {
 	return (bool) Social_Paper::$is_archive;
 }
 
+if ( ! function_exists( 'remove_anonymous_object_filter' ) ) :
+/**
+ * Remove an anonymous object filter.
+ *
+ * @param  string $tag    Hook name.
+ * @param  string $class  Class name
+ * @param  string $method Method name
+ * @param  bool   $strict Whether to check if the calling class matches exactly with $class.  If
+ *                        false, all methods (including parent class) matching $method will be
+ *                        removed.  If true, calling class must match $class in order to be removed.
+ * @return void
+ *
+ * @link http://wordpress.stackexchange.com/a/57088 Tweaked by r-a-y for strict class checks.
+ */
+function remove_anonymous_object_filter( $tag = '', $class = '', $method = '', $strict = true ) {
+	$filters = $GLOBALS['wp_filter'][ $tag ];
+	if ( empty ( $filters ) ) {
+		return;
+	}
+
+	foreach ( $filters as $priority => $filter ) {
+		foreach ( $filter as $identifier => $function ) {
+			if ( is_array( $function )
+				and is_a( $function['function'][0], $class )
+				and $method === $function['function'][1]
+			) {
+				// mod by r-a-y - strict class name checks
+				if ( true === (bool) $strict && $class !== get_class( $function['function'][0] ) ) {
+					continue;
+				}
+
+				remove_filter(
+					$tag,
+					array ( $function['function'][0], $method ),
+					$priority
+				);
+			}
+		}
+	}
+}
+endif;
+
 if ( ! function_exists( 'wp_styles' ) ) :
 /**
  * Abstraction of {@link wp_styles()} function
