@@ -161,6 +161,11 @@ class Social_Paper {
 			require dirname( __FILE__ ) . '/includes/schema.php';
 		}
 
+		// Inline Comments integration
+		if ( function_exists( 'incom_frontend_init' ) ) {
+			require dirname( __FILE__ ) . '/includes/hooks-inline-comments.php';
+		}
+
 		// BuddyPress integration
 		if ( function_exists( 'buddypress' ) ) {
 			require dirname( __FILE__ ) . '/includes/hooks-buddypress-profile.php';
