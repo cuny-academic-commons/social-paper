@@ -316,7 +316,7 @@ add_action( 'loop_end', '_cacsp_archive_ob_end', 999 );
  */
 function cacsp_comment_text( $comment_content, $comment, $args ) {
 	if ( ! cacsp_is_page() ) {
-		return;
+		return $comment_content;
 	}
 
 	return '<div class="comment_content">' . $comment_content . '</div>';
