@@ -7,6 +7,21 @@
  */
 
 /**
+ * Modify selector for Inline Comments when on our Social Paper single page.
+ *
+ * @param  string $retval Current CSS selector.
+ * @return string
+ */
+function cacsp_ic_modify_selector( $retval ) {
+	if ( false === cacsp_is_page() ) {
+		return $retval;
+	}
+
+	return '.entry-content p';
+}
+add_filter( 'option_multiselector', 'cacsp_ic_modify_selector' );
+
+/**
  * Disable Inline Comments on various pages.
  *
  * Currently disabled on:
