@@ -7,13 +7,20 @@
  */
 
 /**
- * Disable Inline Comments on BuddyPress pages.
+ * Disable Inline Comments on various pages.
  *
- * BuddyPress uses virtual pages with the "page" post type, which essentially
- * confuses IC.  Here, we bail out of IC support when on a BP page.
+ * Currently disabled on:
+ * - BuddyPress pages
+ * - Social Paper archive page
  */
-function cacsp_ic_disable_support_on_bp_pages() {
-	if ( false === is_buddypress() ) {
+function cacsp_ic_disable() {
+	$disable = false;
+
+	if ( true === is_buddypress() || true === cacsp_is_archive() ) {
+		$disable = true;
+	}
+
+	if ( false === $disable ) {
 		return;
 	}
 
@@ -32,4 +39,4 @@ function cacsp_ic_disable_support_on_bp_pages() {
 
 	remove_anonymous_object_filter( 'wp_footer',          'INCOM_Comments',  'generateCommentsAndForm' );
 }
-add_action( 'bp_ready', 'cacsp_ic_disable_support_on_bp_pages' );
+add_action( 'bp_ready', 'cacsp_ic_disable' );
