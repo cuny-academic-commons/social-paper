@@ -47,9 +47,21 @@ add_filter( 'option_multiselector', 'cacsp_ic_modify_selector' );
  * @return array
  */
 function cacsp_ic_change_comment_type( $retval ) {
-	// if not an Inline Comment, stop now!
+	// not an Inline Comment
 	if ( false === isset( $_POST[ 'data_incom' ] ) ) {
-		return $retval;
+		// see if there is a comment parent
+		$comment_parent = isset( $retval['comment_parent'] ) ? absint( $retval['comment_parent'] ) : 0;
+
+		// check if comment parent is an inline comment; if not, bail!
+		if ( ! empty( $comment_parent ) ) {
+			if ( 'incom' !== get_comment( $comment_parent )->comment_type ) {
+				return $retval;
+			}
+
+		// no parent, bail!
+		} else {
+			return $retval;
+		}
 	}
 
 	$retval['comment_type'] = 'incom';
