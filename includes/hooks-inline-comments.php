@@ -6,6 +6,8 @@
  * @subpackage Hooks
  */
 
+/** SETTINGS OVERRIDES ***************************************************/
+
 /**
  * Enable inline replies in IC on Social Paper single pages.
  *
@@ -35,6 +37,65 @@ function cacsp_ic_modify_selector( $retval ) {
 	return '.entry-content p';
 }
 add_filter( 'option_multiselector', 'cacsp_ic_modify_selector' );
+
+/** COMMENT OVERRIDES *******************************************************/
+
+/**
+ * Set comment type for Inline Comments to 'incom' during comment saving.
+ *
+ * @param  array $retval Comment data.
+ * @return array
+ */
+function cacsp_ic_change_comment_type( $retval ) {
+	// if not an Inline Comment, stop now!
+	if ( false === isset( $_POST[ 'data_incom' ] ) ) {
+		return $retval;
+	}
+
+	$retval['comment_type'] = 'incom';
+	return $retval;
+}
+add_filter( 'preprocess_comment', 'cacsp_ic_change_comment_type', 999 );
+
+/**
+ * Fetch Inline Comments with the 'incom' comment type.
+ *
+ * Since we've altered IC to change the comment type, we now need to tell IC
+ * to fetch comments with this new comment type.
+ *
+ * @param  array $retval Current comment list args.
+ * @return array
+ */
+function cacsp_ic_alter_comments_list_args( $retval ) {
+	if ( false === cacsp_is_page() ) {
+		return $retval;
+	}
+
+	$retval['type'] = 'incom';
+	return $retval;
+}
+add_filter( 'incom_comments_list_args', 'cacsp_ic_alter_comments_list_args' );
+
+/**
+ * Add back 'comment' CSS class to Inline Comments.
+ *
+ * Since we've altered IC to change the comment type, the CSS class changed
+ * from 'comment' to 'incom'.  IC's JS relies on the comment having the
+ * 'comment' CSS class for toggling to work.
+ *
+ * @param  array $retval Current comment classes.
+ * @return array
+ */
+function cacsp_ic_add_comment_class( $retval ) {
+	if ( false === cacsp_is_page() ) {
+		return $retval;
+	}
+
+	// add back the 'comment' CSS class
+	$retval[] = 'comment';
+	return $retval;
+}
+add_filter( 'comment_class', 'cacsp_ic_add_comment_class' );
 
 /**
  * Disable Inline Comments on various pages.
