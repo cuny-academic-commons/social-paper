@@ -77,6 +77,33 @@ function cacsp_ic_alter_comments_list_args( $retval ) {
 add_filter( 'incom_comments_list_args', 'cacsp_ic_alter_comments_list_args' );
 
 /**
+ * Remove inline comments from the main comment loop on a Social Paper page.
+ *
+ * By default, all comment types are shown in the main comment loop on a
+ * Social Paper page.  We do not want inline comments shown here, so we
+ * restrict the main comment loop to show only main comments.
+ *
+ * At the moment, this also means that trackbacks and pingbacks will not
+ * display... might need to create a new block solely for these types.
+ *
+ * @param  array $retval Current comment list args.
+ * @return array
+ */
+function cacsp_ic_remove_inline_comments_from_main_comment_loop( $retval ) {
+	if ( false === cacsp_is_page() ) {
+		return $retval;
+	}
+
+	if ( ! empty( $retval['type'] ) && 'all' !== $retval['type'] ) {
+		return $retval;
+	}
+
+	$retval['type'] = 'comment';
+	return $retval;
+}
+add_filter( 'wp_list_comments_args', 'cacsp_ic_remove_inline_comments_from_main_comment_loop' );
+
+/**
  * Add back 'comment' CSS class to Inline Comments.
  *
  * Since we've altered IC to change the comment type, the CSS class changed
