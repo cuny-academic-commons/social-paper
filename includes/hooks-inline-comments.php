@@ -7,7 +7,22 @@
  */
 
 /**
- * Modify selector for Inline Comments when on our Social Paper single page.
+ * Enable inline replies in IC on Social Paper single pages.
+ *
+ * @param  string $retval Current setting.
+ * @return string
+ */
+function cacsp_ic_enable_inline_replies( $retval ) {
+	if ( false === cacsp_is_page() ) {
+		return $retval;
+	}
+
+	return 1;
+}
+add_filter( 'option_incom_reply', 'cacsp_ic_enable_inline_replies' );
+
+/**
+ * Modify selector for Inline Comments when on Social Paper single pages.
  *
  * @param  string $retval Current CSS selector.
  * @return string
