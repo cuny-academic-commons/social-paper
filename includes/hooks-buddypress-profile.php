@@ -59,6 +59,8 @@ class CACSP_Profile {
 		// add menu items on member profile
 		add_action( 'bp_setup_nav', array( $this, 'profile_tab' ), 100 );
 
+		// add adminbar nav
+		add_action( 'bp_setup_admin_bar', array( $this, 'adminbar' ), $this->position );
 	}
 
 	/**
@@ -111,6 +113,54 @@ class CACSP_Profile {
 			'position'        => 10,
 		) );
 
+	}
+
+	/**
+	 * Create the "Papers" nav menu in the WP adminbar.
+	 */
+	function adminbar() {
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
+
+		$wp_admin_nav = array();
+
+		// Parent nav
+		$wp_admin_nav[] = array(
+			'parent' => buddypress()->my_account_menu_id,
+			'id'     => 'my-account-' . $this->slug,
+			'title'  => __( 'Papers', 'social-paper' ),
+			'href'   => trailingslashit( bp_loggedin_user_domain() . $this->slug )
+		);
+
+		// Subnav - Published
+		$wp_admin_nav[] = array(
+			'parent' => 'my-account-' . $this->slug,
+			'id'     => 'my-account-' . $this->slug . '-' . $this->published_slug,
+			'title'  => __( 'Published', 'social-paper' ),
+			'href'   => trailingslashit( bp_loggedin_user_domain() . $this->slug )
+		);
+
+		// Subnav - Drafts
+		$wp_admin_nav[] = array(
+			'parent' => 'my-account-' . $this->slug,
+			'id'     => 'my-account-' . $this->slug . '-' . $this->drafts_slug,
+			'title'  => __( 'Drafts', 'social-paper' ),
+			'href'   => trailingslashit( bp_loggedin_user_domain() . $this->slug . '/' . $this->drafts_slug )
+		);
+
+		// Subnav - New Paper
+		$wp_admin_nav[] = array(
+			'parent' => 'my-account-' . $this->slug,
+			'id'     => 'my-account-' . $this->slug . '-new',
+			'title'  => __( 'New Paper', 'social-paper' ),
+			'href'   => trailingslashit( get_post_type_archive_link( 'cacsp_paper' ) . 'new' )
+		);
+
+		// Add each admin menu
+		foreach( $wp_admin_nav as $admin_menu ) {
+			$GLOBALS['wp_admin_bar']->add_menu( $admin_menu );
+		}
 	}
 
 } // end class
