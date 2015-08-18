@@ -9,6 +9,34 @@
 class CACSP_Profile {
 
 	/**
+	 * Position to inject main nav and adminbar.
+	 *
+	 * @var int
+	 */
+	public $position = 50;
+
+	/**
+	 * Slug used for main nav and adminbar.
+	 *
+	 * @var string
+	 */
+	public $slug = 'papers';
+
+	/**
+	 * Published slug.
+	 *
+	 * @var string
+	 */
+	public $published_slug = 'published';
+
+	/**
+	 * Drafts slug.
+	 *
+	 * @var string
+	 */
+	public $drafts_slug = 'drafts';
+
+	/**
 	 * Initialises this object
 	 *
 	 * @return object
@@ -47,8 +75,7 @@ class CACSP_Profile {
 			return;
 		}
 
-		$slug = 'papers';
-		$parent_url = trailingslashit( $user_domain . $slug );
+		$parent_url = trailingslashit( $user_domain . $this->slug );
 		$count    = (int) cacsp_get_total_paper_count_for_user();
 		$class    = ( 0 === $count ) ? 'no-count' : 'count';
 		$nav_text = sprintf( __( 'Papers <span class="%s">%s</span>', 'social-paper' ), esc_attr( $class ), bp_core_number_format( $count )  );
@@ -56,30 +83,30 @@ class CACSP_Profile {
 		// create primary nav
 		bp_core_new_nav_item( array(
 			'name'                    => $nav_text,
-			'slug'                    => $slug,
+			'slug'                    => $this->slug,
 			'item_css_id'             => 'user-papers',
 			'show_for_displayed_user' => true,
 			'site_admin_only'         => false,
-			'position'                => 50,
+			'position'                => $this->position,
 			'screen_function'         => 'cacsp_profile_screen',
-			'default_subnav_slug'     => 'published',
+			'default_subnav_slug'     => $this->published_slug,
 		) );
 
 		// create subnav items
 		bp_core_new_subnav_item( array(
 			'name'            => __( 'Published', 'social-paper' ),
-			'slug'            => 'published',
+			'slug'            => $this->published_slug,
 			'parent_url'      => $parent_url,
-			'parent_slug'     => $slug,
+			'parent_slug'     => $this->slug,
 			'screen_function' => 'cacsp_profile_screen_published',
 			'position'        => 10,
 		) );
 
 		bp_core_new_subnav_item( array(
 			'name'            => __( 'Drafts', 'social-paper' ),
-			'slug'            => 'drafts',
+			'slug'            => $this->drafts_slug,
 			'parent_url'      => $parent_url,
-			'parent_slug'     => $slug,
+			'parent_slug'     => $this->slug,
 			'screen_function' => 'cacsp_profile_screen_draft',
 			'position'        => 10,
 		) );
