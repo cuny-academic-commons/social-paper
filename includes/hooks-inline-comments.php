@@ -218,7 +218,7 @@ add_action( 'wp_footer', 'cacsp_ic_comment_permalink_listener' );
 function cacsp_ic_disable() {
 	$disable = false;
 
-	if ( true === is_buddypress() || true === cacsp_is_archive() ) {
+	if ( ( function_exists( 'is_buddypress' ) && true === is_buddypress() ) || true === cacsp_is_archive() ) {
 		$disable = true;
 	}
 
@@ -241,4 +241,4 @@ function cacsp_ic_disable() {
 
 	remove_anonymous_object_filter( 'wp_footer',          'INCOM_Comments',  'generateCommentsAndForm' );
 }
-add_action( 'bp_ready', 'cacsp_ic_disable' );
+add_action( 'wp', 'cacsp_ic_disable' );
