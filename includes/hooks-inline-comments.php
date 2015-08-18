@@ -137,6 +137,78 @@ function cacsp_ic_add_comment_class( $retval ) {
 add_filter( 'comment_class', 'cacsp_ic_add_comment_class' );
 
 /**
+ * Alters the inline comment permalink to add the paragraph number.
+ *
+ * @param string $retval  Current comment permalink
+ * @param object $comment WP Comment object
+ */
+function cacsp_ic_alter_comment_permalink( $retval, $comment ) {
+	if ( 'incom' !== $comment->comment_type ) {
+		return $retval;
+	}
+
+	// grab the top-parent comment ID
+	$parent = empty( $comment->comment_parent ) ? $comment->comment_ID : $comment->comment_parent;
+	$comment_parent = get_comment( $comment->comment_parent );
+
+	while ( 0 !== (int) $comment_parent->comment_parent ) {
+		$c = get_comment( $comment_parent );
+		$parent = $c->comment_parent;
+		$comment_parent = get_comment( $c->comment_parent );
+	}
+
+	// now re-generate comment permalink
+	$para = get_comment_meta( $parent, 'data_incom', true );
+
+	$permalink = get_post_permalink( $comment->comment_post_ID );
+	$permalink = add_query_arg( 'para', $para, $permalink );
+	$permalink .= "#comment-{$comment->comment_ID}";
+
+	return $permalink;
+}
+add_filter( 'get_comment_link', 'cacsp_ic_alter_comment_permalink', 10, 2 );
+
+/**
+ * Inline JS to display the inline comment permalink at its rightful place.
+ *
+ * Relies on the "?para" URL parameter and the arrive.js library.  Arrive.js
+ * watches for DOM element injections and allows us to hook in when IC adds
+ * its comment elements.
+ *
+ * @see cacsp_ic_alter_comment_permalink()
+ * @see https://github.com/uzairfarooq/arrive
+ */
+function cacsp_ic_comment_permalink_listener() {
+	if ( false === cacsp_is_page() ) {
+		return;
+	}
+
+?>
+
+	<script type="text/javascript" src="//cdn.rawgit.com/uzairfarooq/arrive/master/minified/arrive.min.js"></script>
+	<script type="text/javascript">
+	jQuery(function(){
+		var para = window.location.search.split('=')[1];
+
+		if ( null === para ) {
+			return;
+		}
+
+		jQuery(document).arrive('[data-incom-bubble=' + para + ']', function() {
+			// manually trigger click so IC will display the comment tree
+			jQuery(this).click();
+
+			// unbind arrive
+			jQuery(document).unbindArrive();
+		});
+	});
+	</script>
+
+<?php
+}
+add_action( 'wp_footer', 'cacsp_ic_comment_permalink_listener' );
+
+/**
  * Disable Inline Comments on various pages.
  *
  * Currently disabled on:
