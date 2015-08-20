@@ -1,29 +1,33 @@
 
-<div class="entry-content">
+<article <?php post_class(); ?>>
+	<header class="entry-header">
+		<h1 class="entry-title"><?php _e( 'Papers', 'social-paper' ); ?></h1>
+	</header>
 
-<?php if ( have_posts() ) : ?>
+	<div class="entry-content">
 
-	<?php cacsp_get_template_part( 'archive-header', 'social-paper' ); ?>
+		<?php if ( have_posts() ) : ?>
 
-	<ul>
+			<?php cacsp_get_template_part( 'archive-header', 'social-paper' ); ?>
 
-	<?php
-	// Start the Loop.
-	while ( have_posts() ) : the_post(); ?>
+			<ul>
 
-		<?php cacsp_get_template_part( 'archive-item', 'social-paper' ); ?>
+			<?php
+			// Start the Loop.
+			while ( have_posts() ) : the_post();
+				cacsp_get_template_part( 'archive-item', 'social-paper' );
 
-	<?php
-	// End the loop.
-	endwhile;
-	?>
+			// End the loop.
+			endwhile;
+			?>
 
-	</ul>
+			</ul>
 
-<?php else : ?>
+		<?php else : ?>
 
-	<p><?php _e( 'No papers have been written yet.  Be the first to write a paper!', 'social-paper' ); ?></p>
+			<p><?php _e( 'No papers have been written yet.  Be the first to write a paper!', 'social-paper' ); ?></p>
 
-<?php endif; ?>
+		<?php endif; ?>
 
-</div>
+	</div>
+</article>

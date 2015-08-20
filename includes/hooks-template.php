@@ -90,6 +90,28 @@ add_filter( 'single_template', 'cacsp_single_template_loader' );
 add_filter( 'page_template',   'cacsp_single_template_loader' );
 
 /**
+ * Directory template loader.
+ *
+ * Overrides the archive post template in themes to use the page template.
+ * The page template is more generic-looking than the archive template and
+ * is what BuddyPress uses as well.
+ *
+ * @param  string $retval Absolute path to found template or empty string.
+ * @return string
+ */
+function cacsp_archive_template_loader( $retval = '' ) {
+	if ( ! cacsp_is_archive() ) {
+		return $retval;
+	}
+
+	return get_query_template( 'page', array(
+		'archive-social-paper.php',
+		'page.php'
+	) );
+}
+add_filter( 'archive_template', 'cacsp_archive_template_loader' );
+
+/**
  * Comments template loader.
  *
  * Overrides the theme's comments template with our bundled one only on single
