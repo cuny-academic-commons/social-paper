@@ -266,6 +266,11 @@ function _cacsp_archive_ob_start( $q ) {
 		return;
 	}
 
+	// be careful with other WP_Query loops on the page
+	if ( empty( $q->query['post_type'] ) || 'cacsp_paper' !== $q->query['post_type'] ) {
+		return;
+	}
+
 	if ( true === Social_Paper::$is_buffer ) {
 		return;
 	}
