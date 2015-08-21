@@ -779,8 +779,25 @@ a.comment-edit-link {
 
 /** INLINE COMMENTS **/
 
+#incom_wrapper .incom-comments-wrapper {
+	border-left: 0;
+	margin: 0;
+	padding: 0;
+}
+
+#incom_wrapper ul.children {
+	padding-left: 2em;
+}
+
+#incom_wrapper .comment {
+	border-bottom: 0;
+	padding: 0;
+}
+
 .incom-comments-wrapper #comments-and-form {
 	width: auto;
+	margin-left: 15px;
+	margin-right: 25px;
 }
 
 .incom-ref {
