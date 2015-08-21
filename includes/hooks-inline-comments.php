@@ -53,6 +53,38 @@ function cacsp_ic_disable_x_button( $retval ) {
 }
 add_filter( 'option_cancel_x', 'cacsp_ic_disable_x_button' );
 
+/**
+ * Load the WP Ajaxify Comments (WPAC) module for IC on Social Paper pages.
+ *
+ * WP Ajaxify Comments has its own settings routine, which bypasses WP's
+ * Options API.  As a result, we cannot rely on WP filters.  So in order to
+ * load IC's WPAC settings over WPAC's settings, we need to manually merge
+ * IC's settings to the $wpac_options global before WPAC writes its inline JS
+ * on the 'wp_head' hook.  Sigh...
+ *
+ * @see wpac_initialize()
+ */
+function cacsp_ic_load_wpac_options() {
+	// if not on a Social Paper single page, bail!
+	if ( false === cacsp_is_page() ) {
+		return;
+	}
+
+	// check if WPAC exists; if not, bail!
+	if ( false === function_exists( 'wpac_get_config' ) ) {
+		return;
+	}
+
+	// check if IC's WPAC module is already present, if not load it!
+	if ( false === function_exists( 'filter_options_wpac' ) ) {
+		require_once INCOM_PATH . 'frontend/inc/class-wpac.php';
+	}
+
+	// magic time!
+	$GLOBALS['wpac_options'] = array_merge( $GLOBALS['wpac_options'], get_option( constant( 'WPAC_OPTION_KEY' ) ) );
+}
+add_action( 'wp_head', 'cacsp_ic_load_wpac_options', 9 );
+
 /** COMMENT OVERRIDES *******************************************************/
 
 /**
