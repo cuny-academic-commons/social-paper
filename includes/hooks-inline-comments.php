@@ -38,6 +38,21 @@ function cacsp_ic_modify_selector( $retval ) {
 }
 add_filter( 'option_multiselector', 'cacsp_ic_modify_selector' );
 
+/**
+ * Disables the cancel 'x' button in IC on Social Paper single pages.
+ *
+ * @param  string $retval Current setting.
+ * @return string
+ */
+function cacsp_ic_disable_x_button( $retval ) {
+	if ( false === cacsp_is_page() ) {
+		return $retval;
+	}
+
+	return '1';
+}
+add_filter( 'option_cancel_x', 'cacsp_ic_disable_x_button' );
+
 /** COMMENT OVERRIDES *******************************************************/
 
 /**
