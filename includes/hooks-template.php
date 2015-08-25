@@ -372,3 +372,20 @@ function cacsp_comment_text( $comment_content, $comment, $args ) {
 	return '<div class="comment_content">' . $comment_content . '</div>';
 }
 add_filter( 'get_comment_text', 'cacsp_comment_text', 1000, 3 );
+
+/**
+ * bp-default theme comment overrides.
+ *
+ * Disables the avatar from showing atop the comment form.
+ *
+ * @access private
+ */
+function _cacsp_bp_dtheme_overrides() {
+	if ( ! cacsp_is_page() ) {
+		return;
+	}
+
+	remove_action( 'comment_form_top', 'bp_dtheme_before_comment_form' );
+	remove_action( 'comment_form', 'bp_dtheme_after_comment_form' );
+}
+add_action( 'wp', '_cacsp_bp_dtheme_overrides' );
