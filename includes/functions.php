@@ -117,8 +117,16 @@ function remove_anonymous_object_filter( $tag = '', $class = '', $method = '', $
 
 	foreach ( $filters as $priority => $filter ) {
 		foreach ( $filter as $identifier => $function ) {
-			if ( is_array( $function )
-				and is_a( $function['function'][0], $class )
+			if ( ! is_array( $function ) ) {
+				continue;
+			}
+
+			// mod by r-a-y - bail from closures; prevents fatal error
+			if ( $function['function'] instanceOf Closure ) {
+				continue;
+			}
+
+			if ( is_a( $function['function'][0], $class )
 				and $method === $function['function'][1]
 			) {
 				// mod by r-a-y - strict class name checks
