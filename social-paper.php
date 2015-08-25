@@ -65,6 +65,15 @@ class Social_Paper {
 	public static $is_archive = false;
 
 	/**
+	 * Marker to determine if we have an empty social paper archive.
+	 *
+	 * Otherwise known as the directory page.
+	 *
+	 * @var bool
+	 */
+	public static $is_empty_archive = false;
+
+	/**
 	 * Marker to determine if we're on the social paper create page.
 	 *
 	 * @var bool

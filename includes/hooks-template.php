@@ -272,6 +272,23 @@ function _cacsp_set_virtual_page( $p ) {
 		) );
 	}
 
+	// empty directory
+	// we need to pass the have_posts() check so we can override the content
+	if ( cacsp_is_archive() && empty( $p ) ) {
+		Social_Paper::$is_empty_archive = true;
+
+		// dummy time!
+		$p = array();
+		$p[] = new WP_Post( (object) array(
+			'ID'              => 0,
+			'post_content'    => '',
+			'post_title'      => '',
+			'post_name'       => '',
+			'filter'          => 'raw',
+			'post_type'	  => 'cacsp_paper',
+		) );
+	}
+
 	return $p;
 }
 add_filter( 'the_posts', '_cacsp_set_virtual_page' );
@@ -327,7 +344,10 @@ function _cacsp_archive_ob_end( $q ) {
 
 	remove_action( 'loop_end', '_cacsp_archive_ob_end', 999 );
 
-	$q->rewind_posts();
+	// rewind posts if papers exist to display them in our template
+	if ( false === Social_Paper::$is_empty_archive ) {
+		$q->rewind_posts();
+	}
 
 	cacsp_locate_template( 'content-directory-social-paper.php', true );
 }
