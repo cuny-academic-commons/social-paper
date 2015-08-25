@@ -40,19 +40,6 @@ function cacsp_has_feature_image() {
 }
 
 /**
- * Remove the action which writes inline styles for the admin bar
- */
-function cacsp_prevent_inline_admin_bar_styles() {
-	if ( ! cacsp_is_page() ) {
-		return;
-	}
-
-	show_admin_bar( false );
-	add_theme_support( 'admin-bar', array( 'callback' => '__return_false' ) );
-}
-add_action( 'wp', 'cacsp_prevent_inline_admin_bar_styles' );
-
-/**
  * Single template loader.
  *
  * Overrides the single post template in themes to use our bundled template.
@@ -352,6 +339,22 @@ function _cacsp_archive_ob_end( $q ) {
 	cacsp_locate_template( 'content-directory-social-paper.php', true );
 }
 add_action( 'loop_end', '_cacsp_archive_ob_end', 999 );
+
+/**
+ * Disables the admin bar on single Social Paper pages.
+ *
+ * Might bring it back later...
+ *
+ * @access private
+ */
+function _cacsp_disable_admin_bar_on_social_paper_pages() {
+	if ( ! cacsp_is_page() ) {
+		return;
+	}
+
+	add_filter( 'show_admin_bar', '__return_false' );
+}
+add_action( 'wp', '_cacsp_disable_admin_bar_on_social_paper_pages' );
 
 /**
  * Wrap comment content in an identifer div
