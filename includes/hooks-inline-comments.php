@@ -22,6 +22,7 @@ function cacsp_ic_enable_inline_replies( $retval ) {
 	return 1;
 }
 add_filter( 'option_incom_reply', 'cacsp_ic_enable_inline_replies' );
+add_filter( 'default_option_incom_reply', 'cacsp_ic_enable_inline_replies' );
 
 /**
  * Modify selector for Inline Comments when on Social Paper single pages.
@@ -37,6 +38,7 @@ function cacsp_ic_modify_selector( $retval ) {
 	return '.entry-content p:visible';
 }
 add_filter( 'option_multiselector', 'cacsp_ic_modify_selector' );
+add_filter( 'default_option_multiselector', 'cacsp_ic_modify_selector' );
 
 /**
  * Disables the cancel 'x' button in IC on Social Paper single pages.
@@ -52,6 +54,7 @@ function cacsp_ic_disable_x_button( $retval ) {
 	return '1';
 }
 add_filter( 'option_cancel_x', 'cacsp_ic_disable_x_button' );
+add_filter( 'default_option_cancel_x', 'cacsp_ic_disable_x_button' );
 
 /**
  * Load the WP Ajaxify Comments (WPAC) module for IC on Social Paper pages.
