@@ -57,6 +57,39 @@ add_filter( 'option_cancel_x', 'cacsp_ic_disable_x_button' );
 add_filter( 'default_option_cancel_x', 'cacsp_ic_disable_x_button' );
 
 /**
+ * Enable permalink icons in IC on Social Paper single pages.
+ *
+ * @param  string $retval Current setting.
+ * @return string
+ */
+function cacsp_ic_enable_permalink_icons( $retval ) {
+	if ( false === cacsp_is_page() ) {
+		return $retval;
+	}
+
+
+	return '1';
+}
+add_filter( 'option_incom_comment_permalink', 'cacsp_ic_enable_permalink_icons' );
+add_filter( 'default_option_incom_comment_permalink', 'cacsp_ic_enable_permalink_icons' );
+
+/**
+ * Disable references in IC on Social Paper pages.
+ *
+ * @param  string $retval Current setting.
+ * @return string
+ */
+function cacsp_ic_disable_references( $retval ) {
+	if ( false === cacsp_is_page() ) {
+		return $retval;
+	}
+
+	return 'nowhere';
+}
+add_filter( 'option_incom_references', 'cacsp_ic_disable_references' );
+add_filter( 'default_option_incom_references', 'cacsp_ic_disable_references' );
+
+/**
  * Load the WP Ajaxify Comments (WPAC) module for IC on Social Paper pages.
  *
  * WP Ajaxify Comments has its own settings routine, which bypasses WP's
