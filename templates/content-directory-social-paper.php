@@ -25,7 +25,15 @@
 
 		<?php else : ?>
 
-			<p><?php _e( 'No papers have been written yet.  Be the first to write a paper!', 'social-paper' ); ?></p>
+			<?php if ( is_user_logged_in() ) : ?>
+
+				<p><?php printf( __( 'No papers have been written yet.  %sBe the first to write a paper!%s', 'social-paper' ), '<a href="' . trailingslashit( get_post_type_archive_link( 'cacsp_paper' ) . 'new' ) . '">', '</a>' ); ?></p>
+
+			<?php else : ?>
+
+				<p><?php _e( 'No papers have been written yet.', 'social-paper' ); ?></p>
+
+			<?php endif; ?>
 
 		<?php endif; ?>
 
