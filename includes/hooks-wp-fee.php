@@ -50,6 +50,22 @@ function cacsp_wp_fee_frontend_load() {
 add_action( 'pre_get_posts', 'cacsp_wp_fee_frontend_load', 999 );
 
 /**
+ * Removes the 'wplink' TinyMCE plugin from FEE.
+ *
+ * The 'wplink' plugin got some updates in WP 4.3, which unfortunately breaks
+ * FEE.  We're temporarily removing support until this is fixed upstream.
+ */
+function _cacsp_wp_fee_tinymce_remove_wplink( $retval ) {
+	$key = array_search( 'wplink', $retval );
+	if ( false !== $key ) {
+		unset( $retval[$key] );
+	}
+
+	return $retval;
+}
+add_filter( 'fee_tinymce_plugins', '_cacsp_wp_fee_tinymce_remove_wplink' );
+
+/**
  * Load our version of FEE when a FEE AJAX post is being made.
  *
  * This is the only way to override FEE's default AJAX post method.
