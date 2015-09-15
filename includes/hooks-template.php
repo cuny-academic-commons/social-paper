@@ -143,7 +143,7 @@ add_filter( 'comments_template', 'cacsp_comments_template_loader' );
  * @todo maybe do the same for scripts?
  */
 function cacsp_asset_enqueue_handler() {
-	if ( ! cacsp_is_page() ) {
+	if ( ! cacsp_is_page() || is_404() ) {
 		return;
 	}
 
