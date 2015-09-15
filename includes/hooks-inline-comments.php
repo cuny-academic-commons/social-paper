@@ -124,6 +124,20 @@ add_action( 'wp_head', 'cacsp_ic_load_wpac_options', 9 );
 /** COMMENT OVERRIDES *******************************************************/
 
 /**
+ * Registers our custom comment type with WP's avatar comment types.
+ *
+ * This allows avatars to display for our inline comments.
+ *
+ * @param  array $retval Registered comment types
+ * @return array
+ */
+function cacsp_ic_register_avatar_comment_type( $retval = array() ) {
+	$retval[] = 'incom';
+	return $retval;
+}
+add_filter( 'get_avatar_comment_types', 'cacsp_ic_register_avatar_comment_type' );
+
+/**
  * Set comment type for Inline Comments to 'incom' during comment saving.
  *
  * @param  array $retval Comment data.
