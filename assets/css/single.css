@@ -800,6 +800,10 @@ a.comment-edit-link {
 	margin-right: 25px;
 }
 
+.incom-active {
+	background: #ff9;
+}
+
 .incom-ref {
 	font-size: 80%;
 	color: #2980b9;
