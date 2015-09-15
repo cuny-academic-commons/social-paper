@@ -783,6 +783,7 @@ a.comment-edit-link {
 	border-left: 0;
 	margin: 0;
 	padding: 0;
+	max-width: 400px;
 }
 
 #incom_wrapper ul.children {
@@ -796,8 +797,8 @@ a.comment-edit-link {
 
 .incom-comments-wrapper #comments-and-form {
 	width: auto;
-	margin-left: 15px;
-	margin-right: 25px;
+	margin-left: 40px;
+	margin-right: 50px;
 }
 
 .incom-active {
