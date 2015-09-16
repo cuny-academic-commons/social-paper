@@ -116,10 +116,40 @@ function cacsp_ic_load_wpac_options() {
 		require_once INCOM_PATH . 'frontend/inc/class-wpac.php';
 	}
 
+	// Some special mods to WP Ajaxify Comments for IC
+	add_filter( 'option_wpac', 'cacsp_ic_wpac_extras', 20 );
+
 	// magic time!
 	$GLOBALS['wpac_options'] = array_merge( $GLOBALS['wpac_options'], get_option( constant( 'WPAC_OPTION_KEY' ) ) );
 }
 add_action( 'wp_head', 'cacsp_ic_load_wpac_options', 9 );
+
+/**
+ * Mods to WP Ajaxify Comments for better UX.
+ *
+ * Mods include:
+ * - Update count of bubble (will be added as a PR)
+ * - Update comment timestamp position.  Comment timestamp is a custom addition
+ *   that needs special placement after AJAX is made. See cacsp_comment_text().
+ */
+function cacsp_ic_wpac_extras( $wpacOptions ) {
+	$wpacOptions = is_array( $wpacOptions ) ? $wpacOptions : array();
+
+	if ( isset( $wpacOptions['callbackOnAfterUpdateComments'] ) ) {
+		$wpacOptions['callbackOnAfterUpdateComments'] .= '
+			// Update count of bubble
+			var count = parseInt( jQuery( ".incom-bubble-active a" ).text(), 10 ) + 1;
+			jQuery( ".incom-bubble-active a" ).text( count );
+
+			// Update comment timestamp position
+			jQuery(".comment-time").each(function() {
+				jQuery(this).closest(".comment-body").find(".comment-author cite").append(this);
+			});
+		';
+	}
+
+	return $wpacOptions;
+}
 
 /** COMMENT OVERRIDES *******************************************************/
 
