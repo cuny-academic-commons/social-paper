@@ -138,8 +138,8 @@ function cacsp_ic_wpac_extras( $wpacOptions ) {
 	if ( isset( $wpacOptions['callbackOnAfterUpdateComments'] ) ) {
 		$wpacOptions['callbackOnAfterUpdateComments'] .= '
 			// Update count of bubble
-			var count = parseInt( jQuery( ".incom-bubble-active a" ).text(), 10 ) + 1;
-			jQuery( ".incom-bubble-active a" ).text( count );
+			var bubble = jQuery( ".incom-bubble-active a" );
+			bubble.text( parseInt( bubble.text(), 10 ) + 1 );
 
 			// Update comment timestamp position
 			jQuery(".comment-time").each(function() {
