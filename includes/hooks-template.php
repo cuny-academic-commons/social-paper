@@ -369,7 +369,19 @@ function cacsp_comment_text( $comment_content, $comment, $args ) {
 		return $comment_content;
 	}
 
-	return '<div class="comment_content">' . $comment_content . '</div>';
+	$comment_content = '<div class="comment_content">' . $comment_content;
+
+	// add inline comment permalink to end of content
+	// this will be later moved by JS - see cacsp_ic_inline_js()
+	if ( 'incom' === $comment->comment_type ) {
+		/* translators: 1: date, 2: time */
+		$comment_time = '<div class="comment-time"><a href="' . get_comment_link() . '">' . sprintf( __( '%1$s at %2$s', 'social-paper' ), get_comment_date(),  get_comment_time() ) . '</a></div>';
+
+		$comment_content .= $comment_time;
+	}
+
+	$comment_content .= '</div>';
+	return $comment_content;
 }
 add_filter( 'get_comment_text', 'cacsp_comment_text', 1000, 3 );
 

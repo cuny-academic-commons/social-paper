@@ -275,7 +275,7 @@ add_filter( 'get_comment_link', 'cacsp_ic_alter_comment_permalink', 10, 2 );
  * @see cacsp_ic_alter_comment_permalink()
  * @see https://github.com/uzairfarooq/arrive
  */
-function cacsp_ic_comment_permalink_listener() {
+function cacsp_ic_inline_js() {
 	if ( false === cacsp_is_page() ) {
 		return;
 	}
@@ -285,6 +285,10 @@ function cacsp_ic_comment_permalink_listener() {
 	<script type="text/javascript" src="//cdn.rawgit.com/uzairfarooq/arrive/master/minified/arrive.min.js"></script>
 	<script type="text/javascript">
 	jQuery(function(){
+		jQuery('.comment-time').each(function() {
+			jQuery(this).closest('.comment-body').find('.comment-author cite').append(this);
+		});
+
 		var para = window.location.search.split('=')[1];
 
 		if ( null === para ) {
@@ -303,7 +307,7 @@ function cacsp_ic_comment_permalink_listener() {
 
 <?php
 }
-add_action( 'wp_footer', 'cacsp_ic_comment_permalink_listener' );
+add_action( 'wp_footer', 'cacsp_ic_inline_js' );
 
 /**
  * Disable Inline Comments on various pages.

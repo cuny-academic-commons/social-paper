@@ -801,6 +801,11 @@ a.comment-edit-link {
 	margin-right: 50px;
 }
 
+#comments-and-form cite .comment-time a {
+	font-weight: normal;
+	text-decoration: none;
+}
+
 .incom-active {
 	background: #ff9;
 }
