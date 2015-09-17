@@ -63,11 +63,36 @@ jQuery(document).ready( function($) {
 	});
 
 	/**
-	 * Hook into WP FEE and add items to be saved along with the post data.
+	 * Hook into WP FEE before save
+	 *
+	 * Currently used to strip 'data-incom' attribute from post content before
+	 * it is sent to the server. This prevents the attributes being saved in the
+	 * post content.
+	 *
+	 * Can also be used to add items to be saved along with the post data. See
+	 * example code at foot of function.
 	 */
 	$(document).on( 'fee-before-save', function( event ) {
 
 		//console.log( 'fee-before-save' );
+
+		var items;
+
+		// if Inline Comments present
+		if ( window.incom ) {
+
+			// get raw post content and wrap in temporary div
+			items = $('<div>').html( tinymce.activeEditor.getContent() );
+
+			// strip Inline Comments data attribute
+			items.find( '[data-incom]' ).each( function( i, element ) {
+				element.removeAttribute( 'data-incom' );
+			});
+
+			// overwrite current content
+			tinymce.activeEditor.setContent( items.html(), {format : 'html'} );
+
+		}
 
 		/*
 		// example additions
@@ -91,6 +116,21 @@ jQuery(document).ready( function($) {
 	$(document).on( 'fee-after-save', function( event ) {
 
 		//console.log( 'fee-after-save' );
+
+		// if Inline Comments present
+		if ( window.incom ) {
+
+			// window.incom has no destroy() method, so cannot be re-inited
+
+			// this call requires changing `function load_incom()` in class-wp.php:
+			// wrap incom.init() with window.incom_init = function() {} and call
+			// window.incom_init() immediately. Unfortunately there's a ring-fenced
+			// global variable in inline-comments.js that increments per item parsed
+			// by '.entry-content p:visible', so this doesn't actually work.
+
+			//window.incom_init();
+
+		}
 
 	});
 
