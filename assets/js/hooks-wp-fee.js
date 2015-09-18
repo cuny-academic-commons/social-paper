@@ -60,6 +60,17 @@ jQuery(document).ready( function($) {
 
 		}
 
+		// if Inline Comments present
+		if ( window.incom ) {
+
+			// rebuild - requires this commit on my fork of Inline Comments
+			// https://github.com/christianwach/inline-comments/commit/351f24e1cf5a224024a965ea21bede302b20c07f
+			if ( window.incom.rebuild ) {
+				window.incom.rebuild();
+			}
+
+		}
+
 	});
 
 	/**
@@ -116,21 +127,6 @@ jQuery(document).ready( function($) {
 	$(document).on( 'fee-after-save', function( event ) {
 
 		//console.log( 'fee-after-save' );
-
-		// if Inline Comments present
-		if ( window.incom ) {
-
-			// window.incom has no destroy() method, so cannot be re-inited
-
-			// this call requires changing `function load_incom()` in class-wp.php:
-			// wrap incom.init() with window.incom_init = function() {} and call
-			// window.incom_init() immediately. Unfortunately there's a ring-fenced
-			// global variable in inline-comments.js that increments per item parsed
-			// by '.entry-content p:visible', so this doesn't actually work.
-
-			//window.incom_init();
-
-		}
 
 	});
 
