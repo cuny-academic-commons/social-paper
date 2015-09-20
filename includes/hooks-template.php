@@ -336,7 +336,13 @@ function _cacsp_archive_ob_end( $q ) {
 		$q->rewind_posts();
 	}
 
-	cacsp_locate_template( 'content-directory-social-paper.php', true );
+	$templates = array();
+	if ( function_exists( 'buddypress' ) ) {
+		$templates[] = 'content-directory-social-paper-buddypress.php';
+	}
+	$templates[] = 'content-directory-social-paper.php';
+
+	cacsp_locate_template( $templates, true );
 }
 add_action( 'loop_end', '_cacsp_archive_ob_end', 999 );
 

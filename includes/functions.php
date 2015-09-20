@@ -95,6 +95,48 @@ function cacsp_is_archive() {
 	return (bool) Social_Paper::$is_archive;
 }
 
+/**
+ * Template tag to output pagination on archive page.
+ *
+ * Pagination resembles the markup from BuddyPress.
+ */
+function cacsp_pagination( $type = 'top' ) {
+	// no pagination? bail!
+	if ( '' === get_the_posts_pagination() ) {
+		return;
+	}
+?>
+
+	<div id="pag-<?php esc_attr_e( $type ); ?>" class="pagination">
+		<div class="pag-count">
+			<?php
+				if ( 1 === (int) $GLOBALS['wp_query']->found_posts ) {
+					_e( 'Viewing 1 paper', 'social-paper' );
+
+				} else {
+					$curr_page = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+
+					$start_num = intval( ( $curr_page - 1 ) * get_query_var( 'posts_per_page' ) ) + 1;
+					$to_num    = ( $start_num + ( get_query_var( 'posts_per_page' ) - 1 ) > $GLOBALS['wp_query']->found_posts ) ? $GLOBALS['wp_query']->found_posts : $start_num + ( get_query_var( 'posts_per_page' ) - 1 );
+
+					printf( _n( 'Viewing %1$s - %2$s of %3$s paper', 'Viewing %1$s - %2$s of %3$s papers', (int) $GLOBALS['wp_query']->found_posts, 'social-paper' ), number_format_i18n( $start_num ), number_format_i18n( $to_num ), number_format_i18n( $GLOBALS['wp_query']->found_posts ) );
+				}
+			?>
+		</div>
+
+		<div class="pagination-links">
+			<?php echo paginate_links( array(
+				'prev_text' => _x( '&larr;', 'Pagination previous text', 'social-paper' ),
+				'next_text' => _x( '&rarr;', 'Pagination next text', 'social-paper' ),
+				'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'social-paper' ) . ' </span>',
+			) ); ?>
+		</div>
+	</div>
+
+<?php
+}
+
+
 if ( ! function_exists( 'remove_anonymous_object_filter' ) ) :
 /**
  * Remove an anonymous object filter.
