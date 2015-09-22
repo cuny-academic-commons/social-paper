@@ -307,6 +307,11 @@ function cacsp_total_papers_for_user( $user_id = 0 ) {
 			'post_type' => 'cacsp_paper',
 			'author' => $user_id,
 			'post_status' => 'publish',
+			'fields' => 'ids',
+			'nopaging' => true,
+			'orderby' => 'none',
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false
 		) );
 
 		// get count
