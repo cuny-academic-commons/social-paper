@@ -15,7 +15,7 @@
 			<?php
 			// Start the Loop.
 			while ( have_posts() ) : the_post();
-				cacsp_get_template_part( 'archive-item', 'social-paper' );
+				cacsp_get_template_part( 'list-social-paper' );
 
 			// End the loop.
 			endwhile;
