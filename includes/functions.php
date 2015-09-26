@@ -136,6 +136,23 @@ function cacsp_pagination( $type = 'top' ) {
 <?php
 }
 
+/**
+ * Template tag to output the author of a social paper in a loop.
+ */
+function cacsp_the_loop_author() {
+	if ( empty( $GLOBALS['post'] ) ) {
+		return;
+	}
+
+	if ( (int) $GLOBALS['post']->post_author === bp_loggedin_user_id() ) {
+		if ( is_archive() ) {
+			_e( 'Written by you.', 'social-paper' );
+		}
+
+	} else {
+		printf( __( 'Written by %s', 'social-paper' ), '<a href="' . bp_core_get_user_domain( $GLOBALS['post']->post_author ) . '">' . bp_core_get_username( $GLOBALS['post']->post_author )  . '</a>' );
+	}
+}
 
 if ( ! function_exists( 'remove_anonymous_object_filter' ) ) :
 /**
