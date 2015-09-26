@@ -207,8 +207,6 @@ function cacsp_profile_screen_published_content() {
 
 	<?php if ( $profile_query->have_posts() ) : ?>
 
-		<?php cacsp_get_template_part( 'profile-header-publish', 'social-paper' ); ?>
-
 		<ul class="item-list"">
 
 		<?php while ( $profile_query->have_posts() ) : $profile_query->the_post(); ?>
@@ -266,8 +264,6 @@ function cacsp_profile_screen_draft_content() {
 	<div class="entry-content">
 
 	<?php if ( $profile_query->have_posts() ) : ?>
-
-		<?php cacsp_get_template_part( 'profile-header-draft', 'social-paper' ); ?>
 
 		<ul class="item-list">
 

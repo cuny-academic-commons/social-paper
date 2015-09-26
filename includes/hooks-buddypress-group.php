@@ -63,8 +63,6 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 
 		<?php if ( $group_query->have_posts() ) : ?>
 
-			<?php cacsp_get_template_part( 'group-header', 'social-paper' ); ?>
-
 			<ul class="item-list">
 
 			<?php while ( $group_query->have_posts() ) : $group_query->the_post(); ?>
