@@ -209,10 +209,10 @@ function cacsp_profile_screen_published_content() {
 
 		<?php cacsp_get_template_part( 'profile-header-publish', 'social-paper' ); ?>
 
-		<ul>
+		<ul class="item-list"">
 
 		<?php while ( $profile_query->have_posts() ) : $profile_query->the_post(); ?>
-			<?php cacsp_get_template_part( 'archive-item', 'social-paper' ); ?>
+			<?php cacsp_get_template_part( 'list-social-paper', 'buddypress' ); ?>
 		<?php endwhile; ?>
 
 		</ul>
@@ -272,7 +272,7 @@ function cacsp_profile_screen_draft_content() {
 		<ul>
 
 		<?php while ( $profile_query->have_posts() ) : $profile_query->the_post(); ?>
-			<?php cacsp_get_template_part( 'archive-item', 'social-paper' ); ?>
+			<?php cacsp_get_template_part( 'list-social-paper', 'buddypress' ); ?>
 		<?php endwhile; ?>
 
 		</ul>

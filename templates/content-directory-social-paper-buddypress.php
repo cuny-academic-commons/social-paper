@@ -16,43 +16,7 @@
 			<ul class="item-list">
 
 			<?php while ( have_posts() ) : the_post(); ?>
-				<li>
-					<div class="item-avatar">
-						<a href="<?php the_permalink(); ?>" rel="bookmark"><?php bp_post_author_avatar(); ?></a>
-					</div>
-
-					<div class="item">
-						<div class="item-title">
-							<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-						</div>
-
-						<div class="item-meta">
-							<span class="activity"><?php printf( __( 'Created %s', 'social-paper' ), bp_core_time_since( get_post_time( 'U', true ) ) ); ?></span>
-						</div>
-
-						<?php
-
-						/**
-						 * Fires inside the display of a directory papers item.
-						 */
-						do_action( 'bp_directory_papers_item' ); ?>
-					</div>
-
-					<div class="action">
-						<span class="item-site-creator" style="font-size:90%;"><?php printf( __( 'Written by %s', 'social-paper' ), '<a href="' . bp_core_get_user_domain( $post->post_author ) . '">' . bp_core_get_username( $post->post_author )  . '</a>' ); ?></span>
-
-						<?php
-
-						/**
-						 * Fires inside the 'action' div to display custom markup.
-						 */
-						do_action( 'bp_directory_papers_actions' ); ?>
-
-					</div>
-
-					<div class="clear"></div>
-				</li>
-
+				<?php cacsp_get_template_part( 'list-social-paper', 'buddypress' ); ?>
 			<?php endwhile; ?>
 
 			</ul>
