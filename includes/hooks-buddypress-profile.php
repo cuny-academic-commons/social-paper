@@ -269,7 +269,7 @@ function cacsp_profile_screen_draft_content() {
 
 		<?php cacsp_get_template_part( 'profile-header-draft', 'social-paper' ); ?>
 
-		<ul>
+		<ul class="item-list">
 
 		<?php while ( $profile_query->have_posts() ) : $profile_query->the_post(); ?>
 			<?php cacsp_get_template_part( 'list-social-paper', 'buddypress' ); ?>
