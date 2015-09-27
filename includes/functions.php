@@ -154,6 +154,24 @@ function cacsp_the_loop_author() {
 	}
 }
 
+/**
+ * Template tag to output the link to create a new paper.
+ *
+ * No capability check here.
+ */
+function cacsp_the_new_paper_link() {
+	echo cacsp_get_the_new_paper_link();
+}
+
+	/**
+	 * Returns the link to create a new paper.
+	 *
+	 * No capability check here.
+	 */
+	function cacsp_get_the_new_paper_link() {
+		return trailingslashit( get_post_type_archive_link( 'cacsp_paper' ) . 'new' );
+	}
+
 if ( ! function_exists( 'remove_anonymous_object_filter' ) ) :
 /**
  * Remove an anonymous object filter.

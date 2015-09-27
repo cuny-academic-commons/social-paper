@@ -27,7 +27,7 @@
 
 			<?php if ( is_user_logged_in() ) : ?>
 
-				<p><?php printf( __( 'No papers have been written yet.  %sBe the first to write a paper!%s', 'social-paper' ), '<a href="' . trailingslashit( get_post_type_archive_link( 'cacsp_paper' ) . 'new' ) . '">', '</a>' ); ?></p>
+				<p><?php printf( __( 'No papers have been written yet.  %sBe the first to write a paper!%s', 'social-paper' ), '<a href="' . cacsp_get_the_new_paper_link() . '">', '</a>' ); ?></p>
 
 			<?php else : ?>
 

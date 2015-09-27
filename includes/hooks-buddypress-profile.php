@@ -154,7 +154,7 @@ class CACSP_Profile {
 			'parent' => 'my-account-' . $this->slug,
 			'id'     => 'my-account-' . $this->slug . '-new',
 			'title'  => __( 'New Paper', 'social-paper' ),
-			'href'   => trailingslashit( get_post_type_archive_link( 'cacsp_paper' ) . 'new' )
+			'href'   => cacsp_get_the_new_paper_link()
 		);
 
 		// Add each admin menu
