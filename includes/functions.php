@@ -105,9 +105,16 @@ function cacsp_pagination( $type = 'top' ) {
 	if ( '' === get_the_posts_pagination() ) {
 		return;
 	}
+
+	$pag_args = array(
+		'prev_text' => _x( '&larr;', 'Pagination previous text', 'social-paper' ),
+		'next_text' => _x( '&rarr;', 'Pagination next text', 'social-paper' ),
+		'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'social-paper' ) . ' </span>',
+	);
+
 ?>
 
-	<div id="pag-<?php esc_attr_e( $type ); ?>" class="pagination">
+	<div id="pag-<?php esc_attr_e( $type ); ?>" class="pagination no-ajax">
 		<div class="pag-count">
 			<?php
 				if ( 1 === (int) $GLOBALS['wp_query']->found_posts ) {
@@ -125,11 +132,7 @@ function cacsp_pagination( $type = 'top' ) {
 		</div>
 
 		<div class="pagination-links">
-			<?php echo paginate_links( array(
-				'prev_text' => _x( '&larr;', 'Pagination previous text', 'social-paper' ),
-				'next_text' => _x( '&rarr;', 'Pagination next text', 'social-paper' ),
-				'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'social-paper' ) . ' </span>',
-			) ); ?>
+			<?php echo paginate_links( $pag_args ); ?>
 		</div>
 	</div>
 

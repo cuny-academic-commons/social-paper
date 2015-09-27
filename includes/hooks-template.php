@@ -214,6 +214,22 @@ function _cacsp_set_markers( $q ) {
 	if ( $q->is_archive && 'cacsp_paper' === $post_type ) {
 		Social_Paper::$is_archive = true;
 
+		// always reset scope to all
+		@setcookie( 'bp-papers-scope', 'all', 0, '/' );
+
+		if ( is_user_logged_in() ) {
+			$user_filter = false;
+
+			if ( ! empty( $_GET['user'] ) && get_current_user_id() === (int) $_GET['user'] ) {
+				$user_filter = true;
+			}
+
+			if ( $user_filter ) {
+				$q->set( 'author', (int) get_current_user_id() );
+				$q->set( 'publish_status', array( 'publish', 'private' ) );
+			}
+		}
+
 	} elseif ( $q->is_singular ) {
 		Social_Paper::$is_page = true;
 	}
