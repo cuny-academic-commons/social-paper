@@ -341,3 +341,73 @@ function cacsp_total_paper_count_for_user( $user_id = 0 ) {
 function cacsp_get_total_paper_count_for_user( $user_id = 0 ) {
 	return apply_filters( 'cacsp_get_total_paper_count_for_user', cacsp_total_papers_for_user( $user_id ) );
 }
+
+/**
+ * AJAX callback on the paper directory page to dynamically load papers.
+ */
+function cacsp_ajax_directory_template_callback() {
+	// Bail if not a POST action
+	if ( 'POST' !== strtoupper( $_SERVER['REQUEST_METHOD'] ) ) {
+		return;
+	}
+
+	// Bail if no object passed
+	if ( empty( $_POST['object'] ) || 'papers' !== $_POST['object'] ) {
+		return;
+	}
+
+	$scope = ! empty( $_POST['scope'] ) ? $_POST['scope'] : 'all';
+
+	$args = array(
+		'post_type' => 'cacsp_paper',
+		'post_status' => 'publish',
+	);
+
+	if ( ! empty( $_POST['search_terms'] ) ) {
+		$args['s'] = $_POST['search_terms'];
+	}
+
+	switch ( $scope ) {
+		case 'personal' :
+			$args['author'] = bp_loggedin_user_id();
+			$args['post_status'] = array( 'publish', 'private' );
+			break;
+
+		default :
+			$args = apply_filters( 'bp_papers_ajax_query_args', $args, $scope );
+			break;
+	}
+
+	// perform query
+	$GLOBALS['wp_query'] = new WP_Query( $args );
+
+	if ( have_posts() ) : ?>
+
+		<?php cacsp_pagination(); ?>
+
+		<ul class="item-list">
+
+		<?php while ( have_posts() ) : the_post(); ?>
+			<?php cacsp_get_template_part( 'list-social-paper', 'buddypress' ); ?>
+		<?php endwhile; ?>
+
+		</ul>
+
+		<?php cacsp_pagination( 'bottom' ); ?>
+
+<?php
+	// no papers
+	else :
+?>
+
+		<div id="message" class="info">
+			<p><?php _e( 'Sorry, no papers were found.', 'social-paper' ); ?></p>
+		</div>
+
+<?php
+	endif;
+
+	exit;
+}
+add_action( 'wp_ajax_papers_filter', 'cacsp_ajax_directory_template_callback' );
+add_action( 'wp_ajax_nopriv_papers_filter', 'cacsp_ajax_directory_template_callback' );

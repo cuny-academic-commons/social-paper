@@ -112,6 +112,27 @@ function cacsp_pagination( $type = 'top' ) {
 		'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'social-paper' ) . ' </span>',
 	);
 
+	if ( defined( 'DOING_AJAX' ) && true === DOING_AJAX ) {
+		add_filter( 'get_pagenum_link', create_function( '', "
+			return trailingslashit( get_post_type_archive_link( 'cacsp_paper' ) );
+		" ) );
+		$pag_args['format'] = '';
+		$pag_args['base'] = trailingslashit( get_post_type_archive_link( 'cacsp_paper' ) ) . 'page/%#%/';
+
+		if ( ! empty( $_POST['search_terms'] ) ) {
+			$pag_args['base'] .= '?s=' . esc_attr( $_POST['search_terms'] );
+		}
+
+		if ( ! empty( $_POST['scope'] ) && 'personal' === $_POST['scope'] && is_user_logged_in() ) {
+			if ( ! empty( $_POST['search_terms'] ) ) {
+				$pag_args['base'] .= '&';
+			} else {
+				$pag_args['base'] .= '?';
+			}
+
+			$pag_args['base'] .= 'user=' . bp_loggedin_user_id();
+		}
+	}
 ?>
 
 	<div id="pag-<?php esc_attr_e( $type ); ?>" class="pagination no-ajax">
