@@ -381,21 +381,9 @@ function cacsp_ajax_directory_template_callback() {
 	// perform query
 	$GLOBALS['wp_query'] = new WP_Query( $args );
 
-	if ( have_posts() ) : ?>
+	if ( have_posts() ) :
+		cacsp_get_template_part( 'loop-social-paper', 'buddypress' );
 
-		<?php cacsp_pagination(); ?>
-
-		<ul class="item-list">
-
-		<?php while ( have_posts() ) : the_post(); ?>
-			<?php cacsp_get_template_part( 'list-social-paper', 'buddypress' ); ?>
-		<?php endwhile; ?>
-
-		</ul>
-
-		<?php cacsp_pagination( 'bottom' ); ?>
-
-<?php
 	// no papers
 	else :
 ?>

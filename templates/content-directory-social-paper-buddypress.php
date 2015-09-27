@@ -41,17 +41,7 @@
 		<?php if ( have_posts() ) : ?>
 
 			<div class="papers">
-				<?php cacsp_pagination(); ?>
-
-				<ul class="item-list">
-
-				<?php while ( have_posts() ) : the_post(); ?>
-					<?php cacsp_get_template_part( 'list-social-paper', 'buddypress' ); ?>
-				<?php endwhile; ?>
-
-				</ul>
-
-				<?php cacsp_pagination( 'bottom' ); ?>
+				<?php cacsp_get_template_part( 'loop-social-paper', 'buddypress' ); ?>
 			</div>
 
 		<?php else : ?>
