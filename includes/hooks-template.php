@@ -97,6 +97,7 @@ function cacsp_archive_template_loader( $retval = '' ) {
 	) );
 }
 add_filter( 'archive_template', 'cacsp_archive_template_loader' );
+add_filter( 'search_template',  'cacsp_archive_template_loader' );
 
 /**
  * Comments template loader.
