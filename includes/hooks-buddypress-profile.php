@@ -196,12 +196,18 @@ function cacsp_profile_screen_published_content() {
 		die('WTF?');
 	}
 
-	// perform query for this user
-	$profile_query = new WP_Query( array(
+	$args = array(
 		'post_type' => 'cacsp_paper',
 		'author' => $user_id,
 		'post_status' => 'publish',
-	) );
+	);
+
+	if ( $user_id === bp_loggedin_user_id() ) {
+		$args['post_status'] = array( 'publish', 'private' );
+	}
+
+	// perform query for this user
+	$profile_query = new WP_Query( $args );
 
 	?>
 	<div class="entry-content">
@@ -258,7 +264,7 @@ function cacsp_profile_screen_draft_content() {
 	$profile_query = new WP_Query( array(
 		'post_type' => 'cacsp_paper',
 		'author' => $user_id,
-		'post_status' => 'draft',
+		'post_status' => array( 'draft', 'future' )
 	) );
 
 	?>
