@@ -292,11 +292,13 @@ function cacsp_profile_screen_draft_content() {
 }
 
 /**
- * Get the total number of papers for a user
+ * Get the total number of papers for a user.
  *
- * @return int $count Total paper count for a user
+ * @param  int  $user_id The user ID
+ * @param  bool $include_drafts Should count include drafts?
+ * @return int
  */
-function cacsp_total_papers_for_user( $user_id = 0 ) {
+function cacsp_total_papers_for_user( $user_id = 0, $include_drafts = false ) {
 
 	// get user ID if none passed
 	if ( empty( $user_id ) ) {
@@ -305,8 +307,7 @@ function cacsp_total_papers_for_user( $user_id = 0 ) {
 
 	//if ( !$count = wp_cache_get( 'cacsp_total_papers_for_user_' . $user_id, 'cacsp' ) ) {
 
-		// get papers for user
-		$papers = get_posts( array(
+		$args = array(
 			'post_type' => 'cacsp_paper',
 			'author' => $user_id,
 			'post_status' => 'publish',
@@ -315,7 +316,18 @@ function cacsp_total_papers_for_user( $user_id = 0 ) {
 			'orderby' => 'none',
 			'update_post_meta_cache' => false,
 			'update_post_term_cache' => false
-		) );
+		);
+
+		if ( (int) $user_id === bp_loggedin_user_id() ) {
+			$args['post_status'] = array( 'publish', 'private' );
+		}
+
+		if ( true === (bool) $include_drafts ) {
+			$args['post_status'] = array( 'publish', 'private', 'draft', 'future' );
+		}
+
+		// get papers for user
+		$papers = get_posts( $args );
 
 		// get count
 		$count = bp_core_number_format( count( $papers ) );
@@ -334,8 +346,8 @@ function cacsp_total_papers_for_user( $user_id = 0 ) {
  *
  * @param int $user_id The numeric ID of the user
  */
-function cacsp_total_paper_count_for_user( $user_id = 0 ) {
-	echo cacsp_get_total_paper_count_for_user( $user_id );
+function cacsp_total_paper_count_for_user( $user_id = 0, $include_drafts = false ) {
+	echo cacsp_get_total_paper_count_for_user( $user_id, $include_drafts );
 }
 
 /**
@@ -345,8 +357,8 @@ function cacsp_total_paper_count_for_user( $user_id = 0 ) {
  *
  * @return int The total paper count for the specified user.
  */
-function cacsp_get_total_paper_count_for_user( $user_id = 0 ) {
-	return apply_filters( 'cacsp_get_total_paper_count_for_user', cacsp_total_papers_for_user( $user_id ) );
+function cacsp_get_total_paper_count_for_user( $user_id = 0, $include_drafts = false ) {
+	return apply_filters( 'cacsp_get_total_paper_count_for_user', cacsp_total_papers_for_user( $user_id, $include_drafts ) );
 }
 
 /**
@@ -377,7 +389,7 @@ function cacsp_ajax_directory_template_callback() {
 	switch ( $scope ) {
 		case 'personal' :
 			$args['author'] = bp_loggedin_user_id();
-			$args['post_status'] = array( 'publish', 'private' );
+			$args['post_status'] = array( 'publish', 'private', 'draft', 'future' );
 			break;
 
 		default :

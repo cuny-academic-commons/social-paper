@@ -21,7 +21,7 @@
 				<li class="selected" id="papers-all"><a href="<?php echo esc_url( get_post_type_archive_link( 'cacsp_paper' ) ); ?>"><?php printf( __( 'All Papers <span>%s</span>', 'social-paper' ), $GLOBALS['wp_query']->found_posts ); ?></a></li>
 
 				<?php if ( is_user_logged_in() ) : ?>
-					<li id="papers-personal"><a href="<?php echo bp_loggedin_user_domain() . 'papers/'; ?>"><?php printf( __( 'My Papers <span>%s</span>', 'social-paper' ), cacsp_get_total_paper_count_for_user() ); ?></a></li>
+					<li id="papers-personal"><a href="<?php echo bp_loggedin_user_domain() . 'papers/'; ?>"><?php printf( __( 'My Papers <span>%s</span>', 'social-paper' ), cacsp_get_total_paper_count_for_user( bp_loggedin_user_id(), true ) ); ?></a></li>
 				<?php endif; ?>
 
 				<?php
