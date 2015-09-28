@@ -105,7 +105,8 @@ function _cacsp_enable_fee() {
 
 		<script type="text/javascript">
 		jQuery( function($) {
-			$( '#cacsp-new-paper-link' ).hide().trigger( 'click' );
+			$( '#cacsp-new-paper-link' )[0].click();
+			$( '#cacsp-new-paper-link' ).hide();
 		});
 		</script>
 
