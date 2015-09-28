@@ -10,8 +10,7 @@
 						</div>
 
 						<div class="item-meta">
-							<?php /* translators: "Created [relative time since]" */ ?>
-							<span class="activity"><?php printf( __( 'Created %s', 'social-paper' ), bp_core_time_since( get_post_time( 'U', true ) ) ); ?></span>
+							<span class="activity"><?php cacsp_the_loop_date(); ?></span>
 						</div>
 
 						<?php

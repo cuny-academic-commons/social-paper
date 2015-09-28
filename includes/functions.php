@@ -179,6 +179,23 @@ function cacsp_the_loop_author() {
 }
 
 /**
+ * Template tag to output the relative date of a social paper in a loop.
+ *
+ * If published date doesn't exist, falls back to last modified date.
+ */
+function cacsp_the_loop_date() {
+	$date = get_post_time( 'U', true );
+
+	if ( false !== $date ) {
+		/* translators: "Created [relative time since]" */
+		printf( __( 'Created %s', 'social-paper' ), bp_core_time_since( $date ) );
+	} else {
+		/* translators: "Updated [relative time since]" */
+		printf( __( 'Updated %s', 'social-paper' ), bp_core_time_since( get_post_modified_time( 'U', true ) ) );
+	}
+}
+
+/**
  * Template tag to output the link to create a new paper.
  *
  * No capability check here.
