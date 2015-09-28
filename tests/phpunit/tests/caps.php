@@ -9,7 +9,7 @@ class CACSP_Tests_Caps extends CACSP_UnitTestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->current_user = bp_loggedin_user_id();
+		$this->current_user = get_current_user_id();
 	}
 
 	public function tearDown() {
