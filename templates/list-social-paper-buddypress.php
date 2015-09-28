@@ -7,6 +7,14 @@
 					<div class="item">
 						<div class="item-title">
 							<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+
+							<?php
+								if ( 'publish' !== get_post_status() ) {
+									echo '<span ';
+									post_class();
+									echo '>' . get_post_status_object( get_post_status() )->label . '</span>';
+								}
+							?>
 						</div>
 
 						<div class="item-meta">
