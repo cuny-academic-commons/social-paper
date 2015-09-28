@@ -111,6 +111,7 @@ class CACSP_Profile {
 			'parent_slug'     => $this->slug,
 			'screen_function' => 'cacsp_profile_screen_draft',
 			'position'        => 10,
+			'user_has_access' => bp_core_can_edit_settings()
 		) );
 
 	}
