@@ -186,7 +186,7 @@ function cacsp_the_loop_author() {
 function cacsp_the_loop_date() {
 	$date = get_post_time( 'U', true );
 
-	if ( false !== $date ) {
+	if ( (int) $date > 0 ) {
 		/* translators: "Created [relative time since]" */
 		printf( __( 'Created %s', 'social-paper' ), bp_core_time_since( $date ) );
 	} else {
