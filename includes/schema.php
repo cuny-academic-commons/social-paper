@@ -35,7 +35,7 @@ function cacsp_register_post_types() {
 		'labels' => $labels,
 		'public' => true,
 		'capability_type' => 'paper',
-		'map_meta_cap' => true,
+		//'map_meta_cap' => true,
 		'rewrite' => array(
 			'slug' => 'papers',
 			'with_front' => false,
