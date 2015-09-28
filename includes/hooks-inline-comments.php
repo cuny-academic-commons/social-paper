@@ -296,11 +296,15 @@ function cacsp_ic_alter_comment_permalink( $retval, $comment ) {
 add_filter( 'get_comment_link', 'cacsp_ic_alter_comment_permalink', 10, 2 );
 
 /**
- * Inline JS to display the inline comment permalink at its rightful place.
+ * Inline JS outputted in the footer.
  *
- * Relies on the "?para" URL parameter and the arrive.js library.  Arrive.js
- * watches for DOM element injections and allows us to hook in when IC adds
- * its comment elements.
+ * JS does the following:
+ *
+ * - Repositions inline comment timestamps underneath the author name.
+ * - Displays inline comment for inline comment permalink URLs. Relies on the
+ *   the "?para" URL parameter and the arrive.js library.  Arrive.js watches
+ *   for DOM element injections and allows us to hook in when IC adds its
+ *   comment elements.
  *
  * @see cacsp_ic_alter_comment_permalink()
  * @see https://github.com/uzairfarooq/arrive
@@ -322,6 +326,7 @@ function cacsp_ic_inline_js() {
 	<script type="text/javascript" src="//cdn.rawgit.com/uzairfarooq/arrive/master/minified/arrive.min.js"></script>
 	<script type="text/javascript">
 	jQuery(function(){
+		// reposition inline comment timestamps
 		jQuery('.comment-time').each(function() {
 			jQuery(this).closest('.comment-body').find('.comment-author cite').append(this);
 		});
