@@ -104,6 +104,34 @@ function _cacsp_enable_fee() {
 	?>
 
 		<script type="text/javascript">
+		// this is a copy of fee-adminbar.js
+		( function( $ ) {
+			'use strict';
+
+			function _new( postType ) {
+				wp.ajax.post( 'fee_new', {
+					post_type: postType,
+					nonce: fee.nonce
+				} ).done( function( url ) {
+					// we change window.location.href to window.location.replace()
+					// this is done to avoid the 'new' page being in the browser's history
+					url && ( window.location.replace( url ) );
+				} );
+			}
+
+			$( function() {
+				$.each( fee.supportedPostTypes, function( i, value ) {
+					$( 'a[href="' + fee.postNew + '?post_type=' + value + '"]' )
+					.add( value === 'post' ? 'a[href="' + fee.postNew + '"]' : null )
+					.attr( 'href', '#' )
+					.on( 'click', function( event ) {
+						event.preventDefault();
+						_new( value );
+					} );
+				} );
+			} );
+		} )( jQuery );
+
 		jQuery( function($) {
 			$( '#cacsp-new-paper-link' ).hide().trigger( 'click' );
 		});
@@ -111,7 +139,7 @@ function _cacsp_enable_fee() {
 
 	<?php
 	// show edit link if not on a draft page
-	} elseif ( current_user_can( 'edit_post', get_queried_object()->ID ) && 'auto-draft' !== get_queried_object()->post_status ) {
+	} elseif ( current_user_can( 'edit_paper', get_queried_object()->ID ) && 'auto-draft' !== get_queried_object()->post_status ) {
 		echo '<a id="wp-admin-bar-edit" href="#fee-edit-link"><span>Enable Editing</span></a>';
 	}
 }

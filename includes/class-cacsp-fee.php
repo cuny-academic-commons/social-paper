@@ -92,21 +92,22 @@ class CACSP_FEE extends FEE {
 			wp_enqueue_media( array( 'post' => $post->ID ) );
 		}
 
-		// subscribers need this to check against the 'edit_papers' cap and not 'edit_posts'
-		if ( current_user_can( 'edit_papers' ) && ! current_user_can( 'edit_posts'  ) ) {
-			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || file_exists( dirname( __FILE__ ) . '/.gitignore' ) ? '' : '.min';
+		/**
+		 * When on the 'new' page, do not use FEE's adminbar script.
+		 *
+		 * We want to remove the 'new' page from the browser's history, so when
+		 * clicking on the browser's 'Back' button, we do not get redirected to create
+		 * another paper.
+		 *
+		 * @see _cacsp_enable_fee() We use a version of FEE's adminbar JS there.
+		 */
+		if ( is_user_logged_in() && 'new' === get_query_var( 'name' ) ) {
+			// re-register FEE's adminbar script, but leave it blank
+			wp_deregister_script( 'fee-adminbar' );
+			wp_register_script( 'fee-adminbar', '' );
 
-			if ( is_singular() ) {
-				require_once( ABSPATH . '/wp-admin/includes/post.php' );
-
-				$user_id = wp_check_post_lock( $post->ID );
-				$user = get_userdata( $user_id );
-			}
-
-			wp_enqueue_style( 'fee-adminbar', $this->url( '/css/fee-adminbar.css' ), false, $this->package['version'], 'screen' );
-			wp_enqueue_script( 'fee-adminbar', $this->url( '/js/fee-adminbar' . $suffix . '.js' ), array( 'wp-util' ), $this->package['version'], true );
-			wp_localize_script( 'fee-adminbar', 'fee', array(
-				'lock' => ( is_singular() && $user_id ) ? $user->display_name : false,
+			wp_enqueue_script( 'wp-util' );
+			wp_localize_script( 'wp-util', 'fee', array(
 				'supportedPostTypes' => $this->get_supported_post_types(),
 				'postNew' => admin_url( 'post-new.php' ),
 				'nonce' => wp_create_nonce( 'fee-new' )
