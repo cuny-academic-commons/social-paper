@@ -310,6 +310,13 @@ function cacsp_ic_inline_js() {
 		return;
 	}
 
+	if( true === Social_Paper::$is_new ) {
+		return;
+	}
+
+	if ( true === in_array( get_queried_object()->post_status, array( 'draft', 'auto-draft' ), true ) ) {
+		return;
+	}
 ?>
 
 	<script type="text/javascript" src="//cdn.rawgit.com/uzairfarooq/arrive/master/minified/arrive.min.js"></script>
