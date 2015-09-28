@@ -29,6 +29,12 @@ function _bootstrap_test_requirements() {
 
 	// We need a compatible commenting plugin. Prefer inline-comments.
 	require dirname( __FILE__ ) . '/../../../../inline-comments/inline-comments.php';
+
+	// Social Paper does an explicit check for the FEE class
+	// If it doesn't exist, just add a dummy FEE class to pass the check.
+	if ( ! class_exists( 'FEE' ) ) {
+		class FEE {}
+	}
 }
 tests_add_filter( 'muplugins_loaded', '_bootstrap_test_requirements' );
 
