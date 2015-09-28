@@ -21,4 +21,13 @@ class CACSP_Tests_Caps extends CACSP_UnitTestCase {
 		$this->set_current_user( $u );
 		$this->assertTrue( current_user_can( 'publish_papers' ) );
 	}
+
+	public function test_subscriber_cannot_edit_other_papers() {
+		$p = $this->factory->paper->create();
+		$u = $this->factory->user->create();
+
+		$this->set_current_user( $u );
+
+		$this->assertFalse( current_user_can( 'edit_paper', $p ) );
+	}
 }

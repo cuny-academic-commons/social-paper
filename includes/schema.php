@@ -35,7 +35,6 @@ function cacsp_register_post_types() {
 		'labels' => $labels,
 		'public' => true,
 		'capability_type' => 'paper',
-		//'map_meta_cap' => true,
 		'rewrite' => array(
 			'slug' => 'papers',
 			'with_front' => false,
@@ -62,6 +61,75 @@ function cacsp_register_taxonomies() {
 }
 
 /**
+ * Maps basic capabilities for our 'cacsp_paper' post type.
+ *
+ * @since 1.0
+ *
+ * @param  array  $caps    The mapped caps
+ * @param  string $cap     The cap being mapped
+ * @param  int    $user_id The user id in question
+ * @param  array  $args    Optional parameters passed to has_cap(). For us, this means the post ID.
+ * @return array
+ */
+function cacsp_map_basic_meta_caps( $caps, $cap, $user_id, $args ) {
+	switch ( $cap ) {
+		case 'edit_paper' :
+		case 'delete_paper' :
+		case 'read_paper' :
+			$post = get_post( $args[0] );
+			$post_type = get_post_type_object( $post->post_type );
+
+			// Set an empty array for the caps
+			$caps = array();
+
+			// Sanity check!
+			if( 'cacsp_paper' !== $post->post_type ) {
+				return $caps;
+			}
+
+			break;
+
+		default :
+			return $caps;
+			break;
+	}
+
+	switch ( $cap ) {
+		case 'edit_paper' :
+			if ( $user_id == $post->post_author ) {
+				$caps[] = $post_type->cap->edit_posts;
+			} else {
+				$caps[] = $post_type->cap->edit_others_posts;
+			}
+
+			break;
+
+		case 'delete_paper' :
+			if ( $user_id == $post->post_author ) {
+				$caps[] = $post_type->cap->delete_posts;
+			} else {
+				$caps[] = $post_type->cap->delete_others_posts;
+			}
+
+			break;
+
+		case 'read_paper' :
+			if ( 'private' != $post->post_status ) {
+				$caps[] = 'read';
+			} elseif ( $user_id == $post->post_author ) {
+				$caps[] = 'read';
+			} else {
+				$caps[] = $post_type->cap->read_private_posts;
+			}
+
+			break;
+	}
+
+	return $caps;
+}
+add_filter( 'map_meta_cap', 'cacsp_map_basic_meta_caps', 10, 4 );
+
+/**
  * Add capabilities for subscribers and contributors.
  *
  * By default, subscribers and contributors do not have caps to post, edit or
@@ -73,7 +141,7 @@ function cacsp_register_taxonomies() {
  * @param  array  $args    Optional parameters passed to has_cap(). For us, this means the post ID.
  * @return array
  */
-function cacsp_map_basic_meta_caps( $caps, $cap, $user_id, $args ) {
+function cacsp_map_extra_meta_caps( $caps, $cap, $user_id, $args ) {
 	switch ( $cap ) {
 		// give user these caps
 		case 'publish_papers' :
@@ -122,6 +190,6 @@ function cacsp_map_basic_meta_caps( $caps, $cap, $user_id, $args ) {
 	 * @param string  $cap The cap being mapped
 	 * @param WP_User The user being tested for the cap.
 	 */
-	return apply_filters( 'cacsp_map_basic_meta_caps', array( 'exist' ), $caps, $cap, $user );
+	return apply_filters( 'cacsp_map_extra_meta_caps', array( 'exist' ), $caps, $cap, $user );
 }
-add_filter( 'map_meta_cap', 'cacsp_map_basic_meta_caps', 15, 4 );
+add_filter( 'map_meta_cap', 'cacsp_map_extra_meta_caps', 15, 4 );
