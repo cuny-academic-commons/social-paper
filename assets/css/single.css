@@ -756,8 +756,10 @@ a.comment-edit-link {
 	}
 }
 
-.fee-slug {
-	background-color: #eee;
+.fee-url {
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	padding: .25em .5em;
 }
 
 /** WP SIDE COMMENTS **/
@@ -806,6 +808,7 @@ a.comment-edit-link {
 	text-decoration: none;
 }
 
+.fee-slug,
 .incom-active {
 	background: #ff9;
 }
