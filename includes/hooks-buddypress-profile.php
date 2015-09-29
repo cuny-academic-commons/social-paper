@@ -418,3 +418,134 @@ function cacsp_ajax_directory_template_callback() {
 }
 add_action( 'wp_ajax_papers_filter', 'cacsp_ajax_directory_template_callback' );
 add_action( 'wp_ajax_nopriv_papers_filter', 'cacsp_ajax_directory_template_callback' );
+
+/**
+ * Action handler.
+ */
+function cacsp_profile_action_handler() {
+	if ( false == bp_is_current_component( 'papers' ) ) {
+		return;
+	}
+
+	// if on a subnav slug, bail!
+	if ( bp_is_current_action( 'published' ) || bp_is_current_action( 'drafts' ) ) {
+		return;
+	}
+
+	$redirect = bp_displayed_user_domain() . 'papers/';
+
+	switch ( bp_current_action() ) {
+		// delete paper
+		case 'delete' :
+			// action variable must be set
+			// if not, redirect to user's papers
+			if ( ! bp_action_variable( 0 ) || ! bp_loggedin_user_id() ) {
+				bp_core_redirect( $redirect );
+				die();
+			}
+
+			// nonce check
+			check_admin_referer( 'bp_social_paper_' . bp_current_action(), 'bpsp-' . bp_current_action() );
+
+			// sanity check!
+			if ( false === current_user_can( 'delete_post', bp_action_variable( 0 ) ) ) {
+				bp_core_add_message( __( 'You do not have permission to delete that paper.', 'social-paper' ), 'error' );
+				bp_core_redirect( $redirect );
+				die();
+			}
+
+			$delete = wp_delete_post( bp_action_variable( 0 ), true );
+
+			if ( $delete ) {
+				bp_core_add_message( __( 'Paper successfully deleted.', 'social-paper' ) );
+
+			} else {
+				bp_core_add_message( __( 'There was an error deleting that paper.', 'social-paper' ), 'error' );
+			}
+
+			bp_core_redirect( $redirect );
+			die();
+
+			break;
+
+		// publish paper
+		case 'publish' :
+			// action variable must be set
+			// if not, redirect to user's papers
+			if ( ! bp_action_variable( 0 ) || ! bp_loggedin_user_id() ) {
+				bp_core_redirect( $redirect );
+				die();
+			}
+
+			// nonce check
+			check_admin_referer( 'bp_social_paper_' . bp_current_action(), 'bpsp-' . bp_current_action() );
+
+			// sanity check!
+			if ( false === current_user_can( 'edit_post', bp_action_variable( 0 ) ) ) {
+				bp_core_add_message( __( 'You do not have permission to publish that paper.', 'social-paper' ), 'error' );
+				bp_core_redirect( $redirect );
+				die();
+			}
+
+			// wp_publish_post() doesn't have a return value
+			wp_publish_post( bp_action_variable( 0 ) );
+
+			bp_core_add_message( __( 'Paper successfully published.', 'social-paper' ) );
+			bp_core_redirect( $redirect );
+			die();
+
+			break;
+	}
+}
+add_action( 'bp_actions', 'cacsp_profile_action_handler' );
+
+/**
+ * Template tag to add a button.
+ *
+ * @param string $type The type of button. Either 'delete' or 'publish'.
+ */
+function cacsp_add_button( $type = 'delete' ) {
+	$r = array(
+		'id'                => "bpsp-{$type}",
+		'component'         => 'members',
+		'must_be_logged_in' => true,
+		'block_self'        => false,
+		'link_text'         => 'delete' == $type ? __( 'Delete', 'social-paper' ) : __( 'Publish', 'social-paper' ),
+		'wrapper_class'     => 'paper-button',
+		'link_class'        => 'paper-button',
+	);
+
+	// add confirm class just so user can confirm the choice
+	if ( 'delete' === $type ) {
+		$r['link_class'] .= ' confirm';
+	}
+
+	$r['link_href'] = wp_nonce_url(
+		trailingslashit( bp_loggedin_user_domain() . 'papers/' . esc_attr( $type ) . '/' . get_post()->ID ),
+		"bp_social_paper_{$type}",
+		"bpsp-{$type}"
+	);
+
+	// Output button
+	bp_button( apply_filters( 'bp_social_paper_button_args', $r ) );
+}
+
+/**
+ * Adds a 'delete' button to the paper loop.
+ */
+function cacsp_loop_delete_button() {
+	if ( current_user_can( 'delete_paper', get_post()->ID ) ) {
+		cacsp_add_button( 'delete' );
+	}
+}
+add_action( 'bp_directory_papers_actions', 'cacsp_loop_delete_button' );
+
+/**
+ * Adds a 'publish' button to the paper loop.
+ */
+function cacsp_loop_publish_button() {
+	if ( 'draft' === get_post_status() && current_user_can( 'edit_paper', get_post()->ID ) ) {
+		cacsp_add_button( 'publish' );
+	}
+}
+add_action( 'bp_directory_papers_actions', 'cacsp_loop_publish_button' );
