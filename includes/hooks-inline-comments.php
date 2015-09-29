@@ -365,6 +365,10 @@ function cacsp_ic_disable() {
 		$disable = true;
 	}
 
+	if ( is_singular( 'cacsp_paper' ) && 'auto-draft' === get_post_status() ) {
+		$disable = true;
+	}
+
 	if ( false === $disable ) {
 		return;
 	}
