@@ -35,6 +35,14 @@ function cacsp_register_post_types() {
 		'labels' => $labels,
 		'public' => true,
 		'capability_type' => 'paper',
+		'capabilities' => array(
+			'delete_posts'           => 'delete_papers',
+			'delete_private_posts'   => 'delete_private_papers',
+			'delete_published_posts' => 'delete_published_papers',
+			'delete_others_posts'    => 'delete_others_papers',
+			'edit_private_posts'     => 'edit_private_papers',
+			'edit_published_posts'   => 'edit_published_papers'
+		),
 		'rewrite' => array(
 			'slug' => 'papers',
 			'with_front' => false,
