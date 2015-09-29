@@ -380,6 +380,29 @@ function _cacsp_disable_admin_bar_on_social_paper_pages() {
 add_action( 'wp', '_cacsp_disable_admin_bar_on_social_paper_pages' );
 
 /**
+ * Add a generic title in the loop if no title is added for a paper.
+ *
+ * @param  string $retval
+ * @return string
+ */
+function cacsp_loop_add_placeholder_title( $retval = '' ) {
+	if ( 'cacsp_paper' !== get_query_var( 'post_type' ) ) {
+		return $retval;
+	}
+
+	if ( is_singular( 'cacsp_paper' ) ) {
+		return $retval;
+	}
+
+	if ( ! empty( $retval ) ) {
+		return $retval;
+	}
+
+	return __( '(Untitled)', 'social-paper' );
+}
+add_filter( 'the_title', 'cacsp_loop_add_placeholder_title' );
+
+/**
  * Wrap comment content in an identifer div
  *
  * @param str $comment_content The comment content
