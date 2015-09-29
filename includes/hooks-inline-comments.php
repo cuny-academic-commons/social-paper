@@ -128,7 +128,6 @@ add_action( 'wp_head', 'cacsp_ic_load_wpac_options', 9 );
  * Mods to WP Ajaxify Comments for better UX.
  *
  * Mods include:
- * - Update count of bubble (will be added as a PR)
  * - Update comment timestamp position.  Comment timestamp is a custom addition
  *   that needs special placement after AJAX is made. See cacsp_comment_text().
  */
@@ -137,10 +136,6 @@ function cacsp_ic_wpac_extras( $wpacOptions ) {
 
 	if ( isset( $wpacOptions['callbackOnAfterUpdateComments'] ) ) {
 		$wpacOptions['callbackOnAfterUpdateComments'] .= '
-			// Update count of bubble
-			var bubble = jQuery( ".incom-bubble-active a" );
-			bubble.text( parseInt( bubble.text(), 10 ) + 1 );
-
 			// Update comment timestamp position
 			jQuery(".comment-time").each(function() {
 				jQuery(this).closest(".comment-body").find(".comment-author cite").append(this);
