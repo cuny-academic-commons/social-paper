@@ -179,6 +179,25 @@ function cacsp_map_extra_meta_caps( $caps, $cap, $user_id, $args ) {
 			return $caps;
 			break;
 
+		// allow files to be uploaded via AJAX
+		case 'upload_files' :
+			if ( defined( 'DOING_AJAX' ) || true === constant( 'DOING_AJAX' ) ) {
+				if ( false === isset( $_REQUEST['post_id'] ) ) {
+					return $caps;
+				}
+
+				if ( false === current_user_can( 'edit_paper', $_REQUEST['post_id'] ) ) {
+					return $caps;
+				}
+
+				$user_id = get_current_user_id();
+
+			} else {
+				return $caps;
+			}
+
+			break;
+
 		default :
 			return $caps;
 			break;
