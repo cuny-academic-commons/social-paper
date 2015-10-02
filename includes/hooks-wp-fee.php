@@ -242,6 +242,39 @@ function cacsp_wp_fee_tax_buttons( $post ) {
 add_action( 'fee_tax_buttons', 'cacsp_wp_fee_tax_buttons' );
 
 /**
+ * Filter attachments when selecting media on the frontend.
+ *
+ * By default, the "Add Media" modal shows all available attachments across
+ * the site.  We do not want to do this due to privacy issues. Instead,
+ * this function filters the attachments query to only list attachments
+ * uploaded by the logged-in user.
+ *
+ * @param array $retval Current attachment query arguments
+ * @return array
+ */
+function cacsp_filter_ajax_query_attachments( $retval ) {
+	// don't do this in the admin area or if user isn't logged in
+	if ( defined( 'WP_NETWORK_ADMIN' ) || false === is_user_logged_in() ) {
+		return $retval;
+	}
+
+	if ( empty( $_POST['post_id'] ) )  {
+		return $retval;
+	}
+
+	// check if the post is our event type
+	$post = get_post( $_POST['post_id'] );
+	if ( 'cacsp_paper' !== $post->post_type ) {
+		return $retval;
+	}
+
+	// modify the attachments query to filter by the logged-in user
+	$retval['author'] = get_current_user_id();
+	return $retval;
+}
+add_filter( 'ajax_query_attachments_args', 'cacsp_filter_ajax_query_attachments' );
+
+/**
  * Prevent WP FEE from loading
  *
  * Utility that can be called before 'init' to suppress WP FEE from loading.
