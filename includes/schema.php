@@ -160,7 +160,7 @@ function cacsp_map_extra_meta_caps( $caps, $cap, $user_id, $args ) {
 		case 'edit_paper' :
 		case 'delete_paper' :
 			// bail if someone else's event
-			if ( false !== strpos( $caps[0], 'others' ) ) {
+			if ( ! empty( $caps[0] ) && false !== strpos( $caps[0], 'others' ) ) {
 				return $caps;
 			}
 
