@@ -476,7 +476,8 @@ h1, h2, h3, h4, h5,
 .entry-author,
 #comments a.url,
 #comments .comment-meta a,
-a.comment-reply-link {
+a.comment-reply-link,
+.page-links {
 	font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
 }
 
@@ -699,6 +700,10 @@ a.comment-edit-link {
 	padding-bottom: 1.5em;
 }
 
+.page-links {
+	font-size: 0.8em;
+	margin-bottom: 1em;
+}
 
 /** WP FRONTEND EDITOR **/
 

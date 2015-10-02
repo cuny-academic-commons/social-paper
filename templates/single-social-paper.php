@@ -43,6 +43,17 @@ while ( have_posts() ) : the_post();
 					the_title( '<span class="screen-reader-text">', '</span>', false )
 				) );
 			?>
+
+			<?php
+				wp_link_pages( array(
+					'before'      => '<div class="page-links"><span class="page-links-title">' . __( 'Pages:', 'social-paper' ) . '</span>',
+					'after'       => '</div>',
+					'link_before' => '<span>',
+					'link_after'  => '</span>',
+					'pagelink'    => '<span class="screen-reader-text">' . __( 'Page', 'social-paper' ) . ' </span>%',
+					'separator'   => '<span class="screen-reader-text">, </span>',
+				) );
+			?>
 		</div><!-- .entry-content -->
 
 		<?php if ( 'new' !== get_query_var( 'name' ) && 'auto-draft' !== get_queried_object()->post_status ) : ?>
