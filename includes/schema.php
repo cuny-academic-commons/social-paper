@@ -181,7 +181,7 @@ function cacsp_map_extra_meta_caps( $caps, $cap, $user_id, $args ) {
 
 		// allow files to be uploaded via AJAX
 		case 'upload_files' :
-			if ( defined( 'DOING_AJAX' ) || true === constant( 'DOING_AJAX' ) ) {
+			if ( defined( 'DOING_AJAX' ) && true === constant( 'DOING_AJAX' ) ) {
 				if ( false === isset( $_REQUEST['post_id'] ) ) {
 					return $caps;
 				}
