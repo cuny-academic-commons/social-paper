@@ -117,7 +117,7 @@ function cacsp_paper_group_selector( $paper_id ) {
 		<?php
 			foreach ( $user_groups['groups'] as $group ) {
 				$private = 'public' !== $group->status ? 'title="Private"' : '';
-				$selected = in_array( $group->id, $user_group_ids, true ) ? 'selected="selected"' : '';
+				$selected = in_array( intval( $group->id ), $paper_group_ids, true ) ? 'selected="selected"' : '';
 				echo '<option value="' . esc_attr( $group->id ) . '" ' . $selected . ' ' . $private . '>' . esc_html( stripslashes( $group->name ) ) . '</option>';
 				$foo = 1;
 			}
