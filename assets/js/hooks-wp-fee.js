@@ -12,6 +12,20 @@
  */
 jQuery(document).ready( function($) {
 
+	$(document).on( 'fee-editor-init', function( event ) {
+
+		// Add the Settings button to fee-toolbar, if necessary.
+		$( '.fee-toolbar' ).prepend( '<div class="fee-toolbar-left"><button class="button button-large fee-button-settings"><div class="dashicons dashicons-admin-generic"></div></button></div>' );
+
+		// Set up Settings toggle.
+		$sidebar = $( '.entry-sidebar' );
+		$settings_toggle = $( '.fee-button-settings' );
+		$settings_toggle.on( 'click', function( e ) {
+			$sidebar.toggleClass( 'toggle-on' );
+			$( e.target ).toggleClass( 'active' );
+		} );
+	} );
+
 	/**
 	 * Hook into WP FEE activation
 	 */
@@ -35,6 +49,10 @@ jQuery(document).ready( function($) {
 
 		}
 
+
+		// Toggle Settings sidebar.
+		$sidebar.addClass( 'toggle-on' );
+		$settings_toggle.addClass( 'active' );
 	});
 
 	/**
@@ -71,6 +89,10 @@ jQuery(document).ready( function($) {
 
 		}
 
+		// Toggle Settings sidebar.
+		$sidebar.removeClass( 'toggle-on' );
+		$settings_toggle.removeClass( 'active' );
+
 	});
 
 	/**
@@ -105,19 +127,15 @@ jQuery(document).ready( function($) {
 
 		}
 
-		/*
-		// example additions
-
-		// add nonce
-		wp.fee.post.social_paper_nonce = function() {
-			return $('#social_paper_nonce').val();
+		// Group association nonce.
+		wp.fee.post.social_paper_groups_nonce = function() {
+			return $( '#cacsp-group-selector-nonce' ).val();
 		};
 
-		// add a value
-		wp.fee.post.social_paper_value = function() {
-			return $('#social_paper_value').val();
+		// Group associations.
+		wp.fee.post.social_paper_groups = function() {
+			return $( '#cacsp-group-selector' ).val();
 		};
-		*/
 
 	});
 

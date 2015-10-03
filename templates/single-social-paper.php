@@ -56,6 +56,12 @@ while ( have_posts() ) : the_post();
 			?>
 		</div><!-- .entry-content -->
 
+		<?php if ( current_user_can( 'edit_post', get_queried_object()->ID ) ) : ?>
+		<div class="entry-sidebar">
+			<?php cacsp_locate_template( 'sidebar-single-social-paper.php', true ); ?>
+		</div>
+		<?php endif; ?>
+
 		<?php if ( 'new' !== get_query_var( 'name' ) && 'auto-draft' !== get_queried_object()->post_status ) : ?>
 		<footer class="entry-footer">
 			<div class="entry-author">

@@ -98,3 +98,70 @@ function cacsp_register_group_connection_taxonomy() {
 	) );
 }
 add_action( 'init', 'cacsp_register_group_connection_taxonomy', 15 );
+
+/**
+ * Generate the group selector interface.
+ */
+function cacsp_paper_group_selector( $paper_id ) {
+	$paper = new CACSP_Paper( $paper_id );
+	$paper_group_ids = $paper->get_group_ids();
+
+	$user_groups = groups_get_groups( array(
+		'user_id' => bp_loggedin_user_id(),
+		'type' => 'alphabetical',
+	) );
+	$user_group_ids = array_map( 'intval', wp_list_pluck( $user_groups['groups'], 'id' ) );
+
+	?>
+	<select name="cacsp-groups[]" multiple="multiple" style="width:100%;" id="cacsp-group-selector">
+		<?php
+			foreach ( $user_groups['groups'] as $group ) {
+				$private = 'public' !== $group->status ? 'title="Private"' : '';
+				$selected = in_array( $group->id, $user_group_ids, true ) ? 'selected="selected"' : '';
+				echo '<option value="' . esc_attr( $group->id ) . '" ' . $selected . ' ' . $private . '>' . esc_html( stripslashes( $group->name ) ) . '</option>';
+				$foo = 1;
+			}
+		?>
+	</select>
+	<?php
+
+	wp_nonce_field( 'cacsp-group-selector', 'cacsp-group-selector-nonce' );
+}
+
+/**
+ * Save group selection data sent via AJAX.
+ *
+ * @param int $post_id ID of the post.
+ */
+function cacsp_save_group_connection( $post_id ) {
+	if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+		return;
+	}
+
+	if ( ! isset( $_POST['social_paper_groups_nonce'] ) || ! isset( $_POST['social_paper_groups'] ) ) {
+		return;
+	}
+
+	if ( ! wp_verify_nonce( $_POST['social_paper_groups_nonce'], 'cacsp-group-selector' ) ) {
+		return;
+	}
+
+	$paper = new CACSP_Paper( $post_id );
+	$results = array();
+
+	$new_group_ids      = array_map( 'intval', $_POST['social_paper_groups'] );
+	$existing_group_ids = $paper->get_group_ids();
+
+	// Disconnect from groups no longer listed.
+	foreach ( array_diff( $existing_group_ids, $new_group_ids ) as $group_id ) {
+		$results['disconnected'][ $group_id ] = $paper->disconnect_from_group( $group_id );
+	}
+
+	// Connect to new groups.
+	foreach ( array_diff( $new_group_ids, $existing_group_ids ) as $group_id ) {
+		$results['connected'][ $group_id ] = $paper->connect_to_group( $group_id );
+	}
+
+	// Can't do much with results :(
+}
+add_action( 'save_post', 'cacsp_save_group_connection' );

@@ -178,6 +178,25 @@ function cacsp_asset_enqueue_handler() {
 	// enqueue our styles
 	wp_enqueue_style( 'social-paper-single', Social_Paper::$URL . '/assets/css/single.css' );
 	wp_enqueue_style( 'social-paper-single-print', Social_Paper::$URL . '/assets/css/print.css', array('social-paper-single'), '0.1', 'print' );
+
+	if ( function_exists( 'bp_is_active' ) && bp_is_active( 'groups' ) ) {
+		$select2_css_url = set_url_scheme( 'http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css' );
+		wp_enqueue_style( 'social-paper-select2', $select2_css_url );
+	}
+
+	// Register scripts.
+	$sp_js_deps = array( 'jquery' );
+	if ( function_exists( 'bp_is_active' ) && bp_is_active( 'groups' ) ) {
+		$select2_js_url = set_url_scheme( 'http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.js' );
+		wp_register_script( 'social-paper-select2', $select2_js_url, array( 'jquery' ) );
+		$sp_js_deps[] = 'social-paper-select2';
+	}
+
+	wp_enqueue_script( 'social-paper-single', Social_Paper::$URL . '/assets/js/single.js', $sp_js_deps );
+
+	wp_localize_script( 'social-paper-single', 'SocialPaperL18n', array(
+		'group_placeholder' => __( 'Enter a group name', 'social-paper' ),
+	) );
 }
 add_action( 'wp_enqueue_scripts', 'cacsp_asset_enqueue_handler', 999 );
 

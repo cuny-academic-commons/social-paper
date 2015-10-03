@@ -445,6 +445,10 @@ body {
 	overflow-x: hidden;
 }
 
+.entry-main {
+	position: relative;
+}
+
 h1.entry-title, .entry-content, .entry-footer,
 #comments, #comments-and-form,
 .entry-header .fee-url {
@@ -466,6 +470,40 @@ h1.entry-title, .entry-content, .entry-footer,
 	.entry-header .fee-url {
 		font-size: 80%;
 	}
+}
+
+.entry-sidebar {
+	position: absolute;
+	width: 250px;
+	top: 5%;
+	left: -290px;
+	transition: .5s;
+	background: #f5f5f5;
+	border: 1px solid #dedede;
+	border-radius: 0 3px 3px 0;
+	height: 85%;
+	padding: 5% 12px 5% 22px;
+}
+
+.entry-sidebar.toggle-on {
+	left: -10px;
+}
+
+.sidebar-section h2,
+.sidebar-section h3 {
+	font-weight: 400;
+}
+
+.sidebar-section p {
+	font-size: 16px;
+}
+
+.sidebar-section .select2-container {
+	margin-top: 10px;
+}
+
+.select2-results__options {
+	font-size: 60%;
 }
 
 article {
@@ -733,6 +771,10 @@ a.comment-edit-link {
 /* re-apply styles to publish options */
 .fee-publish-options-dropdown {
 	  font-size: 14px;
+}
+
+.fee-toolbar .fee-toolbar-left {
+	float: left;
 }
 
 .wp-core-ui select {
