@@ -475,7 +475,7 @@ h1.entry-title, .entry-content, .entry-footer,
 .entry-sidebar {
 	position: absolute;
 	width: 250px;
-	top: 5%;
+	top: 0;
 	left: -290px;
 	transition: .5s;
 	background: #f5f5f5;
