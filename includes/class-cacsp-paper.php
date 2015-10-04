@@ -114,7 +114,7 @@ class CACSP_Paper {
 
 		$paper_groups = $this->get_group_ids();
 		if ( ! in_array( $group_id, $paper_groups ) ) {
-			return new WP_Error( 'paper_not_connected_to_group', __( 'This paper is not connected to that group.', 'bp-event-organiser' ), array( 'paper_id' => $this->id, 'group_id' => $group_id ) );
+			return new WP_Error( 'paper_not_connected_to_group', __( 'This paper is not connected to that group.', 'social-paper' ), array( 'paper_id' => $this->id, 'group_id' => $group_id ) );
 		}
 
 		$removed = wp_remove_object_terms( $this->id, 'group_' . $group_id , 'cacsp_paper_group' );
