@@ -146,7 +146,7 @@ function cacsp_filter_activity_args_for_groups( $args ) {
 	$papers_of_group = get_posts( array(
 		'post_type'      => 'cacsp_paper',
 		'post_status'    => 'publish',
-		'bp_group'       => $group_id,
+		'bp_group'       => $group_ids,
 		'posts_per_page' => -1,
 		'fields'         => 'ids',
 	) );
