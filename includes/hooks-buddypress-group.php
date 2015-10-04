@@ -188,6 +188,109 @@ function cacsp_filter_activity_args_for_groups( $args ) {
 add_filter( 'bp_after_has_activities_parse_args', 'cacsp_filter_activity_args_for_groups' );
 
 /**
+ * Format activity actions for papers connected to groups.
+ *
+ * @param string      $action      Formatted action string.
+ * @param obj         $activity    Activity item.
+ * @param CACSP_Paper $paper       Paper object.
+ * @param string      $paper_title Paper title.
+ * @param string      $paper_link  Paper URL.
+ * @param string      $user_link   User link.
+ * @return string
+ */
+function cacsp_format_activity_action_for_group( $action, $activity, CACSP_Paper $paper, $paper_title, $paper_link, $user_link ) {
+	// Don't bother doing this on a group page.
+	if ( bp_is_group() ) {
+		return $action;
+	}
+
+	$paper_group_ids = $paper->get_group_ids();
+	if ( empty( $paper_group_ids ) ) {
+		return $action;
+	}
+
+	// @todo roll our own cache support here too? Le sigh.
+	$_paper_groups = groups_get_groups( array(
+		'populate_extras' => false,
+		'update_meta_cache' => false,
+		'show_hidden' => true,
+		'include' => $paper_group_ids,
+
+	) );
+	$paper_groups = $_paper_groups['groups'];
+
+	// Only include groups that a user has access to. Groups a user is a member of come first.
+	$groups_to_include = array(
+		'is_member'     => array(),
+		'is_not_member' => array(),
+	);
+
+	$user_groups = array();
+	if ( is_user_logged_in() ) {
+		$user_groups = cacsp_get_groups_of_user( bp_loggedin_user_id() );
+	}
+
+	foreach ( $paper_groups as $pg ) {
+		$pg_id = (int) $pg->id;
+
+		$k = null;
+		if ( in_array( $pg_id, $user_groups, true ) ) {
+			$k = 'is_member';
+		} elseif ( 'public' === $pg->status ) {
+			$k = 'is_not_member';
+		}
+
+		if ( $k ) {
+			$groups_to_include[ $k ][ $pg->name ] = bp_get_group_permalink( $pg ) . 'papers/';
+		}
+	}
+
+	$links = array();
+	foreach ( $groups_to_include as $gg ) {
+		ksort( $gg );
+		foreach ( $gg as $group_name => $group_link ) {
+			$links[] = sprintf(
+				'<a href="%s">%s</a>',
+				esc_url( $group_link),
+				esc_html( $group_name )
+			);
+		}
+	}
+
+	// @todo Other activity types.
+	// 1, 2, 3 groups: show all. 4+ groups: show first two + "and x more groups".
+	if ( count( $links ) === 1 ) {
+		$action = sprintf(
+			__( '%1$s created a new paper %2$s in the group %3$s', 'social-paper' ),
+			$user_link,
+			sprintf( '<a href="%s">%s</a>', esc_url( $paper_link ), esc_html( $paper_title ) ),
+			implode( '', $links )
+		);
+
+	} elseif ( count( $links ) <= 3 ) {
+		$action = sprintf(
+			_n( '%1$s created a new paper %2$s in the group %3$s', '%1$s created a new paper in the groups %3$s', count( $links ), 'social-paper' ),
+			$user_link,
+			sprintf( '<a href="%s">%s</a>', esc_url( $paper_link ), esc_html( $paper_title ) ),
+			implode( ', ', $links )
+		);
+
+	} else {
+		$remainder = count( $links ) - 2;
+		$action = sprintf(
+			_n( '%1$s created a new paper %2$s in %3$s and %4$s more group', '%1$s created a new paper in %3$s and %4$s more groups', $remainder, 'social-paper' ),
+			$user_link,
+			sprintf( '<a href="%s">%s</a>', esc_url( $paper_link ), esc_html( $paper_title ) ),
+			implode( ', ', array_slice( $links, 0, 2 ) ),
+			number_format_i18n( $remainder )
+		);
+	}
+
+	return $action;
+}
+add_filter( 'cacsp_format_activity_action', 'cacsp_format_activity_action_for_group', 10, 6 );
+
+/**
  * Generate the group selector interface.
  */
 function cacsp_paper_group_selector( $paper_id ) {
