@@ -56,6 +56,7 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 			'post_type' => 'cacsp_paper',
 			'author' => -1,
 			'post_status' => 'publish',
+			'bp_group' => $group_id,
 		) );
 
 		?>
