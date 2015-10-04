@@ -149,17 +149,23 @@ function cacsp_save_group_connection( $post_id ) {
 	$paper = new CACSP_Paper( $post_id );
 	$results = array();
 
-	$new_group_ids      = array_map( 'intval', $_POST['social_paper_groups'] );
+	$new_group_ids      = array_map( 'intval', (array) $_POST['social_paper_groups'] );
 	$existing_group_ids = $paper->get_group_ids();
 
 	// Disconnect from groups no longer listed.
-	foreach ( array_diff( $existing_group_ids, $new_group_ids ) as $group_id ) {
-		$results['disconnected'][ $group_id ] = $paper->disconnect_from_group( $group_id );
+	$disconnected_groups = array_diff( $existing_group_ids, $new_group_ids );
+	if ( $disconnected_groups ) {
+		foreach ( $disconnected_groups as $group_id ) {
+			$results['disconnected'][ $group_id ] = $paper->disconnect_from_group( $group_id );
+		}
 	}
 
 	// Connect to new groups.
-	foreach ( array_diff( $new_group_ids, $existing_group_ids ) as $group_id ) {
-		$results['connected'][ $group_id ] = $paper->connect_to_group( $group_id );
+	$connected_groups = array_diff( $new_group_ids, $existing_group_ids );
+	if ( $connected_groups ) {
+		foreach ( $connected_groups as $group_id ) {
+			$results['connected'][ $group_id ] = $paper->connect_to_group( $group_id );
+		}
 	}
 
 	// Can't do much with results :(
