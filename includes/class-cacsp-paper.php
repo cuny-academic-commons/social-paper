@@ -10,6 +10,7 @@ class CACSP_Paper {
 	protected $post_obj;
 	protected $post_obj_pristine;
 	protected $group_ids;
+	protected $reader_ids;
 
 	/**
 	 * Constructor.
@@ -145,6 +146,83 @@ class CACSP_Paper {
 		}
 
 		return $this->group_ids;
+	}
+
+	/**
+	 * Get the IDs of readers of this paper.
+	 *
+	 * @return array
+	 */
+	public function get_reader_ids() {
+		if ( ! is_null( $this->reader_ids ) ) {
+			return $this->reader_ids;
+		}
+
+		$reader_terms = wp_get_object_terms( $this->id, 'cacsp_paper_reader', array(
+			'update_term_meta_cache' => false,
+		) );
+		$reader_term_names = wp_list_pluck( $reader_terms, 'name' );
+
+		$this->reader_ids = array();
+		foreach ( $reader_term_names as $reader_term_name ) {
+			// Trim leading 'reader_'.
+			$this->reader_ids[] = intval( substr( $reader_term_name, 7 ) );
+		}
+
+		return $this->reader_ids;
+	}
+
+	/**
+	 * Add a reader to the paper.
+	 *
+	 * @param int $user_id ID of the user being added to the paper as a reader.
+	 * @return bool|WP_Error True on success, WP_Error on failure.
+	 */
+	public function add_reader( $user_id ) {
+		$user = new WP_User( $user_id );
+		if ( ! $user->ID ) {
+			return new WP_Error( 'user_not_found', __( 'No user found by that ID.', 'social-paper' ) );
+		}
+
+		$set = wp_set_object_terms( $this->id, array( 'reader_' . $user_id ), 'cacsp_paper_reader', true );
+
+		$this->reader_ids = null;
+
+		if ( is_wp_error( $set ) || empty( $set ) ) {
+			return $set;
+		} else {
+			return true;
+		}
+	}
+
+	/**
+	 * Remove a reader from a paper.
+	 *
+	 * @param int $user_id ID of the user.
+	 * @return bool|WP_Error True on success, WP_Error on failure.
+	 */
+	public function remove_reader( $user_id ) {
+		if ( ! is_numeric( $user_id ) ) {
+			return;
+		}
+
+		$user_id = (int) $user_id;
+
+		$user = new WP_User( $user_id );
+		if ( ! $user->ID ) {
+			return new WP_Error( 'user_not_found', __( 'No user found by that ID.', 'social-paper' ) );
+		}
+
+		$paper_readers = $this->get_reader_ids();
+		if ( ! in_array( $user_id, $paper_readers, true ) ) {
+			return new WP_Error( 'reader_not_found', __( 'That user is not a reader of this paper.', 'social-paper' ), array( 'paper_id' => $this->id, 'group_id' => $user_id ) );
+		}
+
+		$removed = wp_remove_object_terms( $this->id, 'reader_' . $user_id , 'cacsp_paper_reader' );
+
+		$this->reader_ids = null;
+
+		return $removed;
 	}
 
 	public function __get( $key ) {

@@ -69,6 +69,11 @@ function cacsp_register_taxonomies() {
 			'slug' => 'tag',
 		),
 	) );
+
+	// "Readers".
+	register_taxonomy( 'cacsp_paper_reader', 'cacsp_paper', array(
+		'public' => false,
+	) );
 }
 
 /**
