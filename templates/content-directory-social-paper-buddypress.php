@@ -16,6 +16,8 @@
 
 		<?php cacsp_get_template_part( 'archive-header', 'social-paper' ); ?>
 
+		<?php do_action( 'template_notices' ); ?>
+
 		<div class="item-list-tabs" role="navigation">
 			<ul>
 				<li class="selected" id="papers-all"><a href="<?php echo esc_url( get_post_type_archive_link( 'cacsp_paper' ) ); ?>"><?php printf( __( 'All Papers <span>%s</span>', 'social-paper' ), $GLOBALS['wp_query']->found_posts ); ?></a></li>
