@@ -112,18 +112,7 @@ function cacsp_filter_activity_args_for_groups( $args ) {
 	if ( ! empty( $args['primary_id'] ) ) {
 		$group_ids = array( (int) $args['primary_id'] );
 	} else {
-		// @todo Is there a faster (and better cached) way to do this?
-		$user_groups = groups_get_groups( array(
-			'user_id' => bp_loggedin_user_id(),
-			'update_meta_cache' => false,
-			'show_hidden' => true,
-			'populate_extras' => false,
-		) );
-
-		$group_ids = array();
-		if ( ! empty( $user_groups['groups'] ) ) {
-			$group_ids = array_map( 'intval', wp_list_pluck( $user_groups['groups'], 'id' ) );
-		}
+		$group_ids = cacsp_get_groups_of_user( bp_loggedin_user_id() );
 	}
 
 	$group_filter = array(
@@ -270,3 +259,48 @@ function cacsp_save_group_connection( $post_id ) {
 	// Can't do much with results :(
 }
 add_action( 'save_post', 'cacsp_save_group_connection' );
+
+/** Cache (ugh) **************************************************************/
+
+/**
+ * Add our non-persistent cache group.
+ *
+ * BuddyPress does not have decent (any) cache support for groups-of-member queries. Adding a
+ * non-persistent group here so that we don't have to worry about invalidation. At least this
+ * will help with single pages.
+ */
+function cacsp_add_non_persistent_cache_group() {
+	wp_cache_add_non_persistent_groups( array( 'cacsp_groups_of_user' ) );
+}
+add_action( 'init', 'cacsp_add_non_persistent_cache_group' );
+
+/**
+ * Cached wrapper for fetching IDs of groups that a user is a member of.
+ *
+ * @param int $user_id
+ * @return array
+ */
+function cacsp_get_groups_of_user( $user_id ) {
+	$group_ids = wp_cache_get( $user_id, 'cacsp_groups_of_user' );
+
+	if ( false === $group_ids ) {
+		_b( 'cache miss' );
+		$user_groups = groups_get_groups( array(
+			'user_id' => bp_loggedin_user_id(),
+			'update_meta_cache' => false,
+			'show_hidden' => true,
+			'populate_extras' => false,
+		) );
+
+		$group_ids = array();
+		if ( ! empty( $user_groups['groups'] ) ) {
+			$group_ids = array_map( 'intval', wp_list_pluck( $user_groups['groups'], 'id' ) );
+		}
+
+		wp_cache_add( $user_id, $group_ids, 'cacsp_groups_of_user' );
+	} else {
+		_b( 'cache hit' );
+	}
+
+	return array_map( 'intval', $group_ids );
+}
