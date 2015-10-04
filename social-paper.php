@@ -183,7 +183,10 @@ class Social_Paper {
 				require dirname( __FILE__ ) . '/includes/hooks-buddypress-group.php';
 			}
 
-			//require dirname( __FILE__ ) . '/includes/hooks-buddypress-activity.php';
+			if ( bp_is_active( 'activity' ) ) {
+				require dirname( __FILE__ ) . '/includes/hooks-buddypress-activity.php';
+			}
+
 			//require dirname( __FILE__ ) . '/includes/hooks-buddypress-directory.php';
 		}
 	}
