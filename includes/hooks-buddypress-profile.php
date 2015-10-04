@@ -432,7 +432,11 @@ function cacsp_profile_action_handler() {
 		return;
 	}
 
-	$redirect = bp_displayed_user_domain() . 'papers/';
+	if ( false !== strpos( wp_get_referer(), get_post_type_archive_link( 'cacsp_paper' ) ) ) {
+		$redirect = get_post_type_archive_link( 'cacsp_paper' );
+	} else {
+		$redirect = bp_displayed_user_domain() . 'papers/';
+	}
 
 	switch ( bp_current_action() ) {
 		// delete paper
