@@ -133,7 +133,9 @@ class CACSP_Paper {
 			return $this->group_ids;
 		}
 
-		$group_terms = wp_get_object_terms( $this->id, 'cacsp_paper_group' );
+		$group_terms = wp_get_object_terms( $this->id, 'cacsp_paper_group', array(
+			'update_term_meta_cache' => false,
+		) );
 		$group_term_names = wp_list_pluck( $group_terms, 'name' );
 
 		$this->group_ids = array();
