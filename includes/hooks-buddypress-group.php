@@ -101,6 +101,83 @@ function cacsp_register_group_connection_taxonomy() {
 add_action( 'init', 'cacsp_register_group_connection_taxonomy', 15 );
 
 /**
+ * Filter activity query args to include group-connected papers.
+ */
+function cacsp_filter_activity_args_for_groups( $args ) {
+	if ( 'groups' !== $args['object'] || empty( $args['primary_id'] ) ) {
+		return $args;
+	}
+
+	$group_id = (int) $args['primary_id'];
+
+	$group_filter = array(
+		'relation' => 'AND',
+		array(
+			'column' => 'component',
+			'value'  => 'groups',
+		),
+		array(
+			'column' => 'item_id',
+			'value'  => $group_id,
+		),
+	);
+
+	$papers_of_group = get_posts( array(
+		'post_type'      => 'cacsp_paper',
+		'post_status'    => 'publish',
+		'bp_group'       => $group_id,
+		'posts_per_page' => -1,
+		'fields'         => 'ids',
+	) );
+
+	if ( empty( $papers_of_group ) ) {
+		$papers_of_group = array( 0 );
+	}
+
+	$paper_filter = array(
+		'relation' => 'AND',
+		array(
+			'column' => 'component',
+			'value'  => 'activity',
+		),
+		array(
+			'column'   => 'type',
+			'value'    => array( 'new_cacsp_paper' ),
+			'relation' => 'IN',
+		),
+		array(
+			'column'   => 'secondary_item_id',
+			'value'    => $papers_of_group,
+			'relation' => 'IN',
+		),
+	);
+
+	$new_filter_query = array(
+		'relation' => 'OR',
+		$group_filter,
+		$paper_filter,
+	);
+
+	// Merge with existing filters.
+	if ( ! empty( $args['filter_query'] ) ) {
+		$new_filter_query = array(
+			'relation' => 'AND',
+			$new_filter_query,
+			$args['filter_query'],
+		);
+	}
+
+	// Replace in the query args, and remove original group filters.
+	$args['filter_query'] = $new_filter_query;
+	$args['primary_id'] = '';
+	$args['object'] = '';
+	$args['scope'] = '';
+
+	return $args;
+}
+add_filter( 'bp_after_has_activities_parse_args', 'cacsp_filter_activity_args_for_groups' );
+
+/**
  * Generate the group selector interface.
  */
 function cacsp_paper_group_selector( $paper_id ) {
