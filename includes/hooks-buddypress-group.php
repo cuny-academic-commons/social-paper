@@ -104,11 +104,27 @@ add_action( 'init', 'cacsp_register_group_connection_taxonomy', 15 );
  * Filter activity query args to include group-connected papers.
  */
 function cacsp_filter_activity_args_for_groups( $args ) {
-	if ( 'groups' !== $args['object'] || empty( $args['primary_id'] ) ) {
+	if ( 'groups' !== $args['object'] && 'groups' !== $args['scope'] ) {
 		return $args;
 	}
 
-	$group_id = (int) $args['primary_id'];
+	// Distinguish single group streams from "my groups".
+	if ( ! empty( $args['primary_id'] ) ) {
+		$group_ids = array( (int) $args['primary_id'] );
+	} else {
+		// @todo Is there a faster (and better cached) way to do this?
+		$user_groups = groups_get_groups( array(
+			'user_id' => bp_loggedin_user_id(),
+			'update_meta_cache' => false,
+			'show_hidden' => true,
+			'populate_extras' => false,
+		) );
+
+		$group_ids = array();
+		if ( ! empty( $user_groups['groups'] ) ) {
+			$group_ids = array_map( 'intval', wp_list_pluck( $user_groups['groups'], 'id' ) );
+		}
+	}
 
 	$group_filter = array(
 		'relation' => 'AND',
@@ -116,11 +132,16 @@ function cacsp_filter_activity_args_for_groups( $args ) {
 			'column' => 'component',
 			'value'  => 'groups',
 		),
-		array(
-			'column' => 'item_id',
-			'value'  => $group_id,
-		),
 	);
+
+	// Only bother doing a group_id clause if this is a single group, or my-groups of a logged-in user.
+	if ( ! empty( $group_ids ) ) {
+		$group_filter[] = array(
+			'column'  => 'item_id',
+			'value'   => $group_ids,
+			'compare' => 'IN',
+		);
+	}
 
 	$papers_of_group = get_posts( array(
 		'post_type'      => 'cacsp_paper',
