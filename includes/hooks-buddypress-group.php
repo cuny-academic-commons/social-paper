@@ -141,14 +141,14 @@ function cacsp_filter_activity_args_for_groups( $args ) {
 			'value'  => 'activity',
 		),
 		array(
-			'column'   => 'type',
-			'value'    => array( 'new_cacsp_paper' ),
-			'relation' => 'IN',
+			'column'  => 'type',
+			'value'   => array( 'new_cacsp_paper' ),
+			'compare' => 'IN',
 		),
 		array(
-			'column'   => 'secondary_item_id',
-			'value'    => $papers_of_group,
-			'relation' => 'IN',
+			'column'  => 'secondary_item_id',
+			'value'   => $papers_of_group,
+			'compare' => 'IN',
 		),
 	);
 
