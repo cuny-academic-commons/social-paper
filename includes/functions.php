@@ -96,6 +96,17 @@ function cacsp_is_archive() {
 }
 
 /**
+ * Is the paper Protected?
+ *
+ * @param int $paper_id ID of the paper.
+ * @return bool
+ */
+function cacsp_paper_is_protected( $paper_id ) {
+	return true;
+	return (bool) get_post_meta( $paper_id, 'cacsp_paper_is_protected', true );
+}
+
+/**
  * Template tag to output pagination on archive page.
  *
  * Pagination resembles the markup from BuddyPress.

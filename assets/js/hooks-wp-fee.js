@@ -49,7 +49,6 @@ jQuery(document).ready( function($) {
 
 		}
 
-
 		// Toggle Settings sidebar.
 		$sidebar.addClass( 'toggle-on' );
 		$settings_toggle.addClass( 'active' );
@@ -137,6 +136,15 @@ jQuery(document).ready( function($) {
 			return $( '#cacsp-group-selector' ).val();
 		};
 
+		// Reader selection nonce.
+		wp.fee.post.social_paper_readers_nonce = function() {
+			return $( '#cacsp-reader-selector-nonce' ).val();
+		};
+
+		// Reader selection.
+		wp.fee.post.social_paper_readers = function() {
+			return $( '#cacsp-reader-selector' ).val();
+		};
 	});
 
 	/**

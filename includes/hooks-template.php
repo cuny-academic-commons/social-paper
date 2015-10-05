@@ -196,6 +196,7 @@ function cacsp_asset_enqueue_handler() {
 
 	wp_localize_script( 'social-paper-single', 'SocialPaperL18n', array(
 		'group_placeholder' => __( 'Enter a group name', 'social-paper' ),
+		'reader_placeholder' => __( 'Enter a user name', 'social-paper' ),
 	) );
 }
 add_action( 'wp_enqueue_scripts', 'cacsp_asset_enqueue_handler', 999 );
