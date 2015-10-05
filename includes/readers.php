@@ -8,13 +8,27 @@
  * Generate the reader selector interface.
  */
 function cacsp_paper_reader_selector( $paper_id ) {
+	global $wpdb;
+
+	// Get a list of readers, friends, and co-group-members to prime selectbox.
+	// @todo Add AJAX support.
 	$paper = new CACSP_Paper( $paper_id );
 	$paper_reader_ids = $paper->get_reader_ids();
 
-	// Get a list of readers + friends, to pre-fill selectbox.
+	$groups_of_user = cacsp_get_groups_of_user( bp_loggedin_user_id() );
+
+	// So dirty.
+	$bp = buddypress();
+	$group_member_ids = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$bp->groups->table_name_members} WHERE group_id IN (" . implode( ',', $groups_of_user ) . ") AND user_id != %d AND is_banned = 0 AND is_confirmed = 1", bp_loggedin_user_id() ) );
+	$group_member_ids = array_map( 'intval', $group_member_ids );
+
+	$friend_member_ids = array();
+	if ( bp_is_active( 'friends' ) ) {
+		$friend_member_ids = friends_get_friend_user_ids( bp_loggedin_user_id() );
+	}
+
 	$users = bp_core_get_users( array(
-		'user_id' => bp_loggedin_user_id(),
-		'include' => $paper_reader_ids,
+		'include' => array_merge( $paper_reader_ids, $group_member_ids, $friend_member_ids ),
 		'type' => 'alphabetical',
 	) );
 
@@ -36,7 +50,6 @@ function cacsp_paper_reader_selector( $paper_id ) {
 					'text' => stripslashes( $user->display_name ),
 				);
 			}
-
 		}
 	}
 
