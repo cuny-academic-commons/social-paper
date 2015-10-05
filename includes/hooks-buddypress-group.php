@@ -101,6 +101,53 @@ function cacsp_register_group_connection_taxonomy() {
 add_action( 'init', 'cacsp_register_group_connection_taxonomy', 15 );
 
 /**
+ * Modify `WP_Query` requests for the 'bp_group' param.
+ *
+ * @param WP_Query Query object, passed by reference.
+ */
+function cacsp_filter_query_for_bp_group( $query ) {
+	// Only modify 'event' queries.
+	$post_types = $query->get( 'post_type' );
+	if ( ! in_array( 'cacsp_paper', (array) $post_types ) ) {
+		return;
+	}
+
+	$bp_group = $query->get( 'bp_group', null );
+	if ( null === $bp_group ) {
+		return;
+	}
+
+	if ( ! is_array( $bp_group ) ) {
+		$group_ids = array( $bp_group );
+	} else {
+		$group_ids = $bp_group;
+	}
+
+	// Empty array will always return no results.
+	if ( empty( $group_ids ) ) {
+		$query->set( 'post__in', array( 0 ) );
+		return;
+	}
+
+	// Convert group IDs to a tax query.
+	$tq = $query->get( 'tax_query' );
+	$group_terms = array();
+	foreach ( $group_ids as $group_id ) {
+		$group_terms[] = 'group_' . $group_id;
+	}
+
+	$tq[] = array(
+		'taxonomy' => 'cacsp_paper_group',
+		'terms' => $group_terms,
+		'field' => 'name',
+		'operator' => 'IN',
+	);
+
+	$query->set( 'tax_query', $tq );
+}
+add_action( 'pre_get_posts', 'cacsp_filter_query_for_bp_group' );
+
+/**
  * Filter activity query args to include group-connected papers.
  */
 function cacsp_filter_activity_args_for_groups( $args ) {
