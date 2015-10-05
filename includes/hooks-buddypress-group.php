@@ -387,7 +387,6 @@ function cacsp_get_groups_of_user( $user_id ) {
 	$group_ids = wp_cache_get( $user_id, 'cacsp_groups_of_user' );
 
 	if ( false === $group_ids ) {
-		_b( 'cache miss' );
 		$user_groups = groups_get_groups( array(
 			'user_id' => bp_loggedin_user_id(),
 			'update_meta_cache' => false,
@@ -401,8 +400,6 @@ function cacsp_get_groups_of_user( $user_id ) {
 		}
 
 		wp_cache_add( $user_id, $group_ids, 'cacsp_groups_of_user' );
-	} else {
-		_b( 'cache hit' );
 	}
 
 	return array_map( 'intval', $group_ids );
