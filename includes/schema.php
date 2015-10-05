@@ -247,3 +247,58 @@ function cacsp_map_extra_meta_caps( $caps, $cap, $user_id, $args ) {
 	return apply_filters( 'cacsp_map_extra_meta_caps', array( 'exist' ), $caps, $cap, $user );
 }
 add_filter( 'map_meta_cap', 'cacsp_map_extra_meta_caps', 15, 4 );
+
+/**
+ * Access protection for WP_Query loops.
+ *
+ * @param WP_Query $query Query.
+ */
+function cacsp_filter_query_for_access_protection( $query ) {
+	// Sanity check - in case a query's being run before our taxonomies are registered.
+	if ( ! taxonomy_exists( 'cacsp_paper_status' ) ) {
+		return;
+	}
+
+	// Only modify 'paper' queries.
+	$post_types = $query->get( 'post_type' );
+	if ( ! in_array( 'cacsp_paper', (array) $post_types ) ) {
+		return;
+	}
+
+	// Get protected papers.
+	remove_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
+	$protected = new WP_Query( array(
+		'post_type' => 'cacsp_paper',
+		'post_status' => 'any',
+		'tax_query' => array(
+			'relation' => 'AND',
+			array(
+				'taxonomy' => 'cacsp_paper_status',
+				'terms' => array( 'protected' ),
+				'field' => 'name',
+			),
+			array(
+				'taxonomy' => 'cacsp_paper_reader',
+				'terms' => array( 'reader_' . get_current_user_id() ),
+				'field' => 'name',
+				'operator' => 'NOT IN',
+			),
+		),
+		'author__not_in' => get_current_user_id(),
+		'fields' => 'ids',
+		'nopaging' => true,
+		'orderby' => false,
+	) );
+	add_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
+
+	// No protected papers? Nothing to do here.
+	if ( empty( $protected->posts ) ) {
+		return;
+	}
+
+	// Merge with query var.
+	$post__not_in = $query->get( 'post__not_in' );
+	$post__not_in = array_merge( (array) $post__not_in, $protected->posts );
+	$query->set( 'post__not_in', $post__not_in );
+}
+add_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
