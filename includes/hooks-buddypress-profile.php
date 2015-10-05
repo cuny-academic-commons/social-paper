@@ -78,8 +78,7 @@ class CACSP_Profile {
 		}
 
 		$parent_url = trailingslashit( $user_domain . $this->slug );
-		$class    = ( 0 === $count ) ? 'no-count' : 'count';
-		$nav_text = sprintf( __( 'Papers', 'social-paper' ), esc_attr( $class ) );
+		$nav_text = __( 'Papers', 'social-paper' );
 
 		// create primary nav
 		bp_core_new_nav_item( array(
