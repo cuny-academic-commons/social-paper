@@ -74,6 +74,11 @@ function cacsp_register_taxonomies() {
 	register_taxonomy( 'cacsp_paper_reader', 'cacsp_paper', array(
 		'public' => false,
 	) );
+
+	// Protected status. We use a taxonomy to make it easier to cobble together tax queries.
+	register_taxonomy( 'cacsp_paper_status', 'cacsp_paper', array(
+		'public' => false,
+	) );
 }
 
 /**
@@ -175,17 +180,31 @@ function cacsp_map_extra_meta_caps( $caps, $cap, $user_id, $args ) {
 			break;
 
 		case 'read_paper' :
-			if ( get_post( $args[0] )->post_status === 'publish' ) {
-				return array( 'exist' );
-			}
-
 			// Make sure authors can view their own post
 			if ( (int) get_post( $args[0] )->post_author === $user_id ) {
 				return array( 'exist' );
 			}
 
-			return $caps;
-			break;
+			$post_id = $args[0];
+
+			if ( ! cacsp_paper_is_protected( $post_id ) ) {
+				return array( 'exist' );
+			} else {
+				$paper = new CACSP_Paper( $post_id );
+				$paper_reader_ids = $paper->get_reader_ids();
+
+				if ( in_array( get_current_user_id(), $paper_reader_ids, true ) ) {
+					return array( 'exist' );
+				} elseif ( function_exists( 'bp_is_active' ) && bp_is_active( 'groups' ) ) {
+					$paper_group_ids = $paper->get_group_ids();
+					$user_group_ids = cacsp_get_groups_of_user( get_current_user_id() );
+					if ( array_intersect( $paper_group_ids, $user_group_ids ) ) {
+						return array( 'exist' );
+					}
+				}
+			}
+
+			return array( 'do_not_allow' );
 
 		// allow files to be uploaded via AJAX
 		case 'upload_files' :

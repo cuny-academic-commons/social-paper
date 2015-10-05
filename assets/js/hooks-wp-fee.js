@@ -24,6 +24,17 @@ jQuery(document).ready( function($) {
 			$sidebar.toggleClass( 'toggle-on' );
 			$( e.target ).toggleClass( 'active' );
 		} );
+
+		// Set up Readers hide/show.
+		$readers_subsection = $( '.sidebar-section-subsection-readers' );
+		$( 'input[name="cacsp-paper-status"]' ).on( 'change', function() {
+			var self = $(this);
+			if ( 'public' === self.val() ) {
+				$readers_subsection.addClass( 'hidden' );
+			} else {
+				$readers_subsection.removeClass( 'hidden' );
+			}
+		} );
 	} );
 
 	/**
@@ -125,6 +136,16 @@ jQuery(document).ready( function($) {
 			tinymce.activeEditor.setContent( items.html(), {format : 'html'} );
 
 		}
+
+		// Paper status nonce.
+		wp.fee.post.social_paper_status_nonce = function() {
+			return $( '#cacsp-paper-status-nonce' ).val();
+		};
+
+		// Paper status.
+		wp.fee.post.social_paper_status = function() {
+			return $( 'input[name="cacsp-paper-status"]:checked' ).val();
+		};
 
 		// Group association nonce.
 		wp.fee.post.social_paper_groups_nonce = function() {

@@ -113,3 +113,29 @@ function cacsp_save_reader_connection( $post_id ) {
 	// Can't do much with results :(
 }
 add_action( 'save_post', 'cacsp_save_reader_connection' );
+
+/**
+ * Save paper status setting data sent via AJAX.
+ *
+ * @param int $post_id ID of the post.
+ */
+function cacsp_save_paper_status( $post_id ) {
+	if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+		return;
+	}
+
+	if ( ! isset( $_POST['social_paper_status_nonce'] ) || ! isset( $_POST['social_paper_status'] ) ) {
+		return;
+	}
+
+	if ( ! wp_verify_nonce( $_POST['social_paper_status_nonce'], 'cacsp-paper-status' ) ) {
+		return;
+	}
+
+	if ( 'protected' === $_POST['social_paper_status'] ) {
+		wp_set_object_terms( $post_id, 'protected', 'cacsp_paper_status', false );
+	} else {
+		wp_remove_object_terms( $post_id, 'protected', 'cacsp_paper_status' );
+	}
+}
+add_action( 'save_post', 'cacsp_save_paper_status' );

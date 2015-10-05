@@ -102,8 +102,21 @@ function cacsp_is_archive() {
  * @return bool
  */
 function cacsp_paper_is_protected( $paper_id ) {
-	return true;
-	return (bool) get_post_meta( $paper_id, 'cacsp_paper_is_protected', true );
+	$status = wp_get_object_terms( $paper_id, 'cacsp_paper_status', array(
+		'update_term_meta_cache' => false,
+	) );
+
+	$protected = false;
+	if ( ! empty( $status ) ) {
+		foreach ( $status as $_status ) {
+			if ( 'protected' === $_status->name ) {
+				$protected = true;
+				break;
+			}
+		}
+	}
+
+	return $protected;
 }
 
 /**

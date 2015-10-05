@@ -467,3 +467,25 @@ function _cacsp_bp_dtheme_overrides() {
 	remove_action( 'comment_form', 'bp_dtheme_after_comment_form' );
 }
 add_action( 'wp', '_cacsp_bp_dtheme_overrides' );
+
+/**
+ * Access protection for single papers.
+ *
+ */
+function cacsp_access_protection() {
+	$post = get_queried_object();
+
+	if ( ! ( $post instanceof WP_Post ) || 'cacsp_paper' !== $post->post_type ) {
+		return;
+	}
+
+	if ( ! current_user_can( 'read_paper', $post->ID ) ) {
+		if ( function_exists( 'bp_core_add_message' ) ) {
+			bp_core_add_message( __( 'You do not have access to read that paper.', 'social-paper' ), 'error' );
+		}
+
+		wp_redirect( get_post_type_archive_link( 'cacsp_paper' ) );
+		die();
+	}
+}
+add_action( 'template_redirect', 'cacsp_access_protection' );
