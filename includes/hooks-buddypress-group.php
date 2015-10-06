@@ -237,6 +237,8 @@ add_filter( 'bp_after_has_activities_parse_args', 'cacsp_filter_activity_args_fo
 /**
  * Format activity actions for papers connected to groups.
  *
+ * Disabled for the time being. Not sure if it's valuable information.
+ *
  * @param string      $action      Formatted action string.
  * @param obj         $activity    Activity item.
  * @param CACSP_Paper $paper       Paper object.
@@ -337,7 +339,7 @@ function cacsp_format_activity_action_for_group( $action, $activity, CACSP_Paper
 
 	return $action;
 }
-add_filter( 'cacsp_format_activity_action', 'cacsp_format_activity_action_for_group', 10, 6 );
+//add_filter( 'cacsp_format_activity_action', 'cacsp_format_activity_action_for_group', 10, 6 );
 
 /**
  * Generate the group selector interface.
