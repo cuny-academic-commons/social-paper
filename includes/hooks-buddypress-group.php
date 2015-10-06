@@ -306,31 +306,33 @@ function cacsp_format_activity_action_for_group( $action, $activity, CACSP_Paper
 
 	// @todo Other activity types.
 	// 1, 2, 3 groups: show all. 4+ groups: show first two + "and x more groups".
-	if ( count( $links ) === 1 ) {
-		$action = sprintf(
-			__( '%1$s created a new paper %2$s in the group %3$s', 'social-paper' ),
-			$user_link,
-			sprintf( '<a href="%s">%s</a>', esc_url( $paper_link ), esc_html( $paper_title ) ),
-			implode( '', $links )
-		);
+	if ( 'new_cacsp_paper' === $activity->type ) {
+		if ( count( $links ) === 1 ) {
+			$action = sprintf(
+				__( '%1$s created a new paper %2$s in the group %3$s', 'social-paper' ),
+				$user_link,
+				sprintf( '<a href="%s">%s</a>', esc_url( $paper_link ), esc_html( $paper_title ) ),
+				implode( '', $links )
+			);
 
-	} elseif ( count( $links ) <= 3 ) {
-		$action = sprintf(
-			_n( '%1$s created a new paper %2$s in the group %3$s', '%1$s created a new paper in the groups %3$s', count( $links ), 'social-paper' ),
-			$user_link,
-			sprintf( '<a href="%s">%s</a>', esc_url( $paper_link ), esc_html( $paper_title ) ),
-			implode( ', ', $links )
-		);
+		} elseif ( count( $links ) <= 3 ) {
+			$action = sprintf(
+				_n( '%1$s created a new paper %2$s in the group %3$s', '%1$s created a new paper in the groups %3$s', count( $links ), 'social-paper' ),
+				$user_link,
+				sprintf( '<a href="%s">%s</a>', esc_url( $paper_link ), esc_html( $paper_title ) ),
+				implode( ', ', $links )
+			);
 
-	} else {
-		$remainder = count( $links ) - 2;
-		$action = sprintf(
-			_n( '%1$s created a new paper %2$s in %3$s and %4$s more group', '%1$s created a new paper in %3$s and %4$s more groups', $remainder, 'social-paper' ),
-			$user_link,
-			sprintf( '<a href="%s">%s</a>', esc_url( $paper_link ), esc_html( $paper_title ) ),
-			implode( ', ', array_slice( $links, 0, 2 ) ),
-			number_format_i18n( $remainder )
-		);
+		} else {
+			$remainder = count( $links ) - 2;
+			$action = sprintf(
+				_n( '%1$s created a new paper %2$s in %3$s and %4$s more group', '%1$s created a new paper in %3$s and %4$s more groups', $remainder, 'social-paper' ),
+				$user_link,
+				sprintf( '<a href="%s">%s</a>', esc_url( $paper_link ), esc_html( $paper_title ) ),
+				implode( ', ', array_slice( $links, 0, 2 ) ),
+				number_format_i18n( $remainder )
+			);
+		}
 	}
 
 	return $action;
