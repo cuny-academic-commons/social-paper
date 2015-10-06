@@ -27,6 +27,15 @@ function cacsp_register_activity_actions() {
 		__( 'Paper edits', 'social-paper' ),
 		array( 'activity', 'member', 'group', 'member_groups' )
 	);
+
+	bp_activity_set_action(
+		'groups',
+		'cacsp_paper_added_to_group',
+		__( 'Papers added to groups', 'social-paper' ),
+		'cacsp_format_activity_action',
+		__( 'Papers added to groups', 'social-paper' ),
+		array( 'activity', 'member', 'group', 'member_groups' )
+	);
 }
 add_action( 'bp_register_activity_actions', 'cacsp_register_activity_actions' );
 
@@ -88,6 +97,21 @@ function cacsp_format_activity_action( $action, $activity ) {
 			);
 			break;
 
+		case 'cacsp_paper_added_to_group' :
+			if ( ! bp_is_active( 'groups' ) ) {
+				return $action;
+			}
+
+			$group = groups_get_group( array( 'group_id' => $activity->item_id ) );
+
+			$action = sprintf(
+				__( '%1$s added the paper %2$s to the group %3$s', 'social-paper' ),
+				$user_link,
+				sprintf( '<a href="%s">%s</a>', esc_url( $paper_link ), esc_html( $paper_title ) ),
+				sprintf( '<a href="%s">%s</a>', esc_url( bp_get_group_permalink( $group ) ), esc_html( stripslashes( $group->name ) ) )
+			);
+
+			break;
 		default :
 			return $action;
 	}

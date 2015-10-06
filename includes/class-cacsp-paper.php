@@ -93,6 +93,14 @@ class CACSP_Paper {
 		if ( is_wp_error( $set ) || empty( $set ) ) {
 			return $set;
 		} else {
+			/**
+			 * Fires when a paper has been connected to a group.
+			 *
+			 * @param CACSP_Paper $paper    Paper object.
+			 * @param int         $group_id ID of the group.
+			 */
+			do_action( 'cacsp_connected_paper_to_group', $this, $group_id );
+
 			return true;
 		}
 	}

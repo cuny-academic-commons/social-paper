@@ -235,6 +235,47 @@ function cacsp_filter_activity_args_for_groups( $args ) {
 add_filter( 'bp_after_has_activities_parse_args', 'cacsp_filter_activity_args_for_groups' );
 
 /**
+ * Create an activity item when a paper is added to a group.
+ *
+ * @param CACSP_Paper $paper    Paper object.
+ * @param int         $group_id ID of the group.
+ */
+function cacsp_create_added_to_group_activity( CACSP_Paper $paper, $group_id ) {
+	// The author of the edit is the one who wrote the last revision.
+	if ( $revisions = wp_get_post_revisions( $paper->ID ) ) {
+		// Grab the last revision, but not an autosave.
+		foreach ( $revisions as $revision ) {
+			if ( false !== strpos( $revision->post_name, "{$revision->post_parent}-revision" ) ) {
+				$last_revision = $revision;
+				break;
+			}
+		}
+	}
+
+	// Either revisions are disabled, or something else has gone wrong. Just use the post author.
+	if ( ! isset( $last_revision ) ) {
+		$rev_author = $post_after->post_author;
+	} else {
+		$rev_author = $last_revision->post_author;
+	}
+
+	$group = groups_get_group( array( 'group_id' => $group_id ) );
+
+	$activity_id = bp_activity_add( array(
+		'component'         => 'groups',
+		'type'              => 'cacsp_paper_added_to_group',
+		'primary_link'      => get_permalink( $paper->ID ),
+		'user_id'           => $rev_author,
+		'item_id'           => $group_id,
+		'secondary_item_id' => $paper->ID,
+		'hide_sitewide'     => 'public' !== $group->status,
+	) );
+
+	return $activity_id;
+}
+add_action( 'cacsp_connected_paper_to_group', 'cacsp_create_added_to_group_activity', 10, 2 );
+
+/**
  * Format activity actions for papers connected to groups.
  *
  * Disabled for the time being. Not sure if it's valuable information.
