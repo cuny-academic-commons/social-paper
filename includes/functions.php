@@ -120,6 +120,56 @@ function cacsp_paper_is_protected( $paper_id ) {
 }
 
 /**
+ * Get IDs of papers that are protected to the user, ie those they don't have access to.
+ *
+ * As a hack, we cache using the 'last_changed' incrementor from the 'posts' group.
+ *
+ * @param int $user_id ID of the user.
+ * @return array Array of post IDs that are off-limits to the user.
+ */
+function cacsp_get_protected_papers_for_user( $user_id ) {
+	$last_changed = wp_cache_get( 'last_changed', 'posts' );
+	if ( ! $last_changed ) {
+		$last_changed = microtime();
+		wp_cache_set( 'last_changed', $last_changed, 'posts' );
+	}
+
+	$cache_key = 'cacsp_protected_papers:' . $user_id . ':' . $last_changed;
+	$protected_paper_ids = wp_cache_get( $cache_key, 'posts' );
+
+	if ( false === $protected_paper_ids ) {
+		remove_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
+		$protected = new WP_Query( array(
+			'post_type' => 'cacsp_paper',
+			'post_status' => 'any',
+			'tax_query' => array(
+				'relation' => 'AND',
+				array(
+					'taxonomy' => 'cacsp_paper_status',
+					'terms' => array( 'protected' ),
+					'field' => 'name',
+				),
+				array(
+					'taxonomy' => 'cacsp_paper_reader',
+					'terms' => array( 'reader_' . get_current_user_id() ),
+					'field' => 'name',
+					'operator' => 'NOT IN',
+				),
+			),
+			'author__not_in' => get_current_user_id(),
+			'fields' => 'ids',
+			'nopaging' => true,
+			'orderby' => false,
+		) );
+		add_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
+
+		wp_cache_set( $cache_key, $protected->posts, 'posts' );
+	}
+
+	return array_map( 'intval', $protected_paper_ids );
+}
+
+/**
  * Template tag to output pagination on archive page.
  *
  * Pagination resembles the markup from BuddyPress.

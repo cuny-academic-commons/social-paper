@@ -265,40 +265,11 @@ function cacsp_filter_query_for_access_protection( $query ) {
 		return;
 	}
 
-	// Get protected papers.
-	remove_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
-	$protected = new WP_Query( array(
-		'post_type' => 'cacsp_paper',
-		'post_status' => 'any',
-		'tax_query' => array(
-			'relation' => 'AND',
-			array(
-				'taxonomy' => 'cacsp_paper_status',
-				'terms' => array( 'protected' ),
-				'field' => 'name',
-			),
-			array(
-				'taxonomy' => 'cacsp_paper_reader',
-				'terms' => array( 'reader_' . get_current_user_id() ),
-				'field' => 'name',
-				'operator' => 'NOT IN',
-			),
-		),
-		'author__not_in' => get_current_user_id(),
-		'fields' => 'ids',
-		'nopaging' => true,
-		'orderby' => false,
-	) );
-	add_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
-
-	// No protected papers? Nothing to do here.
-	if ( empty( $protected->posts ) ) {
-		return;
-	}
+	$protected_post_ids = cacsp_get_protected_papers_for_user( $user_id );
 
 	// Merge with query var.
 	$post__not_in = $query->get( 'post__not_in' );
-	$post__not_in = array_merge( (array) $post__not_in, $protected->posts );
+	$post__not_in = array_merge( (array) $post__not_in, $protected_post_ids );
 	$query->set( 'post__not_in', $post__not_in );
 }
 add_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
