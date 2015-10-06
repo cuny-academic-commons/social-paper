@@ -158,3 +158,38 @@ function cacsp_handle_comment_activity_on_transition_comment_status( $new_status
 	cacsp_create_comment_activity( $comment->comment_ID, $comment );
 }
 add_action( 'transition_comment_status', 'cacsp_handle_comment_activity_on_transition_comment_status', 5, 3 );
+
+/**
+ * Access protection in the activity feed.
+ *
+ * Users should not see activity related to papers to which they do not have access.
+ */
+function cacsp_access_protection_for_activity_feed( $where_conditions ) {
+	$protected_paper_ids = cacsp_get_protected_papers_for_user( bp_loggedin_user_id() );
+	if ( ! $protected_paper_ids ) {
+		return $where_conditions;
+	}
+
+	// DeMorgan says: A & B == ! ( ! A || ! B )
+	$activity_query = new BP_Activity_Query( array(
+		'relation' => 'OR',
+		array(
+			'column' => 'type',
+			'value' => array( 'new_cacsp_post', 'new_cacsp_comment' ),
+			'compare' => 'NOT IN',
+		),
+		array(
+			'column' => 'secondary_item_id',
+			'value' => $protected_paper_ids,
+			'compare' => 'NOT IN',
+		),
+	) );
+	$aq_sql = $activity_query->get_sql();
+
+	if ( $aq_sql ) {
+		$where_conditions[] = $aq_sql;
+	}
+
+	return $where_conditions;
+}
+add_filter( 'bp_activity_get_where_conditions', 'cacsp_access_protection_for_activity_feed' );
