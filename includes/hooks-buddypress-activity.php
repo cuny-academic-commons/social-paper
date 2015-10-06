@@ -313,7 +313,7 @@ function cacsp_access_protection_for_activity_feed( $where_conditions ) {
 		'relation' => 'OR',
 		array(
 			'column' => 'type',
-			'value' => array( 'new_cacsp_post', 'new_cacsp_comment' ),
+			'value' => array( 'new_cacsp_post', 'new_cacsp_comment', 'new_cacsp_edit', 'cacsp_paper_added_to_group' ),
 			'compare' => 'NOT IN',
 		),
 		array(
