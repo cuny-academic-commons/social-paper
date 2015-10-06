@@ -130,6 +130,16 @@ class CACSP_Paper {
 
 		$this->group_ids = null;
 
+		if ( $removed && ! is_wp_error( $removed ) ) {
+			/**
+			 * Fires when a paper has been disconnected from a group.
+			 *
+			 * @param CACSP_Paper $paper    Paper object.
+			 * @param int         $group_id ID of the group.
+			 */
+			do_action( 'cacsp_disconnected_paper_from_group', $this, $group_id );
+		}
+
 		return $removed;
 	}
 

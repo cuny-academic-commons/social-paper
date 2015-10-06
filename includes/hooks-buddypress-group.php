@@ -276,6 +276,29 @@ function cacsp_create_added_to_group_activity( CACSP_Paper $paper, $group_id ) {
 add_action( 'cacsp_connected_paper_to_group', 'cacsp_create_added_to_group_activity', 10, 2 );
 
 /**
+ * When a paper is disconnected from a group, remove the "added to group" activity item.
+ *
+ * @param CACSP_Paper $paper    Paper object.
+ * @param int         $group_id ID of the group.
+ */
+function cacsp_remove_added_to_group_activity( CACSP_Paper $paper, $group_id ) {
+	$activity = bp_activity_get( array(
+		'filter_query' => array(
+			array( 'column' => 'component', 'value' => 'groups' ),
+			array( 'column' => 'type', 'value' => 'cacsp_paper_added_to_group' ),
+			array( 'column' => 'item_id', 'value' => $group_id ),
+			array( 'column' => 'secondary_item_id', 'value' => $paper->ID ),
+		),
+		'update_meta_cache' => false,
+	) );
+
+	foreach ( $activity['activities'] as $a ) {
+		bp_activity_delete( array( 'id' => $a->id ) );
+	}
+}
+add_action( 'cacsp_disconnected_paper_from_group', 'cacsp_remove_added_to_group_activity', 10, 2 );
+
+/**
  * Format activity actions for papers connected to groups.
  *
  * Disabled for the time being. Not sure if it's valuable information.
