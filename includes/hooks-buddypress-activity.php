@@ -170,7 +170,7 @@ function cacsp_access_protection_for_activity_feed( $where_conditions ) {
 		return $where_conditions;
 	}
 
-	// DeMorgan says: A & B == ! ( ! A || ! B )
+	// DeMorgan says: A & B == ( ! A || ! B )
 	$activity_query = new BP_Activity_Query( array(
 		'relation' => 'OR',
 		array(
