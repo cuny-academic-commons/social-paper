@@ -163,7 +163,9 @@ function cacsp_get_protected_papers_for_user( $user_id ) {
 		) );
 		add_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
 
-		wp_cache_set( $cache_key, $protected->posts, 'posts' );
+		$protected_paper_ids = $protected->posts;
+
+		wp_cache_set( $cache_key, $protected_paper_ids, 'posts' );
 	}
 
 	return array_map( 'intval', $protected_paper_ids );

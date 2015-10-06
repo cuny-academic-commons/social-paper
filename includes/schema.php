@@ -265,7 +265,7 @@ function cacsp_filter_query_for_access_protection( $query ) {
 		return;
 	}
 
-	$protected_post_ids = cacsp_get_protected_papers_for_user( $user_id );
+	$protected_post_ids = cacsp_get_protected_papers_for_user( bp_loggedin_user_id() );
 
 	// Merge with query var.
 	$post__not_in = $query->get( 'post__not_in' );
