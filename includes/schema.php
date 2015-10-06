@@ -47,7 +47,7 @@ function cacsp_register_post_types() {
 			'slug' => 'papers',
 			'with_front' => false,
 		),
-		'supports' => array( 'title', 'editor', 'comments', 'thumbnail', 'buddypress-activity' ),
+		'supports' => array( 'title', 'editor', 'comments', 'thumbnail', 'buddypress-activity', 'revisions' ),
 		'has_archive' => true,
 		'bp_activity' => array(
 			'format_callback' => 'cacsp_format_activity_action',
