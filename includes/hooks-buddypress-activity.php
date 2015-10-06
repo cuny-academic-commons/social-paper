@@ -239,8 +239,28 @@ function cacsp_create_edit_activity( $post_id, WP_Post $post_after, WP_Post $pos
 		}
 	}
 
+	// Poor man's diff. https://coderwall.com/p/3j2hxq/find-and-format-difference-between-two-strings-in-php
+	$old = $post_before->post_content;
+	$new = $post_after->post_content;
+
+	$from_start = strspn( $old ^ $new, "\0" );
+	$from_end = strspn( strrev( $old ) ^ strrev( $new ), "\0" );
+
+	$old_end = strlen( $old ) - $from_end;
+	$new_end = strlen( $new ) - $from_end;
+
+	$start = substr( $new, 0, $from_start );
+	$end = substr( $new, $new_end );
+	$new_diff = substr( $new, $from_start, $new_end - $from_start );
+
+	// Take a few words before the diff.
+	$_start = explode( ' ', $start );
+	$_start = implode( ' ', array_slice( $_start, -5 ) );
+
+	$content = bp_create_excerpt( '&hellip;' . $_start . $new_diff . $end );
+
 	$activity_id = bp_activity_add( array(
-		'content'           => bp_create_excerpt( $comment->comment_content ),
+		'content'           => $content,
 		'component'         => 'cacsp',
 		'type'              => 'new_cacsp_edit',
 		'primary_link'      => get_permalink( $post_id ),
