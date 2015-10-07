@@ -16,6 +16,9 @@ function cacsp_paper_reader_selector( $paper_id ) {
 	$paper_reader_ids = $paper->get_reader_ids();
 
 	$groups_of_user = cacsp_get_groups_of_user( bp_loggedin_user_id() );
+	if ( empty( $groups_of_user ) ) {
+		$groups_of_user = array( 0 );
+	}
 
 	// So dirty.
 	$bp = buddypress();
