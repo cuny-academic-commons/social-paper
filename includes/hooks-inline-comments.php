@@ -273,7 +273,7 @@ function cacsp_ic_alter_comment_permalink( $retval, $comment ) {
 	$parent = empty( $comment->comment_parent ) ? $comment->comment_ID : $comment->comment_parent;
 	$comment_parent = get_comment( $comment->comment_parent );
 
-	while ( 0 !== (int) $comment_parent->comment_parent ) {
+	while ( $comment_parent && 0 !== (int) $comment_parent->comment_parent ) {
 		$c = get_comment( $comment_parent );
 		$parent = $c->comment_parent;
 		$comment_parent = get_comment( $c->comment_parent );
