@@ -12,7 +12,19 @@
 function cacsp_after_setup_theme() {
 
 	// enable Featured Images for papers
-	add_theme_support( 'post-thumbnails', array( 'cacsp_paper' ) );
+	// http://wordpress.stackexchange.com/a/23943
+	$support = get_theme_support( 'post-thumbnails' );
+
+	// No support for 'post-thumbnails', so add it.
+	if( false === $support ) {
+		add_theme_support( 'post-thumbnails', array( 'cacsp_paper' ) );
+
+	// Only certain post types have 'post-thumbnails' support.
+	// Add our post type to the list.
+	} elseif ( is_array( $support ) ) {
+		$support[0][] = 'cacsp_paper';
+		add_theme_support( 'post-thumbnails', $support[0] );
+	}
 
 	// define a custom image size, cropped to fit
 	add_image_size(
@@ -23,7 +35,7 @@ function cacsp_after_setup_theme() {
 	);
 
 }
-add_action( 'after_setup_theme', 'cacsp_after_setup_theme' );
+add_action( 'after_setup_theme', 'cacsp_after_setup_theme', 11 );
 
 /**
  * Utility to test for feature image, because has_post_thumbnail() fails sometimes
