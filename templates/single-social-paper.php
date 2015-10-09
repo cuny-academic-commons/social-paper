@@ -27,7 +27,7 @@ while ( have_posts() ) : the_post();
 	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 		<header class="entry-header">
-			<?php if ( cacsp_has_feature_image() ) : ?>
+			<?php if ( cacsp_has_feature_image() && post_type_supports( 'cacsp_paper', 'thumbnail' ) ) : ?>
 				<div class="cacsp_feature_image">
 					<?php echo get_the_post_thumbnail( get_the_ID(), 'cacsp-feature' ); ?>
 				</div>
