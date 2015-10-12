@@ -8,9 +8,47 @@
  */
 
 /**
+ * Create SocialPaper instance
+ */
+var SocialPaper = SocialPaper || {};
+
+// TinyMCE content editor instance
+SocialPaper.editor = {};
+
+/**
  * When the page is ready
  */
 jQuery(document).ready( function($) {
+
+	$(document).on( 'fee-editor-init', function( event ) {
+
+		// store editor in our "global" if not already done
+		if ( $.isEmptyObject( SocialPaper.editor ) ) {
+			SocialPaper.editor = tinyMCE.get( window.wpActiveEditor );
+		}
+
+		// Add the Settings button to fee-toolbar, if necessary.
+		$( '.fee-toolbar' ).prepend( '<div class="fee-toolbar-left"><button class="button button-large fee-button-settings"><div class="dashicons dashicons-admin-generic"></div></button></div>' );
+
+		// Set up Settings toggle.
+		$sidebar = $( '.entry-sidebar' );
+		$settings_toggle = $( '.fee-button-settings' );
+		$settings_toggle.on( 'click', function( e ) {
+			$sidebar.toggleClass( 'toggle-on' );
+			$( e.target ).toggleClass( 'active' );
+		} );
+
+		// Set up Readers hide/show.
+		$readers_subsection = $( '.sidebar-section-subsection-readers' );
+		$( 'input[name="cacsp-paper-status"]' ).on( 'change', function() {
+			var self = $(this);
+			if ( 'public' === self.val() ) {
+				$readers_subsection.addClass( 'hidden' );
+			} else {
+				$readers_subsection.removeClass( 'hidden' );
+			}
+		} );
+	} );
 
 	/**
 	 * Hook into WP FEE activation
@@ -93,7 +131,7 @@ jQuery(document).ready( function($) {
 		if ( window.incom ) {
 
 			// get raw post content and wrap in temporary div
-			items = $('<div>').html( tinymce.activeEditor.getContent() );
+			items = $('<div>').html( SocialPaper.editor.getContent() );
 
 			// strip Inline Comments data attribute
 			items.find( '[data-incom]' ).each( function( i, element ) {
@@ -101,7 +139,7 @@ jQuery(document).ready( function($) {
 			});
 
 			// overwrite current content
-			tinymce.activeEditor.setContent( items.html(), {format : 'html'} );
+			SocialPaper.editor.setContent( items.html(), {format : 'html'} );
 
 		}
 
