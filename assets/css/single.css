@@ -712,16 +712,23 @@ a.comment-edit-link {
 	font-family: 'Open Sans', sans-serif;
 }
 
-#wp-admin-bar-edit {
+#cacsp-edit-paper {
+	top: 10px;
+	position: fixed;
+	right: 10px;
+}
+
+body.admin-bar #cacsp-edit-paper {
+	top: 44px;
+}
+
+#cacsp-edit-paper #wp-admin-bar-edit {
 	background: #eee;
 	border-radius: 6px;
 	color: #0091cd;
 	font-family: sans-serif;
 	padding: 1px 15px;
-	position: fixed;
-	right: 10px;
 	text-decoration: none;
-	top: 10px;
 }
 
 /* always show the FEE toolbar */
