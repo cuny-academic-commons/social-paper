@@ -764,12 +764,16 @@ a.comment-edit-link {
 .fee-url {
 	border: 1px solid #ccc;
 	border-radius: 3px;
-	padding: .25em .5em;
+	padding: .25em .5em !important;
 }
 
 body.fee-on .fee-url {
 	display: block !important;
-	margin-top: -1.25em;
+	height: auto !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+	position: relative;
+	top: -1.25em;
 }
 
 #fee-post-status option[value="pending"],
