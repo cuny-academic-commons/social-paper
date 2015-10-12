@@ -767,6 +767,11 @@ a.comment-edit-link {
 	padding: .25em .5em;
 }
 
+body.fee-on .fee-url {
+	display: block !important;
+	margin-top: -1.25em;
+}
+
 /** WP SIDE COMMENTS **/
 
 #page p.commentable-section.active {
