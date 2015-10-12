@@ -384,3 +384,42 @@ function cacsp_ic_disable() {
 	remove_anonymous_object_filter( 'wp_footer',          'INCOM_Comments',  'generateCommentsAndForm' );
 }
 add_action( 'wp', 'cacsp_ic_disable' );
+
+/**
+ * Update a comment's reference based on data sent via AJAX.
+ */
+function cacsp_social_paper_reassign_comment() {
+	if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+		return;
+	}
+
+	// get incoming data
+	$comment_reference = isset( $_POST[ 'incom_ref' ] ) ? $_POST[ 'incom_ref' ] : '';
+	$comment_id = isset( $_POST[ 'comment_id' ] ) ? $_POST[ 'comment_id' ] : '';
+
+	// init with error message
+	$msg = sprintf( __( 'Comment with ID %d was not updated', 'social-paper' ), $comment_id ) . "\n";
+
+	// sanity check
+	if ( ! empty( $comment_reference ) AND ! empty( $comment_id ) ) {
+
+		// update meta
+		update_comment_meta( $comment_id, 'data_incom', sanitize_text_field( $comment_reference ) );
+
+		// overwrite message
+		$msg = sprintf( __( 'Comment with ID %d has been successfully updated', 'social-paper' ), $comment_id ) . "\n";
+
+	}
+
+	// set reasonable headers
+	header('Content-type: text/plain');
+	header("Cache-Control: no-cache");
+	header("Expires: -1");
+
+	// echo & die
+	echo json_encode( $msg );
+	exit();
+
+}
+
+add_action( 'wp_ajax_cacsp_social_paper_reassign_comment', 'cacsp_social_paper_reassign_comment' );
