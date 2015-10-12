@@ -220,22 +220,27 @@ function cacsp_wp_fee_enqueue_scripts() {
 			'button_disable' => __( 'Disable Editing', 'social-paper' ),
 		) );
 
-		// enqueue script
-		wp_enqueue_script(
-			'social-paper-single-reassign',
-			Social_Paper::$URL . '/assets/js/reassign.js',
-			array( 'jquery', 'jquery-ui-droppable', 'jquery-ui-dialog' ), // load droppable and dialog as dependencies
-			'0.1'
-		);
+		global $post;
+		if ( current_user_can( 'edit_post', $post->ID ) ) {
 
-		// localise
-		wp_localize_script( 'social-paper-single-reassign', 'Social_Paper_Reassign', array(
-			'i18n' => cacsp_wp_fee_localise(),
-			'ajax_url' => admin_url( 'admin-ajax.php' ),
-		) );
+			// enqueue script
+			wp_enqueue_script(
+				'social-paper-single-reassign',
+				Social_Paper::$URL . '/assets/js/reassign.js',
+				array( 'jquery', 'jquery-ui-droppable', 'jquery-ui-dialog' ), // load droppable and dialog as dependencies
+				'0.1'
+			);
 
-		// style for dialog
-		wp_enqueue_style( 'wp-jquery-ui-dialog' );
+			// localise
+			wp_localize_script( 'social-paper-single-reassign', 'Social_Paper_Reassign', array(
+				'i18n' => cacsp_wp_fee_localise(),
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+			) );
+
+			// style for dialog
+			wp_enqueue_style( 'wp-jquery-ui-dialog' );
+
+		}
 
 	}
 
