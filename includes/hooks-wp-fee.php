@@ -220,10 +220,48 @@ function cacsp_wp_fee_enqueue_scripts() {
 			'button_disable' => __( 'Disable Editing', 'social-paper' ),
 		) );
 
+		// enqueue script
+		wp_enqueue_script(
+			'social-paper-single-reassign',
+			Social_Paper::$URL . '/assets/js/reassign.js',
+			array( 'jquery', 'jquery-ui-droppable', 'jquery-ui-dialog' ), // load droppable and dialog as dependencies
+			'0.1'
+		);
+
+		// localise
+		wp_localize_script( 'social-paper-single-reassign', 'Social_Paper_Reassign', array(
+			'i18n' => cacsp_wp_fee_localise(),
+			'ajax_url' => admin_url( 'admin-ajax.php' ),
+		) );
+
+		// style for dialog
+		wp_enqueue_style( 'wp-jquery-ui-dialog' );
+
 	}
 
 }
 add_action( 'wp_enqueue_scripts', 'cacsp_wp_fee_enqueue_scripts', 999 );
+
+/**
+ * Enable translation in the Reassignment Javascript
+ *
+ * @return array $translations The array of translations to pass to the script
+ */
+function cacsp_wp_fee_localise() {
+
+	// init array
+	$translations = array();
+
+	// add translations for comment reassignment
+	$translations['title'] = __( 'Are you sure?', 'social-paper' );
+	$translations['body'] = __( 'Are you sure you want to assign the comment and its replies to the paragraph? This action cannot be undone.', 'social-paper' );
+	$translations['submit'] = __( 'Submitting...', 'social-paper' );
+	$translations['message'] = __( 'Please wait while the comments are reassigned. The page will refresh when this has been done.', 'social-paper' );
+
+	// --<
+	return $translations;
+
+}
 
 /**
  * Add button to WP FEE's toolbar

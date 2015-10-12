@@ -844,3 +844,13 @@ body.fee-on .fee-url {
 	color: #2980b9;
 	font-style: normal;
 }
+
+.selected-dropzone {
+	color: red;
+}
+
+.social_paper_alert_text {
+	font-size: 75%;
+	padding: 0;
+	margin: 0;
+}
