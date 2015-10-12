@@ -23,7 +23,7 @@ jQuery(document).ready( function($) {
 		var draggers, droppers, incom_ref, options, alert_text, div;
 
 		// get all draggable items (top level comments)
-		var draggers = $( 'li.incom.depth-1 > .comment-body .incom-permalink' );
+		draggers = $( 'li.incom.depth-1 > .comment-body .incom-permalink' );
 
 		// make comment reassign button draggable
 		draggers.draggable({
@@ -94,15 +94,10 @@ jQuery(document).ready( function($) {
 	 */
 	function social_paper_incom_comments_dragger_dropped( incom_ref, ui ) {
 
-		// define vars
-		var comment_id, comment_item, comment_to_move, other_comments, comment_list;
+		var comment_id;
 
 		// get comment id
 		comment_id = $(ui.draggable).closest('li.incom').prop('id').split('-')[1];
-
-		// let's see what params we've got
-		console.log( 'incom_ref: ' + incom_ref );
-		console.log( 'comment id: ' + comment_id );
 
 		// post to server
 		$.post(
@@ -116,17 +111,12 @@ jQuery(document).ready( function($) {
 
 			// callback
 			function( data, textStatus ) {
-
-				//console.log( data.msg );
-				//console.log( textStatus );
-
 				// if success, refresh from server
 				if ( textStatus == 'success' ) {
 					document.location.reload( true );
 				} else {
 					console.log( textStatus );
 				}
-
 			},
 
 			'json' // expected format
@@ -138,9 +128,7 @@ jQuery(document).ready( function($) {
 	// first clicked.
 	var social_paper_incom_comments_dragger_inited = false;
 	$(document).on( 'click', '.incom-bubble', function( event ) {
-		console.log('pre');
 		if ( social_paper_incom_comments_dragger_inited === true ) { return; }
-		console.log('post');
 		social_paper_incom_comments_dragger_init();
 		social_paper_incom_comments_dragger_inited = true;
 	});
