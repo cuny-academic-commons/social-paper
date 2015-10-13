@@ -390,26 +390,42 @@ add_action( 'wp', 'cacsp_ic_disable' );
  */
 function cacsp_social_paper_reassign_comment() {
 	if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
-		return;
+		exit();
 	}
 
 	// get incoming data
-	$comment_reference = isset( $_POST[ 'incom_ref' ] ) ? $_POST[ 'incom_ref' ] : '';
-	$comment_id = isset( $_POST[ 'comment_id' ] ) ? $_POST[ 'comment_id' ] : '';
+	$target_reference = isset( $_POST[ 'incom_ref' ] ) ? $_POST[ 'incom_ref' ] : '';
+	$curr_reference   = isset( $_POST[ 'curr_ref' ] ) ? $_POST[ 'curr_ref' ] : '';
 
 	// init with error message
-	$msg = sprintf( __( 'Comment with ID %d was not updated', 'social-paper' ), $comment_id ) . "\n";
+	if ( $target_reference === $curr_reference ) {
+		$msg = __( 'Comments match current paragraph! No updating needed.', 'social-paper' );
+	} else {
+		$msg = __( 'Comments were not moved.', 'social-paper' );
+	}
 
 	// sanity check
-	if ( ! empty( $comment_reference ) AND ! empty( $comment_id ) ) {
+	if ( ! empty( $target_reference ) && ! empty( $curr_reference ) ) {
+		// fetch all comments matching our post ID and comments needing updating
+		$comments = get_comments( array(
+			'post_id'    => $_POST['post_id'],
+			'status'     => 'any',
+			'fields'     => 'ids',
+			'orderby'    => false,
+			'meta_key'   => 'data_incom',
+			'meta_value' => $curr_reference
+		) );
 
-		// update meta
-		update_comment_meta( $comment_id, 'data_incom', sanitize_text_field( $comment_reference ) );
+		foreach ( $comments as $comment_id ) {
+			update_comment_meta( $comment_id, 'data_incom', sanitize_text_field( $target_reference ) );
+		}
 
 		// overwrite message
-		$msg = sprintf( __( 'Comment with ID %d has been successfully updated', 'social-paper' ), $comment_id ) . "\n";
+		$msg = __( 'Comments successfully moved!', 'social-paper' );
 
 	}
+
+	$msg .= "\n";
 
 	// set reasonable headers
 	header('Content-type: text/plain');
