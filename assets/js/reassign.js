@@ -124,6 +124,9 @@ jQuery(document).ready( function($) {
 	$(window).on( "load", function() {
 		social_paper_incom_comments_dragger_init();
 	});
+	$(document).on( 'fee-off', function( event ) {
+		social_paper_incom_comments_dragger_init();
+	});
 
 });
 
