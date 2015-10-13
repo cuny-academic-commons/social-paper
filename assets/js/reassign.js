@@ -20,10 +20,10 @@ jQuery(document).ready( function($) {
 	function social_paper_incom_comments_dragger_init() {
 
 		// define vars
-		var draggers, droppers, incom_ref, options, alert_text, div;
+		var draggers, droppers, incom_ref, options, div;
 
 		// get all draggable items (top level comments)
-		draggers = $( 'li.incom.depth-1 > .comment-body .incom-permalink' );
+		draggers = $( '.incom-bubble' );
 
 		// make comment reassign button draggable
 		draggers.draggable({
@@ -38,12 +38,11 @@ jQuery(document).ready( function($) {
 		droppers.droppable({
 
 			// configure droppers
-			accept: '.incom-permalink',
+			accept: '.incom-bubble',
 			hoverClass: 'selected-dropzone',
 
 			// when the button is dropped
 			drop: function( event, ui ) {
-
 				// get id of dropped-on item
 				incom_ref = $(this).attr('data-incom');
 
@@ -61,7 +60,7 @@ jQuery(document).ready( function($) {
 							$('.ui-dialog-buttonset').hide();
 							$('.ui-dialog-title').html( Social_Paper_Reassign.i18n.submit );
 							$('.social_paper_alert_text').html( Social_Paper_Reassign.i18n.message );
-							social_paper_incom_comments_dragger_dropped( incom_ref, ui );
+							social_paper_incom_comments_dragger_dropped( $( '#comment_post_ID' ).val(), incom_ref, ui.draggable.data( 'incomBubble' ) );
 						},
 						"Cancel": function() {
 							$(this).dialog( 'close' );
@@ -88,16 +87,12 @@ jQuery(document).ready( function($) {
 	/**
 	 * Reassign a comment when dropped.
 	 *
-	 * @param string incom_ref The text signature
-	 * @param object ui The UI element
+	 * @param int    postId      Post ID for the comments.
+	 * @param string targetPara  Paragraph reference of the target.
+	 * @param string draggedPara Paragraph reference for the comments needing to be updated.
 	 * @return void
 	 */
-	function social_paper_incom_comments_dragger_dropped( incom_ref, ui ) {
-
-		var comment_id;
-
-		// get comment id
-		comment_id = $(ui.draggable).closest('li.incom').prop('id').split('-')[1];
+	function social_paper_incom_comments_dragger_dropped( postId, targetPara, draggedPara ) {
 
 		// post to server
 		$.post(
@@ -105,8 +100,9 @@ jQuery(document).ready( function($) {
 
 			{
 				action: 'cacsp_social_paper_reassign_comment', // function in WordPress
-				incom_ref: incom_ref,
-				comment_id: comment_id
+				post_id: postId,
+				incom_ref: targetPara,
+				curr_ref: draggedPara,
 			 },
 
 			// callback
@@ -124,13 +120,9 @@ jQuery(document).ready( function($) {
 		);
 	};
 
-	// slightly hacky way of adding the click listener - done when a bubble is
-	// first clicked.
-	var social_paper_incom_comments_dragger_inited = false;
-	$(document).on( 'click', '.incom-bubble', function( event ) {
-		if ( social_paper_incom_comments_dragger_inited === true ) { return; }
+	// drag 'n' drop time!
+	$(window).on( "load", function() {
 		social_paper_incom_comments_dragger_init();
-		social_paper_incom_comments_dragger_inited = true;
 	});
 
 });
