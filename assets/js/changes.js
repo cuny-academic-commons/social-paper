@@ -349,10 +349,24 @@ jQuery(document).ready( function($) {
 		 * @param object event The TinyMCE event object
 		 */
 		this.handle_PASTE_POST = function( event ) {
+
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_PASTE_POST', event );
 			me.paste_flag = true;
-			return;
+
+			// When cutting and pasting from the same TinyMCE instance, markup
+			// may not be cleaned sufficiently - this can result in the 'style'
+			// and 'data-incom' attributes remaining in the paste content. This
+			// messes up the logic for finding the last identifiable item below.
+
+			// remove class and data-incom attributes from any content
+			items = $('<div>').html( event.node.innerHTML );
+			items.find( '[data-incom]' ).each( function( i, element ) {
+				element.removeAttribute( 'data-incom' );
+				//element.removeAttribute( 'class' );
+			});
+
+			event.node.innerHTML = items.html();
 
 		};
 
