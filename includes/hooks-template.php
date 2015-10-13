@@ -185,6 +185,10 @@ function cacsp_asset_enqueue_handler() {
 		'tinymce-view',
 		'fee',
 		'dashicons',
+
+		// adminbar
+		'admin-bar',
+		'fee-adminbar'
 	);
 
 	// enqueue our styles
@@ -394,22 +398,6 @@ function _cacsp_archive_ob_end( $q ) {
 	cacsp_locate_template( $templates, true );
 }
 add_action( 'loop_end', '_cacsp_archive_ob_end', 999 );
-
-/**
- * Disables the admin bar on single Social Paper pages.
- *
- * Might bring it back later...
- *
- * @access private
- */
-function _cacsp_disable_admin_bar_on_social_paper_pages() {
-	if ( ! cacsp_is_page() ) {
-		return;
-	}
-
-	add_filter( 'show_admin_bar', '__return_false' );
-}
-add_action( 'wp', '_cacsp_disable_admin_bar_on_social_paper_pages' );
 
 /**
  * Add a generic title in the loop if no title is added for a paper.

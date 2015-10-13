@@ -750,16 +750,23 @@ a.comment-edit-link {
 	font-family: 'Open Sans', sans-serif;
 }
 
-#wp-admin-bar-edit {
+#cacsp-edit-paper {
+	top: 10px;
+	position: fixed;
+	right: 10px;
+}
+
+body.admin-bar #cacsp-edit-paper {
+	top: 44px;
+}
+
+#cacsp-edit-paper #wp-admin-bar-edit {
 	background: #eee;
 	border-radius: 6px;
 	color: #0091cd;
 	font-family: sans-serif;
 	padding: 1px 15px;
-	position: fixed;
-	right: 10px;
 	text-decoration: none;
-	top: 10px;
 }
 
 /* always show the FEE toolbar */
@@ -806,7 +813,21 @@ a.comment-edit-link {
 .fee-url {
 	border: 1px solid #ccc;
 	border-radius: 3px;
-	padding: .25em .5em;
+	padding: .25em .5em !important;
+}
+
+body.fee-on .fee-url {
+	display: block !important;
+	height: auto !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+	position: relative;
+	top: -1.25em;
+}
+
+#fee-post-status option[value="pending"],
+#fee-post-visibility option[value="sticky"] {
+	display: none;
 }
 
 /** WP SIDE COMMENTS **/
