@@ -868,7 +868,13 @@ jQuery(document).ready( function($) {
 		 * the content of the editor. Simple, but effective!
 		 */
 		this.copy_original = function() {
+
+			// replace content of editor with original
 			me.instance.setContent( $('.fee-content-original').html(), {format : 'html'} );
+
+			// clear the undo queue so we can't undo beyond here
+			me.instance.undoManager.clear();
+
 		};
 
 	};
