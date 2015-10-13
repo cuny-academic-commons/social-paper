@@ -526,3 +526,45 @@ function cacsp_social_paper_reassign_comment() {
 }
 
 add_action( 'wp_ajax_cacsp_social_paper_reassign_comment', 'cacsp_social_paper_reassign_comment' );
+
+/**
+ * Update comment references based on data sent via AJAX.
+ *
+ * @param int $post_id ID of the post.
+ */
+function cacsp_update_comment_references( $post_id ) {
+	if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+		return;
+	}
+
+	// bail unless we get a populated array
+	if (
+		! isset( $_POST['social_paper_comments'] ) ||
+		! is_array( $_POST['social_paper_comments'] ) ||
+		count( $_POST['social_paper_comments'] ) == 0	) {
+		return;
+	}
+
+	/*
+	if ( ! wp_verify_nonce( $_POST['social_paper_comments_nonce'], 'cacsp-social-paper-comments' ) ) {
+		return;
+	}
+	*/
+
+	// update comment meta for each changed comment
+	foreach( $_POST['social_paper_comments'] AS $comment_data ) {
+
+		// get comment ID from exploded array
+		$comment_id_array = explode( '-', $comment_data['comment_id'] );
+		$comment_id = isset( $comment_id_array[1] ) ? (int) $comment_id_array[1] : 0;
+
+		// sanity check
+		if ( $comment_id === 0 ) continue;
+
+		// update comment meta
+		update_comment_meta( $comment_id, 'data_incom', sanitize_text_field( $comment_data['new_value'] ) );
+
+	}
+
+}
+add_action( 'save_post', 'cacsp_update_comment_references' );
