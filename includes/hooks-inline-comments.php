@@ -405,7 +405,7 @@ function cacsp_social_paper_reassign_comment() {
 	}
 
 	// sanity check
-	if ( ! empty( $target_reference ) && ! empty( $curr_reference ) ) {
+	if ( ! empty( $target_reference ) && ! empty( $curr_reference ) && $target_reference !== $curr_reference ) {
 		// fetch all comments matching our post ID and comments needing updating
 		$comments = get_comments( array(
 			'post_id'    => $_POST['post_id'],
