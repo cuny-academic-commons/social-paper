@@ -220,6 +220,14 @@ function cacsp_wp_fee_enqueue_scripts() {
 			'button_disable' => __( 'Disable Editing', 'social-paper' ),
 		) );
 
+		// enqueue change tracking script
+		wp_enqueue_script(
+			'social-paper-single-changes',
+			Social_Paper::$URL . '/assets/js/changes.js',
+			array( 'social-paper-single-fee' ), // make dependent on our main script above
+			'0.1'
+		);
+
 		global $post;
 		if ( current_user_can( 'edit_post', $post->ID ) ) {
 
