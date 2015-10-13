@@ -313,6 +313,12 @@ jQuery(document).ready( function($) {
 				me.handle_PASTE_COMPLETE( event );
 			});
 
+			// handle undo & redo
+			me.instance.on( 'undo redo', function( event ) {
+				//console.log('undo redo event', event);
+				//console.log('undo redo event type', event.type);
+			});
+
 		};
 
 		/**
@@ -487,6 +493,14 @@ jQuery(document).ready( function($) {
 		 * so let's route this onwards until there's a need to do otherwise.
 		 */
 		this.handle_CUT = function( event ) {
+
+			// It would be nice to be able to detect what has been cut and if it
+			// contains one or more complete "data-incom" elements. If this can
+			// be detected, the corresponding comments can also be assigned to a
+			// "limbo" until such time as that content is pasted back in.
+			//console.log( 'CUT event', event );
+			//console.log( 'CUT content', event );
+
 			this.handle_DELETE();
 		};
 
