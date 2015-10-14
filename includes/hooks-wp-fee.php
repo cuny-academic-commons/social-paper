@@ -216,7 +216,7 @@ function cacsp_wp_fee_enqueue_scripts() {
 			'social-paper-single-fee',
 			Social_Paper::$URL . '/assets/js/hooks-wp-fee.js',
 			array( 'jquery', 'jquery-ui-droppable', 'jquery-ui-dialog' ), // load droppable and dialog as dependencies
-			'0.1'
+			'0.2'
 		);
 
 		// assume user cannot drag-n-drop

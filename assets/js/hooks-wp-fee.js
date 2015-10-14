@@ -25,8 +25,9 @@ jQuery(document).ready( function($) {
 	 */
 	SocialPaper.dragdrop = new function() {
 
-		// prevent reference collisions
-		var me = this;
+
+		var me = this, // prevent reference collisions
+			active = false;
 
 		/**
 		 * Enable reassignment of comments
@@ -144,6 +145,9 @@ jQuery(document).ready( function($) {
 
 			});
 
+			// set active flag
+			active = true;
+
 		};
 
 		/**
@@ -153,10 +157,15 @@ jQuery(document).ready( function($) {
 
 			var drag, drop;
 
+			// bail if inactive
+			if ( ! active ) {
+				return;
+			}
+
 			// destroy draggable if present
 			drag = $( '.incom-bubble, li.incom.depth-1 > .comment-body .incom-permalink' ).draggable( 'instance' );
 			if ( 'undefined' !== typeof drag ) {
-				$( '.incom-bubble, li.incom.depth-1 > .comment-body .incom-permalink' ).draggable( 'destroy' );
+				drag.destroy();
 			}
 
 			// destroy droppable if present
