@@ -147,6 +147,19 @@ jQuery(document).ready( function($) {
 		};
 
 		/**
+		 * Destroy reassignment of comments functionality
+		 */
+		this.destroy = function() {
+
+			// destroy droppable
+			$('.fee-content-original').find( '[data-incom]' ).droppable( 'destroy' );
+
+			// destroy draggable
+			$( '.incom-bubble, li.incom.depth-1 > .comment-body .incom-permalink' ).draggable( 'destroy' );
+
+		};
+
+		/**
 		 * Reassign all comments for a paragraph when bubble is dropped.
 		 *
 		 * @param int    postId      Post ID for the comments.
@@ -276,6 +289,17 @@ jQuery(document).ready( function($) {
 		// Toggle Settings sidebar.
 		$sidebar.addClass( 'toggle-on' );
 		$settings_toggle.addClass( 'active' );
+
+		// if Inline Comments present
+		if ( window.incom ) {
+
+			// destroy drag-n-drop
+			if ( Social_Paper_FEE.drag_allowed == '1' ) {
+				SocialPaper.dragdrop.destroy();
+			}
+
+		}
+
 	});
 
 	/**
@@ -300,7 +324,15 @@ jQuery(document).ready( function($) {
 		if ( window.incom ) {
 
 			if ( window.incom.rebuild ) {
+
+				// rebuild Inline Comments UI
 				window.incom.rebuild();
+
+				// rebuild drag-n-drop
+				if ( Social_Paper_FEE.drag_allowed == '1' ) {
+					SocialPaper.dragdrop.init();
+				}
+
 			}
 
 		}
