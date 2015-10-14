@@ -43,6 +43,26 @@ jQuery(document).ready( function($) {
 			hoverClass: 'selected-dropzone',
 			addClasses: false,
 
+			activate: function( event, ui ) {
+
+				var incom_attr;
+
+				$( '.fee-content-original [data-incom]' ).removeClass( 'suppress-highlight' );
+
+				// get existing attribute from either bubble or comment
+				incom_attr = ui.draggable.data( 'incomBubble' );
+				if ( 'undefined' === typeof incom_attr ) {
+					incom_attr = $(ui.draggable).closest('li.incom').attr( 'data-incom-comment' );
+				}
+
+				$( '.fee-content-original [data-incom="' + incom_attr + '"]' ).addClass( 'suppress-highlight' );
+
+			},
+
+			deactivate: function( event, ui ) {
+				$( '.fee-content-original [data-incom]' ).removeClass( 'suppress-highlight' );
+			},
+
 			// when the button is dropped
 			drop: function( event, ui ) {
 
