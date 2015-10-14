@@ -215,8 +215,10 @@ jQuery(document).ready( function($) {
 	 */
 	$(window).on( "load", function() {
 
-		// drag 'n' drop time!
-		SocialPaper.dragdrop.init();
+		// drag 'n' drop time! (if allowed)
+		if ( Social_Paper_FEE.drag_allowed == '1' ) {
+			SocialPaper.dragdrop.init();
+		}
 
 	});
 
