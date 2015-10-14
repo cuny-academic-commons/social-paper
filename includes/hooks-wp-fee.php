@@ -212,13 +212,15 @@ function cacsp_wp_fee_enqueue_scripts() {
 	if ( is_user_logged_in() ) {
 
 		// enqueue script
-		wp_enqueue_script( 'social-paper-single-fee', Social_Paper::$URL . '/assets/js/hooks-wp-fee.js', array('jquery'), '0.1' );
+		wp_enqueue_script(
+			'social-paper-single-fee',
+			Social_Paper::$URL . '/assets/js/hooks-wp-fee.js',
+			array( 'jquery', 'jquery-ui-droppable', 'jquery-ui-dialog' ), // load droppable and dialog as dependencies
+			'0.1'
+		);
 
-		// localise
-		wp_localize_script( 'social-paper-single-fee', 'Social_Paper_FEE_i18n', array(
-			'button_enable' => __( 'Enable Editing', 'social-paper' ),
-			'button_disable' => __( 'Disable Editing', 'social-paper' ),
-		) );
+		// assume user cannot drag-n-drop
+		$drag_allowed = '0';
 
 		// enqueue change tracking script
 		wp_enqueue_script(
@@ -231,24 +233,20 @@ function cacsp_wp_fee_enqueue_scripts() {
 		global $post;
 		if ( current_user_can( 'edit_post', $post->ID ) ) {
 
-			// enqueue script
-			wp_enqueue_script(
-				'social-paper-single-reassign',
-				Social_Paper::$URL . '/assets/js/reassign.js',
-				array( 'jquery', 'jquery-ui-droppable', 'jquery-ui-dialog' ), // load droppable and dialog as dependencies
-				'0.1'
-			);
+			// user can, so override
+			$drag_allowed = '1';
 
-			// localise
-			wp_localize_script( 'social-paper-single-reassign', 'Social_Paper_Reassign', array(
-				'i18n' => cacsp_wp_fee_localise(),
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
-			) );
-
-			// style for dialog
+			// add style for dialog
 			wp_enqueue_style( 'wp-jquery-ui-dialog' );
 
 		}
+
+		// localise
+		wp_localize_script( 'social-paper-single-fee', 'Social_Paper_FEE', array(
+			'ajax_url' => admin_url( 'admin-ajax.php' ),
+			'drag_allowed' => $drag_allowed,
+			'i18n' => cacsp_wp_fee_localise(),
+		) );
 
 	}
 
@@ -256,22 +254,22 @@ function cacsp_wp_fee_enqueue_scripts() {
 add_action( 'wp_enqueue_scripts', 'cacsp_wp_fee_enqueue_scripts', 999 );
 
 /**
- * Enable translation in the Reassignment Javascript
+ * Define translation strings for our Javascript
  *
  * @return array $translations The array of translations to pass to the script
  */
 function cacsp_wp_fee_localise() {
 
-	// init array
-	$translations = array();
-
 	// add translations for comment reassignment
-	$translations['title'] = __( 'Are you sure?', 'social-paper' );
-	$translations['body'] = __( 'Are you sure you want to assign the comment and its replies to the paragraph? This action cannot be undone.', 'social-paper' );
-	$translations['submit'] = __( 'Submitting...', 'social-paper' );
-	$translations['message'] = __( 'Please wait while the comments are reassigned. The page will refresh when this has been done.', 'social-paper' );
+	$translations = array(
+		'button_enable' => __( 'Enable Editing', 'social-paper' ),
+		'button_disable' => __( 'Disable Editing', 'social-paper' ),
+		'title' => __( 'Are you sure?', 'social-paper' ),
+		'body' => __( 'Are you sure you want to assign the comment and its replies to the paragraph? This action cannot be undone.', 'social-paper' ),
+		'submit' => __( 'Submitting...', 'social-paper' ),
+		'message' => __( 'Please wait while the comments are reassigned. The page will refresh when this has been done.', 'social-paper' ),
+	);
 
-	// --<
 	return $translations;
 
 }
