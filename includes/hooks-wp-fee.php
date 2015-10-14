@@ -220,13 +220,13 @@ function cacsp_wp_fee_enqueue_scripts() {
 		);
 
 		// assume user cannot drag-n-drop
-		$drag_allowed = false;
+		$drag_allowed = '0';
 
 		global $post;
 		if ( current_user_can( 'edit_post', $post->ID ) ) {
 
 			// user can, so override
-			$drag_allowed = true;
+			$drag_allowed = '1';
 
 			// add style for dialog
 			wp_enqueue_style( 'wp-jquery-ui-dialog' );
