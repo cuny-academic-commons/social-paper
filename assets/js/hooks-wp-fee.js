@@ -295,11 +295,11 @@ jQuery(document).ready( function($) {
 
 		// fade out bubbles if Inline Comments present
 		if ( window.incom ) {
-			$('#incom_wrapper').fadeOut();
+			$('#incom_wrapper').hide();
 		}
 
 		// always fade out comments and comment form
-		$('#comments, #respond').fadeOut();
+		$('#comments, #respond').hide();
 
 		// switch editing toggle button text
 		$('#wp-admin-bar-edit span').text( Social_Paper_FEE.i18n.button_disable );
@@ -336,11 +336,11 @@ jQuery(document).ready( function($) {
 
 		// fade in bubbles if Inline Comments present
 		if ( window.incom ) {
-			$('#incom_wrapper').fadeIn();
+			$('#incom_wrapper').show();
 		}
 
 		// always fade in comments and comment form
-		$('#comments, #respond').fadeIn();
+		$('#comments, #respond').show();
 
 		// switch editing toggle button text
 		$('#wp-admin-bar-edit span').text( Social_Paper_FEE.i18n.button_enable );
