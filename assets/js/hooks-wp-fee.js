@@ -151,11 +151,19 @@ jQuery(document).ready( function($) {
 		 */
 		this.destroy = function() {
 
-			// destroy droppable
-			$('.fee-content-original').find( '[data-incom]' ).droppable( 'destroy' );
+			var drag, drop;
 
-			// destroy draggable
-			$( '.incom-bubble, li.incom.depth-1 > .comment-body .incom-permalink' ).draggable( 'destroy' );
+			// destroy draggable if present
+			drag = $( '.incom-bubble, li.incom.depth-1 > .comment-body .incom-permalink' ).draggable( 'instance' );
+			if ( 'undefined' !== typeof drag ) {
+				$( '.incom-bubble, li.incom.depth-1 > .comment-body .incom-permalink' ).draggable( 'destroy' );
+			}
+
+			// destroy droppable if present
+			drop = $('.fee-content-original').find( '[data-incom]' ).droppable( 'instance' );
+			if ( 'undefined' !== typeof drop ) {
+				$('.fee-content-original').find( '[data-incom]' ).droppable( 'destroy' );
+			}
 
 		};
 
@@ -275,6 +283,16 @@ jQuery(document).ready( function($) {
 
 		//console.log( 'fee-on' );
 
+		// if Inline Comments present
+		if ( window.incom ) {
+
+			// destroy drag-n-drop
+			if ( Social_Paper_FEE.drag_allowed == '1' ) {
+				SocialPaper.dragdrop.destroy();
+			}
+
+		}
+
 		// fade out bubbles if Inline Comments present
 		if ( window.incom ) {
 			$('#incom_wrapper').fadeOut();
@@ -305,17 +323,6 @@ jQuery(document).ready( function($) {
 
 		//console.log( 'fee-off' );
 
-		// fade in bubbles if Inline Comments present
-		if ( window.incom ) {
-			$('#incom_wrapper').fadeIn();
-		}
-
-		// always fade in comments and comment form
-		$('#comments, #respond').fadeIn();
-
-		// switch editing toggle button text
-		$('#wp-admin-bar-edit span').text( Social_Paper_FEE.i18n.button_enable );
-
 		// if Inline Comments present
 		if ( window.incom ) {
 
@@ -333,6 +340,16 @@ jQuery(document).ready( function($) {
 
 		}
 
+		// fade in bubbles if Inline Comments present
+		if ( window.incom ) {
+			$('#incom_wrapper').fadeIn();
+		}
+
+		// always fade in comments and comment form
+		$('#comments, #respond').fadeIn();
+
+		// switch editing toggle button text
+		$('#wp-admin-bar-edit span').text( Social_Paper_FEE.i18n.button_enable );
 	});
 
 	/**
