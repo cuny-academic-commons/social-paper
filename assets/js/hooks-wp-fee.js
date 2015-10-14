@@ -165,7 +165,7 @@ jQuery(document).ready( function($) {
 			// destroy draggable if present
 			drag = $( '.incom-bubble, li.incom.depth-1 > .comment-body .incom-permalink' ).draggable( 'instance' );
 			if ( 'undefined' !== typeof drag ) {
-				$( '.incom-bubble, li.incom.depth-1 > .comment-body .incom-permalink' ).draggable( 'destroy' );
+				drag.destroy();
 			}
 
 			// destroy droppable if present
