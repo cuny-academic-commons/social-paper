@@ -14,16 +14,17 @@ jQuery(document).ready( function($) {
 
 	/**
 	 * Enable reassignment of comments
-	 *
-	 * @return void
 	 */
 	function social_paper_incom_comments_dragger_init() {
 
 		// define vars
-		var draggers, droppers, incom_ref, options, div;
+		var draggers, droppers, dropped,
+			incom_ref, incom_attr,
+			comment_ref, tmp, comment_id = 0,
+			options, div;
 
-		// get all draggable items (top level comments)
-		draggers = $( '.incom-bubble' );
+		// get all draggable items (bubbles AND top level comments)
+		draggers = $( '.incom-bubble, li.incom.depth-1 > .comment-body .incom-permalink' );
 
 		// make comment reassign button draggable
 		draggers.draggable({
@@ -38,13 +39,36 @@ jQuery(document).ready( function($) {
 		droppers.droppable({
 
 			// configure droppers
-			accept: '.incom-bubble',
+			accept: '.incom-bubble, .incom-permalink',
 			hoverClass: 'selected-dropzone',
+			addClasses: false,
 
 			// when the button is dropped
 			drop: function( event, ui ) {
-				// get id of dropped-on item
+
+				// get identifier of dropped-on item
 				incom_ref = $(this).attr('data-incom');
+
+				// determine what was dropped
+				incom_attr = ui.draggable.data( 'incomBubble' );
+				if ( 'undefined' === typeof incom_attr ) {
+					dropped = 'comment';
+					incom_attr = $(ui.draggable).closest('li.incom').attr( 'data-incom-comment' );
+					comment_ref = $(ui.draggable).closest('li.incom').prop('id');
+					if ( comment_ref.match( 'comment-' ) ) {
+						tmp = comment_ref.split('comment-');
+						if ( tmp.length === 2 ) {
+							comment_id = parseInt( tmp[1] );
+						}
+					}
+				} else {
+					dropped = 'bubble';
+				}
+
+				// bail if the target is the same
+				if ( incom_ref == incom_attr ) {
+					return;
+				}
 
 				// create options for modal dialog
 				options = {
@@ -60,7 +84,11 @@ jQuery(document).ready( function($) {
 							$('.ui-dialog-buttonset').hide();
 							$('.ui-dialog-title').html( Social_Paper_Reassign.i18n.submit );
 							$('.social_paper_alert_text').html( Social_Paper_Reassign.i18n.message );
-							social_paper_incom_comments_dragger_dropped( $( '#comment_post_ID' ).val(), incom_ref, ui.draggable.data( 'incomBubble' ) );
+							if ( dropped == 'bubble' ) {
+								social_paper_incom_comments_bubble_dropped( $( '#comment_post_ID' ).val(), incom_ref, incom_attr );
+							} else {
+								social_paper_incom_comments_comment_dropped( incom_ref, comment_id );
+							}
 						},
 						"Cancel": function() {
 							$(this).dialog( 'close' );
@@ -82,29 +110,54 @@ jQuery(document).ready( function($) {
 
 	};
 
-
-
 	/**
-	 * Reassign a comment when dropped.
+	 * Reassign all comments for a paragraph when bubble is dropped.
 	 *
 	 * @param int    postId      Post ID for the comments.
 	 * @param string targetPara  Paragraph reference of the target.
 	 * @param string draggedPara Paragraph reference for the comments needing to be updated.
 	 * @return void
 	 */
-	function social_paper_incom_comments_dragger_dropped( postId, targetPara, draggedPara ) {
+	function social_paper_incom_comments_bubble_dropped( postId, targetPara, draggedPara ) {
+
+		// configure and send
+		social_paper_incom_comments_post_to_server({
+			action: 'cacsp_social_paper_reassign_comments', // function in WordPress
+			post_id: postId,
+			incom_ref: targetPara,
+			curr_ref: draggedPara,
+		});
+
+	};
+
+	/**
+	 * Reassign a comment and its children when a comment permalink is dropped.
+	 *
+	 * @param string incom_ref  The paragraph reference
+	 * @param object comment_id The comment ID
+	 */
+	function social_paper_incom_comments_comment_dropped( incom_ref, comment_id ) {
+
+		// configure and send
+		social_paper_incom_comments_post_to_server({
+			action: 'cacsp_social_paper_reassign_comment', // function in WordPress
+			incom_ref: incom_ref,
+			comment_id: comment_id
+		});
+
+	};
+
+	/**
+	 * Send data to server.
+	 *
+	 * @param object data The data to send
+	 */
+	function social_paper_incom_comments_post_to_server( data ) {
 
 		// post to server
 		$.post(
 			Social_Paper_Reassign.ajax_url,
-
-			{
-				action: 'cacsp_social_paper_reassign_comment', // function in WordPress
-				post_id: postId,
-				incom_ref: targetPara,
-				curr_ref: draggedPara,
-			 },
-
+			data,
 			// callback
 			function( data, textStatus ) {
 				// if success, refresh from server
@@ -114,10 +167,9 @@ jQuery(document).ready( function($) {
 					console.log( textStatus );
 				}
 			},
-
 			'json' // expected format
-
 		);
+
 	};
 
 	// drag 'n' drop time!
@@ -126,5 +178,3 @@ jQuery(document).ready( function($) {
 	});
 
 });
-
-
