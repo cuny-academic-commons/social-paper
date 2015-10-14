@@ -849,6 +849,10 @@ body.fee-on .fee-url {
 	color: red;
 }
 
+.suppress-highlight {
+	color: inherit !important;
+}
+
 .social_paper_alert_text {
 	font-size: 75%;
 	padding: 0;
