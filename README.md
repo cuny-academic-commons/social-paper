@@ -1,6 +1,11 @@
 #Social Paper
 
-A tool for networking in-progress student writing and feedback across disciplines, institutions, academic terms, and publics. Social Paper is currently in development at The CUNY Graduate Center by The CUNY Academic Commons development team and funded by a 2014 National Endowment for the Humanities Digital Start Up Grant and a 2015 CUNY Advance Grant. 
+A tool for networking in-progress student writing and feedback across disciplines, institutions, academic terms, and publics. Social Paper is currently in development at the CUNY Graduate Center by the [CUNY Academic Commons](https://commons.gc.cuny.edu) development team and funded by a 2014 National Endowment for the Humanities Digital Start Up Grant and a 2015 CUNY Advance Grant. 
+
+* [Project Overview](#project-overview)
+* [Technical Overview](#technical-overview)
+
+##<a name="project-overview"></a>Project Overview
 
 ###Why social? 
 
@@ -16,5 +21,23 @@ For the most part, student writing is confined to the audience of a single profe
 
 ###Get involved
 
-Social Paper will be released first as a feature of The CUNY Academic Commons and then abstracted as a plugin for Commons in a Box (CBOX). Interested educators or students outside of The CUNY Graduate Center community will need to set up a CBOX installation to use Social Paper for their community. Team members are currently exploring ways that Social Paper might be released for general public use without a CBOX install. Individuals interested in using, contributing to, or learning more about Social Paper, are invited to contact Erin Glass at erin (dot) glass (at) gmail (dot) com. 
+Social Paper will be released first as a feature of the CUNY Academic Commons, and in the future will be abstracted as a plugin intended for integration with Commons In A Box (CBOX). Interested educators or students outside of The CUNY Graduate Center community will need to set up a WordPress/BuddyPress or CBOX installation to use Social Paper for their community. Team members are currently exploring ways that Social Paper might be released for general public use without a CBOX install. Individuals interested in using, contributing to, or learning more about Social Paper, are invited to contact Erin Glass at erin (dot) glass (at) gmail (dot) com. 
+
+##<a name="technical-overview"></a>Technical Overview
+
+Social Paper is a WordPress plugin, designed to work best when installed alongside [BuddyPress](https://buddypress.org).
+
+### Prerequisites
+
+Social Paper requires a few additional components to work correctly:
+
+* [WordPress Front End Editor](https://wordpress.org/plugins/wp-front-end-editor/) - Note that the mainline version of WP-FEE does not fully support more recent versions of WordPress. See [https://github.com/iseulde/wp-front-end-editor/issues/257](https://github.com/iseulde/wp-front-end-editor/issues/257) for more details.
+* An inline-commenting plugin. Currently, Social Paper supports [WP Side Comments](https://github.com/richardtape/wp-side-comments) and [Inline Comments](https://wordpress.org/plugins/inline-comments/). The first iteration on the CUNY Academic Commons will use Inline Comments, so integration there might be the smoothest.
+
+### Optional integrations
+
+When installed alongside BuddyPress, Social Paper has some additional functionality:
+
+* Papers can be linked to groups (requires bp-groups)
+* Creating and editing papers creates items in the activity stream (requires bp-activity)
 
