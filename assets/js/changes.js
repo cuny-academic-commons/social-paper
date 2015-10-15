@@ -490,16 +490,91 @@ jQuery(document).ready( function($) {
 		 * Handle CUT key combination
 		 *
 		 * In practice, this seems to need identical handling to the DELETE key,
-		 * so let's route this onwards until there's a need to do otherwise.
+		 * so route this onwards until there's a need to do otherwise.
 		 */
 		this.handle_CUT = function( event ) {
 
-			// It would be nice to be able to detect what has been cut and if it
-			// contains one or more complete "data-incom" elements. If this can
-			// be detected, the corresponding comments can also be assigned to a
-			// "limbo" until such time as that content is pasted back in.
-			//console.log( 'CUT event', event );
-			//console.log( 'CUT content', event );
+			//console.log( '------------------------------------------------------------' );
+			//console.log( 'handle_CUT', event );
+
+			/*
+			--------------------------------------------------------------------
+			It would be nice to be able to detect what has been cut and if it
+			contains one or more complete "data-incom" elements. If this can
+			be detected, the corresponding comments can also be assigned to a
+			"limbo" until such time as that content is pasted back in.
+
+			This should only be a "fallback" system, because there may not be a
+			subsequent paste - so comments should be immediately reassigned the
+			way they are at present. A record of comments affected by the cut
+			can be stored in case a subsequent paste does occur where the paste
+			content matches the cut content.
+
+			When entire paragraphs are cut, TinyMCE shifts the existing content
+			"upwards" such that it becomes wrapped in the tag of the first
+			complete item to have been cut. So, given:
+
+			<p data-incom="P0">Foo</p>
+			<p data-incom="P1">Bar</p>
+			<p data-incom="P2">Lorem</p>
+			<p data-incom="P3">Ipsum</p>
+
+			If we cut P1 and P2, we're left with:
+
+			<p data-incom="P0">Foo</p>
+			<p data-incom="P1">Ipsum</p>
+
+			The clipboard data contains the actual elements that have been cut,
+			but with the addition of an empty paragraph, representing the
+			line-break/return character at the end of the cut content:
+
+			<p data-incom="P1">Bar</p>
+			<p data-incom="P2">Lorem</p>
+			<p data-incom="P3">&nbsp;</p>
+
+			If we cut partial content spanning two elements, i.e. we cut the
+			content below between [ and ]:
+
+			<p data-incom="P0">Foo</p>
+			<p data-incom="P1">Ba[r</p>
+			<p data-incom="P2">Lo]rem</p>
+			<p data-incom="P3">Ipsum</p>
+
+			then we're left with:
+
+			<p data-incom="P0">Foo</p>
+			<p data-incom="P1">Barem</p>
+			<p data-incom="P3">Ipsum</p>
+
+			the clipboard data is wrapped in the tags from which it originated:
+
+			<p data-incom="P1">r</p>
+			<p data-incom="P2">Lo</p>
+
+			Thus, the presence in the clipboard content of the 'data-incom'
+			attribute itself is not a reliable way to discover if the cut
+			content contains a complete data-incom element.
+
+			Dammit.
+			--------------------------------------------------------------------
+			*/
+
+			/*
+			var clipboard_html, current_items = [], missing = [];
+
+			clipboard_html = event.clipboardData.getData( 'text/html' );
+			console.log( 'CUT clipboard HTML', clipboard_html );
+
+			// get current identifiers
+			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
+				current_items.push( $(element).attr( 'data-incom' ) );
+			});
+			console.log( 'CUT current', current_items );
+
+			// find any missing items
+			missing = SocialPaperChange.tracker.get_missing( current_items );
+			console.log( 'CUT missing', missing );
+			*/
 
 			this.handle_DELETE();
 		};
