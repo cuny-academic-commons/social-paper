@@ -1146,8 +1146,15 @@ jQuery(document).ready( function($) {
 	 */
 	$(document).on( 'fee-editor-init', function( event ) {
 
-		// start tracking the editor
-		SocialPaperChange.editor.track( event );
+		//console.log( 'fee-editor-init' );
+
+		// if Inline Comments present
+		if ( window.incom ) {
+
+			// start tracking the editor
+			SocialPaperChange.editor.track( event );
+
+		}
 
 	});
 
@@ -1208,6 +1215,7 @@ jQuery(document).ready( function($) {
 
 		//console.log( 'fee-after-save' );
 
+		// if Inline Comments present
 		if ( window.incom ) {
 
 			// rebuild TinyMCE content (since this what's visible)
