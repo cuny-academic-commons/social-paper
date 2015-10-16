@@ -372,14 +372,25 @@ jQuery(document).ready( function($) {
 				//element.removeAttribute( 'class' );
 			});
 
-			event.node.innerHTML = items.html();
+			// get content stripped of new lines and unnecessary whitespace
+			var content = items.html().replace( /(\r\n|\n|\r)/gm, ' ' ).replace( /\s+/g, ' ' );
+
+			// strip ending <p>&nbsp;</p>
+			if ( content.length > 13 ) {
+				if ( content.slice( -13 ) == '<p>&nbsp;</p>' ) {
+					console.log( 'content', content );
+					content = content.slice( 0, -13 );
+				}
+			}
+
+			event.node.innerHTML = content;
 
 		};
 
 		/**
 		 * Handle 'paste' event after the DOM has been built.
 		 *
-		 * This is a callback fromm the 'change' event and may be unreliable
+		 * This is a callback from the 'change' event and may be unreliable
 		 * because for 'change' events to be triggered requires sufficient change
 		 * to trigger an undo. Needs thorough testing.
 		 *
@@ -421,12 +432,37 @@ jQuery(document).ready( function($) {
 
 			// do we have one?
 			if ( previous_element === false ) {
-				return;
-			}
 
-			tag = previous_element.prop( 'tagName' ).substr( 0, 5 );
-			identifier = previous_element.attr( 'data-incom' );
-			number = parseInt( identifier.replace( tag, '' ) );
+				// this means we have probably pasted the content and the very
+				// beginning of the editor
+
+				// sanity check
+				if ( paras.length === 0 ) {
+					return;
+				}
+
+				// set some defaults - but note that this will only work with
+				// pargraphs set as the Inline Comments selector
+				tag = 'P';
+				identifier = 'P0';
+
+				// because it is incremented *before* applying new identifier and
+				// we want the sequence to start with 'P0'
+				number = -1;
+
+				// set subsequent to all paras
+				subsequent = paras;
+
+			} else {
+
+				tag = previous_element.prop( 'tagName' ).substr( 0, 5 );
+				identifier = previous_element.attr( 'data-incom' );
+				number = parseInt( identifier.replace( tag, '' ) );
+
+				// get subsequent
+				subsequent = previous_element.nextAll( 'p' );
+
+			}
 
 			// find any missing items
 			missing = SocialPaperChange.tracker.get_missing( current_items );
@@ -450,10 +486,7 @@ jQuery(document).ready( function($) {
 
 			}
 
-			// get subsequent
-			subsequent = previous_element.nextAll( 'p' );
-
-			// are there any?
+			// are there any subsequent?
 			if ( subsequent.length > 0 ) {
 
 				// reparse all p tags greater than this
@@ -469,13 +502,19 @@ jQuery(document).ready( function($) {
 					becomes = tag + number;
 					element.attr( 'data-incom', becomes );
 
-					// get data and update
-					tracker_data = SocialPaperChange.tracker.get_by( current_identifier, 'modified' );
-					tracker_data.modified = becomes;
-					tracker_data.is_modified = true;
+					// if we have one
+					if ( 'undefined' !== typeof current_identifier ) {
 
-					// update tracker array
-					SocialPaperChange.tracker.update( tracker_data );
+						// get data and update
+						tracker_data = SocialPaperChange.tracker.get_by( current_identifier, 'modified' );
+						tracker_data.modified = becomes;
+						tracker_data.is_modified = true;
+						console.log( 'tracker_data', tracker_data );
+
+						// update tracker array
+						SocialPaperChange.tracker.update( tracker_data );
+
+					}
 
 				});
 
