@@ -303,6 +303,48 @@ function cacsp_remove_added_to_group_activity( CACSP_Paper $paper, $group_id ) {
 add_action( 'cacsp_disconnected_paper_from_group', 'cacsp_remove_added_to_group_activity', 10, 2 );
 
 /**
+ * Send 'new_cacsp_edit' activity items to BuddyPress Group Email Subscription.
+ *
+ * Edit activity is not associated with the 'groups' component, so BPGES will not recognize it
+ * by default. This function manually triggers the necessary notifications.
+ *
+ * Requires BPGES 3.6.0.
+ *
+ * @param int $activity_id ID of the 'new_cacsp_edit' activity.
+ * @param int $paper_id    ID of the paper post object.
+ */
+function cacsp_send_edit_activity_to_bpges( $activity_id, $paper_id ) {
+	// Requires the `ass_generate_notification()` function, introduced in BPGES 3.6.0.
+	if ( ! function_exists( 'ass_generate_notification' ) ) {
+		return;
+	}
+
+	$paper = new CACSP_Paper( $paper_id );
+
+	$paper_groups = $paper->get_group_ids();
+	if ( empty( $paper_groups ) ) {
+		return;
+	}
+
+	$activity = new BP_Activity_Activity( $activity_id );
+
+	$args = array(
+		'sender_id'   => $activity->user_id,
+		'activity_id' => $activity_id,
+		'action'      => $activity->action,
+		'content'     => $activity->content,
+		'link'        => get_permalink( $paper_id ),
+	);
+
+	foreach ( $paper_groups as $group_id ) {
+		$_args = $args;
+		$_args['group_id'] = $group_id;
+		ass_generate_notification( $_args );
+	}
+}
+add_action( 'cacsp_created_edit_activity', 'cacsp_send_edit_activity_to_bpges', 10, 2 );
+
+/**
  * Format activity actions for papers connected to groups.
  *
  * Disabled for the time being. Not sure if it's valuable information.
