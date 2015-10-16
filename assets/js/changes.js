@@ -1213,6 +1213,9 @@ jQuery(document).ready( function($) {
 			// rebuild TinyMCE content (since this what's visible)
 			window.incom.rebuild();
 
+			// force not dirty state
+			SocialPaperChange.editor.isNotDirty = 1;
+
 			// build tracker array
 			//SocialPaperChange.tracker.init();
 
