@@ -258,7 +258,7 @@ function cacsp_create_added_to_group_activity( CACSP_Paper $paper, $group_id ) {
 
 	// Either revisions are disabled, or something else has gone wrong. Just use the post author.
 	if ( ! isset( $last_revision ) ) {
-		$rev_author = $post_after->post_author;
+		$rev_author = $paper->post_author;
 	} else {
 		$rev_author = $last_revision->post_author;
 	}
