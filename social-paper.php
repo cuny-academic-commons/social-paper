@@ -178,6 +178,7 @@ class Social_Paper {
 
 		// BuddyPress integration
 		if ( function_exists( 'buddypress' ) ) {
+			require dirname( __FILE__ ) . '/includes/class-cacsp-component.php';
 			require dirname( __FILE__ ) . '/includes/hooks-buddypress-profile.php';
 
 			if ( bp_is_active( 'groups' ) ) {
@@ -186,6 +187,10 @@ class Social_Paper {
 
 			if ( bp_is_active( 'activity' ) ) {
 				require dirname( __FILE__ ) . '/includes/hooks-buddypress-activity.php';
+			}
+
+			if ( bp_is_active( 'notifications' ) ) {
+				require dirname( __FILE__ ) . '/includes/hooks-buddypress-notifications.php';
 			}
 
 			//require dirname( __FILE__ ) . '/includes/hooks-buddypress-directory.php';

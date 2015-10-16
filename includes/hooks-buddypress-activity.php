@@ -294,6 +294,18 @@ function cacsp_create_edit_activity( $post_id, WP_Post $post_after, WP_Post $pos
 		'hide_sitewide'     => false, // We'll hide with a filter.
 
 	) );
+
+	/**
+	 * Fires after a 'new_cacsp_edit' activity item has been created.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int     $activity_id ID of the activity created.
+	 * @param int     $post_id     ID of the paper post.
+	 * @param WP_Post $post_after  The post object, after editing.
+	 * @param WP_Post $post_before The post object, before editing.
+	 */
+	do_action( 'cacsp_created_edit_activity', $activity_id, $post_id, $post_after, $post_before );
 }
 add_action( 'post_updated', 'cacsp_create_edit_activity', 10, 3 );
 

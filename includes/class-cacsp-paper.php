@@ -209,6 +209,13 @@ class CACSP_Paper {
 		if ( is_wp_error( $set ) || empty( $set ) ) {
 			return $set;
 		} else {
+			/**
+			 * Fires when a reader has been added to a paper.
+			 *
+			 * @param CACSP_Paper $paper   Paper object.
+			 * @param int         $user_id ID of the user added as a reader.
+			 */
+			do_action( 'cacsp_added_reader_to_paper', $this, $user_id );
 			return true;
 		}
 	}
