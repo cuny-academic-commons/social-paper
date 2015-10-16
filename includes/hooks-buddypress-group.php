@@ -241,6 +241,10 @@ add_filter( 'bp_after_has_activities_parse_args', 'cacsp_filter_activity_args_fo
  * @param int         $group_id ID of the group.
  */
 function cacsp_create_added_to_group_activity( CACSP_Paper $paper, $group_id ) {
+	if ( ! $paper->ID ) {
+		return;
+	}
+
 	// The author of the edit is the one who wrote the last revision.
 	if ( $revisions = wp_get_post_revisions( $paper->ID ) ) {
 		// Grab the last revision, but not an autosave.
