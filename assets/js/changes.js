@@ -378,7 +378,6 @@ jQuery(document).ready( function($) {
 			// strip ending <p>&nbsp;</p>
 			if ( content.length > 13 ) {
 				if ( content.slice( -13 ) == '<p>&nbsp;</p>' ) {
-					console.log( 'content', content );
 					content = content.slice( 0, -13 );
 				}
 			}
@@ -405,8 +404,8 @@ jQuery(document).ready( function($) {
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_PASTE_COMPLETE', event );
 
-			var tag, identifier, number, subsequent,
-				current_items = [], new_paras = [], paras = [],
+			var tag, identifier, number, subsequent, wp_view,
+				current_items = [], paras = [], filtered = [],
 				previous_element = false, stop_now = false;
 
 			// get current identifiers
@@ -417,17 +416,21 @@ jQuery(document).ready( function($) {
 			// get current paras
 			paras = $('.fee-content-body p');
 
-			// get unidentified paras and find the para prior to them
+			// try to find the para prior to the first unidentified para
 			paras.each( function( i, element ) {
+
+				// get identifier
 				var id = $(element).attr( 'data-incom' );
+
+				// find previous, if present
 				if ( 'undefined' === typeof id ) {
-					new_paras.push( $(element) );
 					stop_now = true;
 				} else {
 					if ( stop_now === false ) {
 						previous_element = $(element);
 					}
 				}
+
 			});
 
 			// do we have one?
@@ -450,8 +453,8 @@ jQuery(document).ready( function($) {
 				// we want the sequence to start with 'P0'
 				number = -1;
 
-				// set subsequent to all paras
-				subsequent = paras;
+				// set subsequent to filtered paras
+				subsequent = me.filter_elements( paras );
 
 			} else {
 
@@ -460,7 +463,7 @@ jQuery(document).ready( function($) {
 				number = parseInt( identifier.replace( tag, '' ) );
 
 				// get subsequent
-				subsequent = previous_element.nextAll( 'p' );
+				subsequent = me.filter_elements( previous_element.nextAll( 'p' ) );
 
 			}
 
@@ -490,7 +493,7 @@ jQuery(document).ready( function($) {
 			if ( subsequent.length > 0 ) {
 
 				// reparse all p tags greater than this
-				subsequent.each( function( i, el ) {
+				$.each( subsequent, function( i, el ) {
 
 					var element, current_identifier, becomes, tracker_data;
 
@@ -509,7 +512,6 @@ jQuery(document).ready( function($) {
 						tracker_data = SocialPaperChange.tracker.get_by( current_identifier, 'modified' );
 						tracker_data.modified = becomes;
 						tracker_data.is_modified = true;
-						console.log( 'tracker_data', tracker_data );
 
 						// update tracker array
 						SocialPaperChange.tracker.update( tracker_data );
@@ -1002,6 +1004,36 @@ jQuery(document).ready( function($) {
 
 			// clear the undo queue so we can't undo beyond here
 			me.instance.undoManager.clear();
+
+		};
+
+		/**
+		 * Given an array of paragraph tags, filter out those which are used
+		 * for UI-related purposes, e.g. inside a .wpview-wrap container which
+		 * is used to wrap a "Page Break"
+		 *
+		 * @param array elements An array of elements present in the editor
+		 * @param array filtered Filtered array of elements
+		 */
+		this.filter_elements = function( elements ) {
+
+			// init return
+			var filtered = [];
+
+			// try to find the para prior to the first unidentified para
+			elements.each( function( i, element ) {
+
+				var el = $(element), wp_view;
+
+				// add to filter if not inside .wpview-wrap
+				wp_view = el.closest( '.wpview-wrap' );
+				if ( 'undefined' === typeof wp_view || wp_view.length === 0 ) {
+					filtered.push( el );
+				}
+
+			});
+
+			return filtered;
 
 		};
 
