@@ -617,6 +617,30 @@ jQuery(document).ready( function($) {
 			console.log( 'CUT missing', missing );
 			*/
 
+			/*
+
+			First we need to detect any instances of a trailing newline, as in:
+			<p data-incom="Pn">&nbsp;</p>
+
+			Then:
+
+			If we have cut entire paragraphs, then after stripping the trailing
+			newline, missing.length === (complete paragraphs).length
+
+			If we have cut across two adjoining paragraphs, there is
+			* no trailing newline,
+			* missing.length === 1,
+			* there are exactly 2 '<p data-incom="' elements
+
+
+			If we have missing.length === 1 and we have exactly 1 '<p data-incom="'
+			element then it must be a complete paragraph.
+
+			If we have missing.length === 1 and we have more than one '<p data-incom="'
+			element then it must be a complete paragraph.
+
+			*/
+
 			this.handle_DELETE();
 		};
 
@@ -801,7 +825,7 @@ jQuery(document).ready( function($) {
 			missing = SocialPaperChange.tracker.get_missing( current_items );
 
 			// bail if there's no difference
-			if ( missing.length == 0 ) {
+			if ( missing.length === 0 ) {
 				return;
 			}
 
@@ -1120,7 +1144,7 @@ jQuery(document).ready( function($) {
 		this.get_formatted = function() {
 
 			// construct formatted array
-			var formatted = [];
+			var formatted = [], key;
 			for( key in me.data ) {
 				formatted.push({
 					comment_id: key,
