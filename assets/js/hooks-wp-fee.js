@@ -7,6 +7,11 @@
  * @subpackage Template
  */
 
+/*global
+	SocialPaper, Social_Paper_FEE, jQuery, document, tinyMCE, window, wp,
+	$sidebar, $settings_toggle, $readers_subsection
+*/
+
 /**
  * Create SocialPaper instance
  */
@@ -62,8 +67,6 @@ jQuery(document).ready( function($) {
 
 				activate: function( event, ui ) {
 
-					var incom_attr;
-
 					$( '.fee-content-original [data-incom]' ).removeClass( 'suppress-highlight' );
 
 					// get existing attribute from either bubble or comment
@@ -95,7 +98,7 @@ jQuery(document).ready( function($) {
 						if ( comment_ref.match( 'comment-' ) ) {
 							tmp = comment_ref.split('comment-');
 							if ( tmp.length === 2 ) {
-								comment_id = parseInt( tmp[1] );
+								comment_id = parseInt( tmp[1], 10 );
 							}
 						}
 					} else {
@@ -103,7 +106,7 @@ jQuery(document).ready( function($) {
 					}
 
 					// bail if the target is the same
-					if ( incom_ref == incom_attr ) {
+					if ( incom_ref === incom_attr ) {
 						return;
 					}
 
@@ -121,7 +124,7 @@ jQuery(document).ready( function($) {
 								$('.ui-dialog-buttonset').hide();
 								$('.ui-dialog-title').html( Social_Paper_FEE.i18n.submit );
 								$('.social_paper_alert_text').html( Social_Paper_FEE.i18n.message );
-								if ( dropped == 'bubble' ) {
+								if ( dropped === 'bubble' ) {
 									me.bubble_dropped( $( '#comment_post_ID' ).val(), incom_ref, incom_attr );
 								} else {
 									me.comment_dropped( incom_ref, comment_id );
@@ -227,7 +230,7 @@ jQuery(document).ready( function($) {
 				// callback
 				function( data, textStatus ) {
 					// if success, refresh from server
-					if ( textStatus == 'success' ) {
+					if ( textStatus === 'success' ) {
 						document.location.reload( true );
 					} else {
 						console.log( textStatus );
@@ -246,7 +249,7 @@ jQuery(document).ready( function($) {
 	$(window).on( "load", function() {
 
 		// drag 'n' drop time! (if allowed)
-		if ( Social_Paper_FEE.drag_allowed == '1' ) {
+		if ( Social_Paper_FEE.drag_allowed === '1' ) {
 			SocialPaper.dragdrop.init();
 		}
 
@@ -296,7 +299,7 @@ jQuery(document).ready( function($) {
 		if ( window.incom ) {
 
 			// destroy drag-n-drop
-			if ( Social_Paper_FEE.drag_allowed == '1' ) {
+			if ( Social_Paper_FEE.drag_allowed === '1' ) {
 				SocialPaper.dragdrop.destroy();
 			}
 
@@ -335,7 +338,7 @@ jQuery(document).ready( function($) {
 				window.incom.rebuild();
 
 				// rebuild drag-n-drop
-				if ( Social_Paper_FEE.drag_allowed == '1' ) {
+				if ( Social_Paper_FEE.drag_allowed === '1' ) {
 					SocialPaper.dragdrop.init();
 				}
 
