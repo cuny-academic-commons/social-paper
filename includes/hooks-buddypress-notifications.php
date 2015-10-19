@@ -42,6 +42,20 @@ function cacsp_format_notifications( $action, $paper_id, $secondary_item_id, $co
 			}
 
 			break;
+
+		case 'mythread_comment' :
+			if ( (int) $count > 1 ) {
+				$text = __( 'There is new activity on papers where you have commented', 'social-paper' );
+
+				// @todo Notifications directory? Maybe only if corresponding to more than one paper?
+				$link = get_comment_link( $secondary_item_id );
+			} else {
+				$paper = new CACSP_Paper( $paper_id );
+				$text = sprintf( __( 'There is new activity on the paper "%s"', 'social-paper' ), $paper->post_title );
+				$link = get_comment_link( $secondary_item_id );
+			}
+
+			break;
 	}
 
 	if ( 'array' === $format ) {
@@ -212,3 +226,70 @@ function cacsp_notification_mypaper_comment( $comment_id ) {
 	) );
 }
 add_action( 'wp_insert_comment', 'cacsp_notification_mypaper_comment' );
+
+/**
+ * Notify a user when a comment is left on a thread where the user has commented.
+ *
+ * Excludes post authors, who are notified with 'mypost_comment'.
+ *
+ * Currently, the notifications fire for all users who have commented on the *post*.
+ *
+ * @todo A more fine-grained concept of "thread": comments belonging to a single paragraph; comments with common
+ *       ancestors; a comment that is a direct descendant of the other.
+ * @todo Maybe this should be replaced with (or at least integrated tightly with) Follow. Ie, when you comment
+ *       on a paper, you automatically follow it. This wouldn't be thread-specific.
+ *
+ * @since 1.0.0
+ *
+ * @param int $comment_id ID of the comment.
+ */
+function cacsp_notification_mythread_comment( $comment_id ) {
+	$comment = get_comment( $comment_id );
+	if ( ! $comment ) {
+		return;
+	}
+
+	$paper = new CACSP_Paper( $comment->comment_post_ID );
+	$paper_id = $paper->ID;
+	if ( ! $paper_id ) {
+		return;
+	}
+
+	// Fetch emails of previous commenters.
+	$comments = get_comments( array(
+		'comment_post_ID' => $paper_id,
+		'update_comment_meta_cache' => false,
+		'update_comment_post_cache' => false,
+	) );
+
+	// @todo Can't use user_id because it's not always provided?
+	$emails = wp_list_pluck( $comments, 'comment_author_email' );
+	$emails = array_unique( array_filter( $emails ) );
+
+	if ( empty( $emails ) ) {
+		return;
+	}
+
+	$type = 'mythread_comment';
+
+	foreach ( $emails as $email ) {
+		$user = get_user_by( 'email', $comment->comment_author_email );
+		if ( ! $user ) {
+			continue;
+		}
+
+		// We handle the post author elsewhere.
+		if ( $user->ID == $paper->post_author ) {
+			continue;
+		}
+
+		$added = bp_notifications_add_notification( array(
+			'user_id' => $user->ID,
+			'item_id' => $paper->ID,
+			'secondary_item_id' => $comment_id,
+			'component_name' => 'cacsp',
+			'component_action' => $type,
+		) );
+	}
+}
+add_action( 'wp_insert_comment', 'cacsp_notification_mythread_comment' );
