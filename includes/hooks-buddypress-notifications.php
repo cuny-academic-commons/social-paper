@@ -193,6 +193,11 @@ function cacsp_notification_mypaper_comment( $comment_id ) {
 
 	$type = 'mypaper_comment';
 
+	// Don't notify authors of their own comments.
+	if ( $comment->user_id == $paper->post_author ) {
+		return;
+	}
+
 	$added = bp_notifications_add_notification( array(
 		'user_id' => $paper->post_author,
 		'item_id' => $paper->ID,
@@ -200,14 +205,6 @@ function cacsp_notification_mypaper_comment( $comment_id ) {
 		'component_name' => 'cacsp',
 		'component_action' => $type,
 	) );
-
-	$author = get_userdata( $paper->post_author );
-
-	/** See wp-includes/pluggable.php wp_notify_postauthor() */
-	$notify_author = apply_filters( 'comment_notification_notify_author', false, $comment_id );
-	if ( $author && ! $notify_author && $comment->user_id == $paper->post_author ) {
-		return;
-	}
 
 	$subject = sprintf( __( 'New comment on your paper "%s"', 'social-paper' ), $paper->post_title );
 
