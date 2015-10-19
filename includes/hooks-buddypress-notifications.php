@@ -269,8 +269,15 @@ function cacsp_notification_mythread_comment( $comment_id ) {
 
 	$type = 'mythread_comment';
 
+	$email_subject = sprintf( __( 'New comment on the paper "%s"', 'social-paper' ), $paper->post_title );
+	$email_content  = sprintf( __( 'New comment on the paper "%s"', 'social-paper' ), $paper->post_title ) . "\r\n";
+	$email_content .= sprintf( __( 'Author: %s', 'social-paper' ), $comment->comment_author ) . "\r\n";
+	$email_content .= sprintf( __( 'Comment: %s', 'social-paper' ), "\r\n" . $comment->comment_content ) . "\r\n\r\n";
+	$email_content .= sprintf( __( 'View the commment: %s', 'social-paper' ), get_comment_link( $comment ) ) . "\r\n";
+	$email_content .= sprintf( __( 'Visit the paper: %s', 'social-paper' ), get_permalink( $paper->ID ) ) . "\r\n\r\n";
+
 	foreach ( $emails as $email ) {
-		$user = get_user_by( 'email', $comment->comment_author_email );
+		$user = get_user_by( 'email', $email );
 		if ( ! $user ) {
 			continue;
 		}
@@ -286,6 +293,14 @@ function cacsp_notification_mythread_comment( $comment_id ) {
 			'secondary_item_id' => $comment_id,
 			'component_name' => 'cacsp',
 			'component_action' => $type,
+		) );
+
+		cacsp_send_notification_email( array(
+			'recipient_user_id' => $user->ID,
+			'paper_id' => $paper->ID,
+			'subject' => $email_subject,
+			'content' => $email_content,
+			'type' => $type,
 		) );
 	}
 }
