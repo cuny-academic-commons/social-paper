@@ -12,7 +12,7 @@
  * @since 1.0.0
  *
  */
-function cacsp_format_notifications( $action, $paper_id, $user_id, $count, $format = 'string' ) {
+function cacsp_format_notifications( $action, $paper_id, $secondary_item_id, $count, $format = 'string' ) {
 	$paper = new CACSP_Paper( $paper_id );
 
 	switch ( $action ) {
@@ -23,8 +23,22 @@ function cacsp_format_notifications( $action, $paper_id, $user_id, $count, $form
 				// @todo Some directory.
 				$link = '';
 			} else {
-				$text = sprintf( __( '%s has added you as a reader on the paper %s', 'social-paper' ), bp_core_get_user_displayname( $user_id ), $paper->post_title );
+				$text = sprintf( __( '%s has added you as a reader on the paper "%s"', 'social-paper' ), bp_core_get_user_displayname( $secondary_item_id ), $paper->post_title );
 				$link = get_permalink( $paper_id );
+			}
+
+			break;
+
+		case 'mypaper_comment' :
+			if ( (int) $count > 1 ) {
+				$text = sprintf( _n( 'You have %s comment on your papers', 'You have %s comments on your papers', $count, 'social-paper' ), $count );
+
+				// @todo Notifications directory? Maybe only if corresponding to more than one paper?
+				$link = get_comment_link( $secondary_item_id );
+			} else {
+				$paper = new CACSP_Paper( $paper_id );
+				$text = sprintf( __( 'You have a new comment on your paper "%s"', 'social-paper' ), $paper->post_title );
+				$link = get_comment_link( $secondary_item_id );
 			}
 
 			break;
@@ -44,6 +58,9 @@ function cacsp_format_notifications( $action, $paper_id, $user_id, $count, $form
  * Send an email related to a notification.
  *
  * @since 1.0.0
+ *
+ * @todo This would be a good place to block multiple emails. Maybe create a hash of user IDs + notification IDs,
+ * and don't let multiple emails for a given notification ID to go out to a single user. Doesn't need to be persistent.
  *
  * @param array $args {
  *     @type int    $recipient_user_id ID of the user receiving the message.
@@ -114,3 +131,84 @@ Visit the paper: %2$s', 'social-paper' ), $text, $link );
 	) );
 }
 add_action( 'cacsp_added_reader_to_paper', 'cacsp_notification_added_reader', 10, 2 );
+
+/**
+ * Prevent WP from sending its native postauthor email notifications for comments.
+ *
+ * We send our own. This is an ugly hack.
+ *
+ * @since 1.0.0
+ *
+ * @param array $emails     Array of email addresses to notify. We'll wipe it out to noop wp_notify_postauthor().
+ * @param int   $comment_id ID of the comment.
+ */
+function cacsp_prevent_wp_notify_postauthor( $emails, $comment_id ) {
+	$comment = get_comment( $comment_id );
+	if ( ! $comment ) {
+		return $emails;
+	}
+
+	$paper = new CACSP_Paper( $comment->comment_post_ID );
+	$paper_id = $paper->ID;
+	if ( ! $paper_id ) {
+		return $emails;
+	}
+
+	return array();
+}
+add_filter( 'comment_notification_recipients', 'cacsp_prevent_wp_notify_postauthor', 10, 2 );
+
+/**
+ * Notify a user when a comment is left on her paper.
+ *
+ * @since 1.0.0
+ *
+ * @param int $comment_id ID of the comment.
+ */
+function cacsp_notification_mypaper_comment( $comment_id ) {
+	$comment = get_comment( $comment_id );
+	if ( ! $comment ) {
+		return;
+	}
+
+	$paper = new CACSP_Paper( $comment->comment_post_ID );
+	$paper_id = $paper->ID;
+	if ( ! $paper_id ) {
+		return;
+	}
+
+	$type = 'mypaper_comment';
+
+	$added = bp_notifications_add_notification( array(
+		'user_id' => $paper->post_author,
+		'item_id' => $paper->ID,
+		'secondary_item_id' => $comment_id,
+		'component_name' => 'cacsp',
+		'component_action' => $type,
+	) );
+
+	$author = get_userdata( $paper->post_author );
+
+	/** See wp-includes/pluggable.php wp_notify_postauthor() */
+	$notify_author = apply_filters( 'comment_notification_notify_author', false, $comment_id );
+	if ( $author && ! $notify_author && $comment->user_id == $paper->post_author ) {
+		return;
+	}
+
+	$subject = sprintf( __( 'New comment on your paper "%s"', 'social-paper' ), $paper->post_title );
+
+	$content  = sprintf( __( 'New comment on your paper "%s"', 'social-paper' ), $paper->post_title ) . "\r\n";
+	$content .= sprintf( __( 'Author: %s', 'social-paper' ), $comment->comment_author ) . "\r\n";
+	$content .= sprintf( __( 'Comment: %s', 'social-paper' ), "\r\n" . $comment->comment_content ) . "\r\n\r\n";
+	$content .= sprintf( __( 'View the commment: %s', 'social-paper' ), get_comment_link( $comment ) ) . "\r\n";
+	$content .= sprintf( __( 'Visit the paper: %s', 'social-paper' ), get_permalink( $paper->ID ) ) . "\r\n";
+
+	cacsp_send_notification_email( array(
+		'recipient_user_id' => $paper->post_author,
+		'paper_id' => $paper->ID,
+		'subject' => $subject,
+		'content' => $content,
+		'type' => $type,
+	) );
+}
+add_action( 'wp_insert_comment', 'cacsp_notification_mypaper_comment' );
