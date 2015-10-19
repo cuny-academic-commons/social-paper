@@ -290,3 +290,58 @@ function cacsp_notification_mythread_comment( $comment_id ) {
 	}
 }
 add_action( 'wp_insert_comment', 'cacsp_notification_mythread_comment' );
+
+/** Marking read *************************************************************/
+
+/**
+ * Mark all notifications read for a user + paper combination.
+ *
+ * Optionally, you can also pass a 'type' which will limit the marking-read to notifications matching
+ * that 'component_action'.
+ *
+ * @since 1.0.0
+ *
+ * @param int    $user_id           ID of the user.
+ * @param int    $paper_id          ID of the paper.
+ * @param string $type              Optional. 'component_action' to limit to.
+ * @param int    $secondary_item_id Optional. 'secondary_item_id' to limit to.
+ */
+function cacsp_mark_notifications_read( $user_id, $paper_id, $type = '', $secondary_item_id = '' ) {
+	$where = array(
+		'user_id'        => $user_id,
+		'item_id'        => $paper_id,
+		'component_name' => 'cacsp',
+	);
+
+	if ( $type ) {
+		$where['component_action'] = $type;
+	}
+
+	if ( $secondary_item_id ) {
+		$where['secondary_item_id'] = $secondary_item_id;
+	}
+
+	return BP_Notifications_Notification::update(
+		array( 'is_new' => 0 ),
+		$where
+	);
+}
+
+/**
+ * Mark notifications read when a user views a paper.
+ *
+ * @since 1.0.0
+ */
+function cacsp_mark_notifications_read_on_paper_view() {
+	if ( ! is_user_logged_in() ) {
+		return;
+	}
+
+	$queried_object = get_queried_object();
+	if ( ! ( $queried_object instanceof WP_Post ) || 'cacsp_paper' !== $queried_object->post_type ) {
+		return;
+	}
+
+	cacsp_mark_notifications_read( bp_loggedin_user_id(), $queried_object->ID );
+}
+add_action( 'bp_actions', 'cacsp_mark_notifications_read_on_paper_view' );
