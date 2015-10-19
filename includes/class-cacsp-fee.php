@@ -125,6 +125,24 @@ class CACSP_FEE extends FEE {
 	}
 
 	/**
+	 * FEE forces `comment_status` to 'default_comment_status'. We must override.
+	 *
+	 * @since 1.0.0
+	 */
+	function wp() {
+		global $post;
+
+		parent::wp();
+
+		if ( $post instanceof WP_Post
+			&& 'auto-draft' === $post->post_status
+			&& 'cacsp_paper' === $post->post_type
+		) {
+			$post->comment_status = 'open';
+		}
+	}
+
+	/**
 	 * Groan.  Copy over the parent footer() method to fix a few things.
 	 *
 	 * - Added 'fee_tax_buttons' hook.

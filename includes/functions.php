@@ -172,6 +172,25 @@ function cacsp_get_protected_papers_for_user( $user_id ) {
 }
 
 /**
+ * Ensure that comments are open on new papers.
+ *
+ * @since 1.0.0
+ *
+ * @param string $status Default 'comment_status'.
+ * @param string $post_type Post type name.
+ * @param string $comment_type Comment type name.
+ * @return string
+ */
+function cacsp_default_comment_status( $status, $post_type, $comment_type ) {
+	if ( 'cacsp_paper' === $post_type ) {
+		$status = 'open';
+	}
+
+	return $status;
+}
+add_filter( 'get_default_comment_status', 'cacsp_default_comment_status', 10, 3 );
+
+/**
  * Template tag to output pagination on archive page.
  *
  * Pagination resembles the markup from BuddyPress.
