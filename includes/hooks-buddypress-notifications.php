@@ -41,42 +41,6 @@ function cacsp_format_notifications( $action, $paper_id, $user_id, $count, $form
 }
 
 /**
- * Notify a user when added as a reader to a paper.
- *
- * @since 1.0.0
- *
- * @param CACSP_Paper $paper   Paper object.
- * @param int         $user_id ID of the user added as a reader.
- */
-function cacsp_notification_added_reader( CACSP_Paper $paper, $user_id ) {
-	$type = 'added_reader';
-
-	$added = bp_notifications_add_notification( array(
-		'user_id' => $user_id,
-		'item_id' => $paper->ID,
-		'secondary_item_id' => bp_loggedin_user_id(),
-		'component_name' => 'cacsp',
-		'component_action' => $type,
-	) );
-
-	$text = sprintf( __( '%s has added you as a reader on the paper "%s".', 'social-paper' ), bp_core_get_user_displayname( bp_loggedin_user_id() ), $paper->post_title );
-	$link = wp_login_url( get_permalink( $paper->ID ) );
-	$content = sprintf( __(
-'%1$s
-
-Visit the paper: %2$s', 'social-paper' ), $text, $link );
-
-	cacsp_send_notification_email( array(
-		'recipient_user_id' => $user_id,
-		'paper_id' => $paper->ID,
-		'subject' => $text,
-		'content' => $content,
-		'type' => $type,
-	) );
-}
-add_action( 'cacsp_added_reader_to_paper', 'cacsp_notification_added_reader', 10, 2 );
-
-/**
  * Send an email related to a notification.
  *
  * @since 1.0.0
@@ -112,3 +76,41 @@ function cacsp_send_notification_email( $args = array() ) {
 
 	return wp_mail( $recipient->user_email, $subject, $r['content'] );
 }
+
+/** Specific notifications ***************************************************/
+
+/**
+ * Notify a user when added as a reader to a paper.
+ *
+ * @since 1.0.0
+ *
+ * @param CACSP_Paper $paper   Paper object.
+ * @param int         $user_id ID of the user added as a reader.
+ */
+function cacsp_notification_added_reader( CACSP_Paper $paper, $user_id ) {
+	$type = 'added_reader';
+
+	$added = bp_notifications_add_notification( array(
+		'user_id' => $user_id,
+		'item_id' => $paper->ID,
+		'secondary_item_id' => bp_loggedin_user_id(),
+		'component_name' => 'cacsp',
+		'component_action' => $type,
+	) );
+
+	$text = sprintf( __( '%s has added you as a reader on the paper "%s".', 'social-paper' ), bp_core_get_user_displayname( bp_loggedin_user_id() ), $paper->post_title );
+	$link = wp_login_url( get_permalink( $paper->ID ) );
+	$content = sprintf( __(
+'%1$s
+
+Visit the paper: %2$s', 'social-paper' ), $text, $link );
+
+	cacsp_send_notification_email( array(
+		'recipient_user_id' => $user_id,
+		'paper_id' => $paper->ID,
+		'subject' => $text,
+		'content' => $content,
+		'type' => $type,
+	) );
+}
+add_action( 'cacsp_added_reader_to_paper', 'cacsp_notification_added_reader', 10, 2 );
