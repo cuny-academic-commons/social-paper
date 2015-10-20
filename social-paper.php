@@ -100,35 +100,39 @@ class Social_Paper {
 	 * Constructor.
 	 */
 	public function __construct() {
-		// bail if a commenting plugin is not enabled
-		if ( false === $this->is_commenting_plugin_enabled() ) {
-			$notice = __( 'Social Paper requires a paragraph commenting plugin enabled.', 'social-paper' );
+		// Bail if the "Inline Comments" plugin is not enabled
+		if ( ! function_exists( 'incom_frontend_init' ) ) {
+			// Show admin notice
+			if ( current_user_can( 'install_plugins' ) ) {
+				$notice = sprintf(
+					__( 'Social Paper requires the %s plugin to be enabled.  Please download it %shere%s.', 'social-paper' ),
+					'<strong>' . __( 'Inline Comments', 'social-paper' ). '</strong>',
+					'<a target="_blank" href="https://wordpress.org/plugins/inline-comments/">',
+					'</a>'
+				);
 
-			if ( count( array_keys( $this->get_supported_commenting_plugins() ) ) > 1 ) {
-				$notice .= ' ' . __( 'Please install one of the following:', 'social-paper' );
-			} else {
-				$notice .= ' ' . __( 'Please install:', 'social-paper' );
+				add_action( 'admin_notices', create_function( '', "
+					echo '<div class=\"error\"><p>" . $notice . "</p></div>';
+				" ) );
 			}
-
-			$plugins = '';
-			foreach( (array) $this->get_supported_commenting_plugins() as $plugin ) {
-				$plugins .= "&middot; <a href=\"{$plugin['link']}\">{$plugin['name']}</a><br />";
-			}
-
-			// show admin notice
-			add_action( 'admin_notices', create_function( '', "
-				echo '<div class=\"error\"><p>" . $notice . "</p><p>" . $plugins . "</p></div>';
-			" ) );
 			return;
 		}
-		if ( !class_exists( 'FEE' ) ) {
-			add_action( 'admin_notices', create_function('', '
-				echo "<div class=\"error\">";
-				$notice = __( \'Social Paper requires the plugin WP Front End Editor to work. Please enable it through the plugin repository or by downloading it\', \'social paper\' );
-				echo $notice;
-				echo " <a href=\"https://wordpress.org/plugins/wp-front-end-editor/\">here</a>.";
-				echo "</div>";
-			' ) );
+
+		// Bail if the "Front-end Editor" plugin is not enabled
+		if ( ! class_exists( 'FEE' ) ) {
+			// Show admin notice
+			if ( current_user_can( 'install_plugins' ) ) {
+				$notice = sprintf(
+					__( 'Social Paper requires the %s plugin to be enabled.  Please download it %shere%s.', 'social-paper' ),
+					'<strong>' . __( 'Inline Comments', 'social-paper' ). '</strong>',
+					'<a target="_blank" href="https://wordpress.org/plugins/inline-comments/">',
+					'</a>'
+				);
+
+				add_action( 'admin_notices', create_function( '', "
+					echo '<div class=\"error\"><p>" . $notice . "</p></div>';
+				" ) );
+			}
 			return;
 		}
 
@@ -197,59 +201,4 @@ class Social_Paper {
 		}
 	}
 
-	/**
-	 * Get supported commenting plugins.
-	 *
-	 * Social Paper heavily relies on a 3rd-party commenting plugin to handle
-	 * paragraph commenting.
-	 *
-	 * Currently, we only support UBC CTLT's WP Side Comments plugin:
-	 * https://github.com/richardtape/wp-side-comments
-	 *
-	 * @return array
-	 */
-	protected function get_supported_commenting_plugins() {
-		$plugins = array();
-
-		// WP Side Comments
-		// Note: This is *not* the same plugin as the one on wp.org
-		$plugins['wp-side-comments'] = array();
-		$plugins['wp-side-comments']['name']   = 'WP Side Comments';
-		$plugins['wp-side-comments']['exists'] = class_exists( 'CTLT_WP_Side_Comments' );
-		$plugins['wp-side-comments']['link']   = 'https://github.com/richardtape/wp-side-comments';
-
-		// Inline Comments
-		// https://github.com/kevinweber/inline-comments
-		$plugins['inline-comments'] = array();
-		$plugins['inline-comments']['name']   = 'Inline Comments';
-		$plugins['inline-comments']['exists'] = function_exists( 'incom_frontend_init' );
-		$plugins['inline-comments']['link']   = 'https://wordpress.org/plugins/inline-comments/';
-
-		/**
-		 * Allow plugins to filter if a commenting plugin is enabled.
-		 *
-		 * Handy for developers to build support for other commenting plugins.
-		 *
-		 * @param type $retval bool
-		 */
-		return apply_filters( 'cacsp_get_supported_commenting_plugins', $plugins );
-	}
-
-	/**
-	 * See if a commenting plugin is enabled.
-	 *
-	 * @return bool
-	 */
-	protected function is_commenting_plugin_enabled() {
-		$enabled = false;
-
-		foreach ( (array) $this->get_supported_commenting_plugins() as $plugin => $prop ) {
-			if ( true === $prop['exists'] ) {
-				$enabled = true;
-				break;
-			}
-		}
-
-		return $enabled;
-	}
 }
