@@ -856,6 +856,10 @@ body.fee-on .fee-url {
 	max-width: 400px;
 }
 
+.incom-bubble-active {
+	display: block !important;
+}
+
 #incom_wrapper ul.children {
 	padding-left: 2em;
 }
