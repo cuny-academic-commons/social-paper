@@ -112,6 +112,17 @@ class CACSP_Profile {
 			'user_has_access' => bp_core_can_edit_settings()
 		) );
 
+		bp_core_new_subnav_item( array(
+			'name'            => __( 'New Paper', 'social-paper' ),
+			'slug'            => 'new',
+			'link'            => cacsp_get_the_new_paper_link(),
+			'parent_url'      => $parent_url,
+			'parent_slug'     => $this->slug,
+			'screen_function' => 'cacsp_profile_screen_published',
+			'position'        => 99,
+			'user_has_access' => current_user_can( 'publish_events' )
+		) );
+
 	}
 
 	/**
