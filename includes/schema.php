@@ -8,7 +8,7 @@
  * @since 1.0
  */
 
-add_action( 'init', 'cacsp_register_post_types' );
+add_action( 'init', 'cacsp_register_post_types', 1 );
 add_action( 'init', 'cacsp_register_taxonomies', 15 );
 
 /**
