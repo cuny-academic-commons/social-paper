@@ -222,6 +222,14 @@ function cacsp_wp_fee_enqueue_scripts() {
 		// assume user cannot drag-n-drop
 		$drag_allowed = '0';
 
+		// enqueue change tracking script
+		wp_enqueue_script(
+			'social-paper-single-changes',
+			Social_Paper::$URL . '/assets/js/changes.js',
+			array( 'social-paper-single-fee' ), // make dependent on our main script above
+			'0.1'
+		);
+
 		global $post;
 		if ( current_user_can( 'edit_post', $post->ID ) ) {
 
