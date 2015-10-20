@@ -334,6 +334,35 @@ function cacsp_ic_inline_js() {
 			jQuery(this).closest('.comment-body').find('.comment-author cite').append(this);
 		});
 
+		// Hide main comment bubble form when attempting to reply to an inline comment
+		jQuery( '.incom-reply a.comment-reply-link' ).on( 'click', function() {
+			if ( jQuery( 'li #comment' ).length ) {
+				jQuery( '#comments-and-form > #respond' ).hide();
+				jQuery( '#comments-and-form > .incom-cancel' ).hide();
+			}
+
+			jQuery( 'li #comment' ).show();
+			jQuery( 'li .form-submit' ).show();
+		});
+
+		/**
+		 * Hook into window load
+		 */
+		jQuery(window).on( 'load', function() {
+			// Show main comment bubble form when clicking on a comment bubble
+			jQuery( '.incom-bubble' ).on( 'click', function() {
+				// Hide inline reply comment form
+				if ( jQuery( 'li #comment:visible' ).length ) {
+					jQuery( 'li #comment' ).hide();
+					jQuery( 'li .form-submit' ).hide();
+				}
+
+				jQuery( '#comments-and-form > #respond' ).show();
+				jQuery( '#comments-and-form > .incom-cancel' ).show();
+			});
+
+		});
+
 		var para = window.location.search.split('=')[1];
 
 		if ( null === para ) {
