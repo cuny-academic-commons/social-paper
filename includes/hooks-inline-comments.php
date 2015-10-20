@@ -272,11 +272,19 @@ function cacsp_ic_alter_comment_permalink( $retval, $comment ) {
 	// grab the top-parent comment ID
 	$parent = empty( $comment->comment_parent ) ? $comment->comment_ID : $comment->comment_parent;
 	$comment_parent = get_comment( $comment->comment_parent );
+	if ( $comment_parent instanceof WP_Comment ) {
+		$comment_parent = new stdClass;
+		$comment_parent->comment_parent = 0;
+	}
 
 	while ( $comment_parent && 0 !== (int) $comment_parent->comment_parent ) {
 		$c = get_comment( $comment_parent );
 		$parent = $c->comment_parent;
 		$comment_parent = get_comment( $c->comment_parent );
+		if ( $comment_parent instanceof WP_Comment ) {
+			$comment_parent = new stdClass;
+			$comment_parent->comment_parent = 0;
+		}
 	}
 
 	// now re-generate comment permalink
