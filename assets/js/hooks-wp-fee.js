@@ -295,16 +295,6 @@ jQuery(document).ready( function($) {
 		// switch editing toggle button text
 		$('#wp-admin-bar-edit span').text( Social_Paper_FEE.i18n.button_disable );
 
-		// if Inline Comments present
-		if ( window.incom ) {
-
-			// destroy drag-n-drop
-			if ( Social_Paper_FEE.drag_allowed == '1' ) {
-				SocialPaper.dragdrop.destroy();
-			}
-
-		}
-
 	});
 
 	/**
