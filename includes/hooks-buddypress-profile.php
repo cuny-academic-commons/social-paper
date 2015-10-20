@@ -114,7 +114,7 @@ class CACSP_Profile {
 
 		bp_core_new_subnav_item( array(
 			'name'            => __( 'New Paper', 'social-paper' ),
-			'slug'            => 'new',
+			'slug'            => 'new-paper',
 			'link'            => cacsp_get_the_new_paper_link(),
 			'parent_url'      => $parent_url,
 			'parent_slug'     => $this->slug,
