@@ -158,11 +158,6 @@ class Social_Paper {
 		require dirname( __FILE__ ) . '/includes/hooks-template.php';
 		require dirname( __FILE__ ) . '/includes/readers.php';
 
-		// WP FEE integration
-		if ( class_exists( 'FEE' ) ) {
-			require dirname( __FILE__ ) . '/includes/hooks-wp-fee.php';
-		}
-
 		/**
 		 * Should we register our custom post type?
 		 *
@@ -173,6 +168,11 @@ class Social_Paper {
 		$register_cpt = (bool) apply_filters( 'cacsp_register_cpt', true );
 		if ( true === $register_cpt ) {
 			require dirname( __FILE__ ) . '/includes/schema.php';
+		}
+
+		// WP FEE integration
+		if ( class_exists( 'FEE' ) ) {
+			require dirname( __FILE__ ) . '/includes/hooks-wp-fee.php';
 		}
 
 		// Inline Comments integration
@@ -197,7 +197,6 @@ class Social_Paper {
 				require dirname( __FILE__ ) . '/includes/hooks-buddypress-notifications.php';
 			}
 
-			//require dirname( __FILE__ ) . '/includes/hooks-buddypress-directory.php';
 		}
 	}
 
