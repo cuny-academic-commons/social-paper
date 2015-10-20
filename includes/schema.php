@@ -48,7 +48,8 @@ function cacsp_register_post_types() {
 			'with_front' => false,
 		),
 		'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),
-		'has_archive' => true
+		'has_archive' => true,
+		'show_in_admin_bar' => false,
 	) );
 }
 
