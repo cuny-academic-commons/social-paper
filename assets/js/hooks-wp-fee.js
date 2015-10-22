@@ -114,7 +114,7 @@ jQuery(document).ready( function($) {
 					options = {
 						resizable: false,
 						width: 400,
-						height: 200,
+						height: 240,
 						zIndex: 3999,
 						modal: true,
 						dialogClass: 'wp-dialog',
