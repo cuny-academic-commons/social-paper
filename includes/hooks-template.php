@@ -202,6 +202,7 @@ function cacsp_asset_enqueue_handler() {
 
 	// Somehow we lose BP's original enqueue, so let's add it back.
 	if ( function_exists( 'bp_is_active' ) && bp_is_active( 'activity' ) ) {
+		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.min' : '';
 		wp_enqueue_style( 'bp-mentions-css', buddypress()->plugin_url . "bp-activity/css/mentions{$min}.css", array(), bp_get_version() );
 	}
 
