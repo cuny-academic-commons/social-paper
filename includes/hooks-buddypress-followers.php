@@ -147,7 +147,10 @@ class BP_Follow_Papers {
 			"cacsp_follow_paper_{$action}",
 			"cacsp-fp-{$action}"
 		);
-		_b( $action_url );
+
+		$markup = sprintf(
+
+		);
 	}
 
 	/**
