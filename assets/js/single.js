@@ -10,5 +10,16 @@
 				data: CACSP_Potential_Readers
 			} );
 		}
+
+		if ( 'undefined' !== typeof bp.mentions.users ) {
+			var $incom_text = $( '#incom-commentform textarea' );
+			$incom_text.bp_mentions( bp.mentions.users );
+
+			// Don't let Inline Comments collapse comments on @-mentions selection.
+			$( '#atwho-container' ).click( function( e ) {
+				e.stopPropagation();
+			});
+		}
 	} );
+
 }( jQuery ) );
