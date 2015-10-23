@@ -50,11 +50,9 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 	 */
 	public function display( $group_id = null ) {
 
-		// perform query for this group
-		// NOTE: query is currently disabled
+		// Perform query for this group.
 		$group_query = new WP_Query( array(
 			'post_type' => 'cacsp_paper',
-			'author' => -1,
 			'post_status' => 'publish',
 			'bp_group' => $group_id,
 		) );
