@@ -524,6 +524,42 @@ function cacsp_save_group_connection( $post_id ) {
 }
 add_action( 'save_post', 'cacsp_save_group_connection' );
 
+/**
+ * Add group information to the paper meta area.
+ *
+ * @since 1.0.0
+ */
+function cacsp_show_group_info_in_paper_meta() {
+	$paper = new CACSP_Paper( get_queried_object_id() );
+	$group_ids = $paper->get_group_ids();
+
+	if ( empty( $group_ids ) ) {
+		return;
+	}
+
+	$groups = groups_get_groups( array(
+		'type' => 'alphabetical',
+		'include' => $group_ids,
+		'show_hidden' => true,
+	) );
+
+	$show_groups = array();
+	foreach ( $groups['groups'] as $group ) {
+		if ( 'public' === $group->status || $group->is_member ) {
+			$show_groups[] = sprintf( '<a href="%s">%s</a>', esc_url( bp_get_group_permalink( $group ) ) . 'papers/', esc_html( stripslashes( $group->name ) ) );
+		}
+	}
+
+	if ( empty( $show_groups ) ) {
+		return;
+	}
+
+	echo '<span class="posted-in-groups"><br />';
+	printf( _x( 'In %s', 'Paper group list', 'social-paper' ), implode( ', ', $show_groups ) );
+	echo '</span>';
+}
+add_action( 'cacsp_after_paper_meta', 'cacsp_show_group_info_in_paper_meta' );
+
 /** Cache (ugh) **************************************************************/
 
 /**

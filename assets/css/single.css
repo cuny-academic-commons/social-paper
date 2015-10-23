@@ -667,6 +667,10 @@ a {
 	margin-bottom: 0.3em;
 }
 
+.posted-in-groups a {
+	font-weight: 700;
+}
+
 /* Comments styling */
 #comments {
 }
