@@ -874,7 +874,7 @@ class BP_Follow_Papers_Screens {
 	?>
 		<div class="papers follow-papers" role="main">
 			<?php if ( $user_papers->have_posts() ) : ?>
-				<?php while ( $user_papers->have_posts() ) : ?>
+				<?php while ( $user_papers->have_posts() ) : $user_papers->the_post(); ?>
 					<?php cacsp_get_template_part( 'list-social-paper', 'buddypress' ); ?>
 				<?php endwhile; ?>
 			<?php else : ?>
