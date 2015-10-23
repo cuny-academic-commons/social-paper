@@ -65,32 +65,38 @@ while ( have_posts() ) : the_post();
 		<?php if ( 'new' !== get_query_var( 'name' ) && 'auto-draft' !== get_queried_object()->post_status ) : ?>
 		<footer class="entry-footer">
 			<div class="entry-author">
-				<a href="<?php the_author_meta( 'url' ); ?>"><?php echo get_avatar( $post->post_author, 50, 'mm', '', array(
-					'class' => 'avatar'
-				) ); ?>
-				</a>
+				<div class="entry-author-avatar">
+					<a href="<?php the_author_meta( 'url' ); ?>"><?php echo get_avatar( $post->post_author, 50, 'mm', '', array(
+						'class' => 'avatar'
+					) ); ?>
+					</a>
+				</div>
 
-				<h3><?php the_author_link(); ?></h3>
-				<?php
-				if ( $bio = get_the_author_meta( 'description' ) ) {
-					echo "<p>{$bio}</p>";
-				}
-				?>
+				<div class="entry-author-meta">
+					<h3><?php the_author_link(); ?></h3>
+					<?php
+					if ( $bio = get_the_author_meta( 'description' ) ) {
+						echo "<p>{$bio}</p>";
+					}
+					?>
 
-				<?php
-					$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+					<?php
+						$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
 
-					$time_string = sprintf( $time_string,
-						esc_attr( get_the_date( 'c' ) ),
-						get_the_date()
-					);
+						$time_string = sprintf( $time_string,
+							esc_attr( get_the_date( 'c' ) ),
+							get_the_date()
+						);
 
-					printf( '<span class="posted-on">%1$s <a href="%2$s" rel="bookmark">%3$s</a></span>',
-						_x( 'Published on', 'Used before publish date.', 'social-paper' ),
-						esc_url( get_permalink() ),
-						$time_string
-					);
-				?>
+						printf( '<span class="posted-on">%1$s <a href="%2$s" rel="bookmark">%3$s</a></span>',
+							_x( 'Published on', 'Used before publish date.', 'social-paper' ),
+							esc_url( get_permalink() ),
+							$time_string
+						);
+
+						do_action( 'cacsp_after_paper_meta' );
+					?>
+				</div>
 			</div>
 
 			<?php //edit_post_link( __( 'Edit', 'social-paper' ), '<span class="edit-link">', '</span>' ); ?>

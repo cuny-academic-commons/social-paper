@@ -652,6 +652,15 @@ a {
 	padding: 1em 0;
 }
 
+.entry-author-avatar {
+	width: 60px;
+	float: left;
+}
+
+.entry-author-meta {
+	padding-left: 75px;
+}
+
 .entry-author h3 {
 	line-height: 1;
 	margin-top: 0.3em;
