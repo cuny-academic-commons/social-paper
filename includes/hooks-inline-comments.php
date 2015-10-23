@@ -321,7 +321,7 @@ function cacsp_ic_inline_js() {
 		return;
 	}
 
-	if ( true === in_array( get_queried_object()->post_status, array( 'draft', 'auto-draft' ), true ) ) {
+	if ( get_queried_object() && true === in_array( get_queried_object()->post_status, array( 'draft', 'auto-draft' ), true ) ) {
 		return;
 	}
 ?>
