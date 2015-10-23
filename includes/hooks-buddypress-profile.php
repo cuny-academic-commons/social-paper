@@ -543,6 +543,8 @@ function cacsp_add_button( $type = 'delete' ) {
 	bp_button( apply_filters( 'bp_social_paper_button_args', $r ) );
 }
 
+/** Directory ************************************************************/
+
 /**
  * Adds a 'delete' button to the paper loop.
  */
@@ -562,3 +564,53 @@ function cacsp_loop_publish_button() {
 	}
 }
 add_action( 'bp_directory_papers_actions', 'cacsp_loop_publish_button' );
+
+/**
+ * Add the 'buddypress' CSS class when on the Paper archive page.
+ *
+ * Fixes display issues for BuddyPress companion stylesheets.
+ *
+ * @param  array $retval Current CSS classes
+ * @return array
+ */
+function cacsp_directory_add_buddypress_body_class( $retval ) {
+	if ( false === is_post_type_archive( 'cacsp_paper' ) ) {
+		return $retval;
+	}
+
+	$retval[] = 'buddypress';
+	return $retval;
+}
+add_filter( 'body_class', 'cacsp_directory_add_buddypress_body_class' );
+
+/**
+ * Alters the CSS post class when on the Paper archive page.
+ *
+ * Fixes display issues for BuddyPress companion stylesheets.  Most notably,
+ * twentyfourteen, twentyfifteen and twentysixteen.
+ *
+ * @param  array $retval Current CSS classes
+ * @return array
+ */
+function cacsp_directory_post_class_compatibility( $retval ) {
+	if ( false === is_post_type_archive( 'cacsp_paper' ) ) {
+		return $retval;
+	}
+
+	$retval = array_unique( $retval );
+
+	// twentysixteen needs this
+	$retval[] = 'type-page';
+
+	// twentyfourteen + twentyfifteen - remove 'has-post-thumbnail' class.
+	// This is done because we're tricking the archive template to use the post
+	// template and using the post_class() function.  The 'has-post-thumbnail'
+	// class styles things differently in twentyfourteen + twentyfifteen.
+	$key = array_search( 'has-post-thumbnail', $retval );
+	if ( false !== $key ) {
+		unset( $retval[ $key ] );
+	}
+
+	return $retval;
+}
+add_filter( 'post_class', 'cacsp_directory_post_class_compatibility', 999 );
