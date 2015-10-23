@@ -343,3 +343,73 @@ function cacsp_access_protection_for_activity_feed( $where_conditions ) {
 	return $where_conditions;
 }
 add_filter( 'bp_activity_get_where_conditions', 'cacsp_access_protection_for_activity_feed' );
+
+/**
+ * Prevent BP from sending its native notification emails for paper comment @-mentions.
+ *
+ * BP doesn't have any meaningful way to filter the subject and content of the emails, so we have to use this awful
+ * sledgehammer, and reproduce a bunch of BP logic.
+ *
+ * @since 1.0.0
+ *
+ * @param BP_Activity_Activity $activity Activity object.
+ */
+function cacsp_maybe_disable_bp_at_mention_notification( $activity ) {
+	// Nothing to do here.
+	if ( ! has_action( 'bp_activity_after_save', 'bp_activity_at_name_send_emails' ) ) {
+		return;
+	}
+
+	if ( 'new_cacsp_comment' !== $activity->type ) {
+		return;
+	}
+
+	remove_action( 'bp_activity_after_save', 'bp_activity_at_name_send_emails' );
+	add_action( 'bp_activity_after_save', 'cacsp_at_mention_send_notifications' );
+}
+add_action( 'bp_activity_before_save', 'cacsp_maybe_disable_bp_at_mention_notification', 100 );
+
+/**
+ * Sends emails and notifications for users @-mentioned in a cacsp_new_comment.
+ *
+ * We're unhooking bp_activity_at_name_send_emails() and putting this in its place.
+ *
+ * @since 1.0.0
+ *
+ * @param BP_Activity_Activity $activity The BP_Activity_Activity object.
+ */
+function cacsp_at_mention_send_notifications( $activity ) {
+	// Are mentions disabled?
+	if ( ! bp_activity_do_mentions() ) {
+		return;
+	}
+
+	// If our temporary variable doesn't exist, stop now.
+	if ( empty( buddypress()->activity->mentioned_users ) ) {
+		return;
+	}
+
+	// Grab our temporary variable from bp_activity_at_name_filter_updates().
+	$usernames = buddypress()->activity->mentioned_users;
+
+	// Get rid of temporary variable.
+	unset( buddypress()->activity->mentioned_users );
+
+	/**
+	 * Filters BuddyPress' ability to send email notifications for @mentions.
+	 *
+	 * @param bool  $value     Whether or not BuddyPress should send a notification to the mentioned users.
+	 * @param array $usernames Array of users potentially notified.
+	 */
+	if ( apply_filters( 'bp_activity_at_name_do_notifications', true, $usernames ) ) {
+		cacsp_notification_comment_mention( $activity->id, array_keys( $usernames ) );
+	}
+
+
+	// Send @mentions and setup BP notifications.
+	foreach( (array) $usernames as $user_id => $username ) {
+
+		// Updates mention count for the user.
+		bp_activity_update_mention_count_for_user( $user_id, $activity->id );
+	}
+}

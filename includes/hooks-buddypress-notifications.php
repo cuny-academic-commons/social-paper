@@ -56,6 +56,20 @@ function cacsp_format_notifications( $action, $paper_id, $secondary_item_id, $co
 			}
 
 			break;
+
+		case 'comment_mention' :
+			if ( (int) $count > 1 ) {
+				$text = __( 'You have been mentioned in papers', 'social-paper' );
+
+				// @todo Notifications directory? Maybe only if corresponding to more than one paper?
+				$link = get_comment_link( $secondary_item_id );
+			} else {
+				$paper = new CACSP_Paper( $paper_id );
+				$text = sprintf( __( 'You&#8217;ve been mentioned in a comment on the paper "%s"', 'social-paper' ), $paper->post_title );
+				$link = get_comment_link( $secondary_item_id );
+			}
+
+			break;
 	}
 
 	if ( 'array' === $format ) {
@@ -297,6 +311,105 @@ function cacsp_notification_mythread_comment( $comment_id ) {
 
 		cacsp_send_notification_email( array(
 			'recipient_user_id' => $user->ID,
+			'paper_id' => $paper->ID,
+			'subject' => $email_subject,
+			'content' => $email_content,
+			'type' => $type,
+		) );
+	}
+}
+add_action( 'wp_insert_comment', 'cacsp_notification_mythread_comment' );
+
+/**
+ * Notify a user when a comment is left with an @-mention of a user.
+ *
+ * Fired from cacsp_at_mention_send_notifications().
+ *
+ * @todo This will produce duplicate comment notifications in some cases. Figure out the precedence, and how to
+ *       keep track and deduplicate.
+ * @todo Maybe this should be replaced with (or at least integrated tightly with) Follow. Ie, when you comment
+ *       on a paper, you automatically follow it. This wouldn't be thread-specific.
+ *
+ * @since 1.0.0
+ *
+ * @param int   $activity_id ID of the cacsp_new_comment activity item triggering the notification.
+ * @param array $user_ids    IDs of the users the notification is being sent to.
+ */
+function cacsp_notification_comment_mention( $activity_id, $user_ids ) {
+	if ( empty( $user_ids ) ) {
+		return;
+	}
+
+	$activity = new BP_Activity_Activity( $activity_id );
+	if ( empty( $activity->secondary_item_id ) ) {
+		return;
+	}
+
+	$comment_id = $activity->item_id;
+	$_paper_id  = $activity->secondary_item_id;
+
+	$comment = get_comment( $comment_id );
+	if ( ! $comment ) {
+		return;
+	}
+
+	$paper = new CACSP_Paper( $comment->comment_post_ID );
+	$paper_id = $paper->ID;
+	if ( ! $paper_id || $paper_id != $_paper_id ) {
+		return;
+	}
+
+	// Pull up info on the commenter.
+	if ( ! empty( $comment->user_id ) ) {
+		$comment_user_id = (int) $comment->user_id;
+		$comment_user = new WP_User( $comment_user_id );
+	} else {
+		$_comment_user = get_user_by( 'email', $comment->comment_author_email );
+		if ( $_comment_user->exists() ) {
+			$comment_user = $_comment_user;
+			$comment_user_id = (int) $comment_user->ID;
+		}
+	}
+
+	$type = 'comment_mention';
+
+	// Fetch emails of users.
+	$users = get_users( array(
+		'include' => $user_ids,
+		'fields' => 'all',
+	) );
+
+	$emails = array();
+	foreach ( $users as $u ) {
+		$emails[ $u->ID ] = $u->user_email;
+	}
+
+	if ( empty( $emails ) ) {
+		return;
+	}
+
+	$email_subject = sprintf( __( 'You&#8217;ve been mentioned in a comment on the paper "%s"', 'social-paper' ), $paper->post_title );
+	$email_content  = sprintf( __( '%1$s mentioned you in a comment on the paper "%2$s"', 'social-paper' ), bp_core_get_user_displayname( $comment_user_id ), $paper->post_title ) . "\r\n\r\n";
+	$email_content .= sprintf( _x( '"%s"', 'Mention email notification comment content', 'social-paper' ), $comment->comment_content ) . "\r\n\r\n";
+	$email_content .= sprintf( __( 'View the commment: %s', 'social-paper' ), get_comment_link( $comment ) ) . "\r\n";
+	$email_content .= sprintf( __( 'Visit the paper: %s', 'social-paper' ), get_permalink( $paper->ID ) ) . "\r\n\r\n";
+
+	foreach ( $emails as $user_id => $email ) {
+		// We handle the post author elsewhere.
+		if ( $user_id == $paper->post_author ) {
+			continue;
+		}
+
+		$added = bp_notifications_add_notification( array(
+			'user_id' => $user_id,
+			'item_id' => $paper->ID,
+			'secondary_item_id' => $comment_id,
+			'component_name' => 'cacsp',
+			'component_action' => $type,
+		) );
+
+		cacsp_send_notification_email( array(
+			'recipient_user_id' => $user_id,
 			'paper_id' => $paper->ID,
 			'subject' => $email_subject,
 			'content' => $email_content,
