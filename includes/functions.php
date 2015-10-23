@@ -191,6 +191,34 @@ function cacsp_default_comment_status( $status, $post_type, $comment_type ) {
 add_filter( 'get_default_comment_status', 'cacsp_default_comment_status', 10, 3 );
 
 /**
+ * Force-approve comments from logged-in users.
+ *
+ * @since 1.0.0
+ *
+ * @param bool|string $approved    The approval status.
+ * @param array       $commentdata Comment data.
+ */
+function cacsp_approve_loggedin_comments( $approved, $commentdata ) {
+	$post = get_post( $commentdata['comment_post_ID'] );
+	if ( 'cacsp_paper' !== $post->post_type ) {
+		return $approved;
+	}
+
+	if ( ! is_user_logged_in() ) {
+		return $approved;
+	}
+
+	// Sanity-check.
+	$user = get_userdata( get_current_user_id() );
+	if ( ! $user->exists() || $user->user_email !== $commentdata['comment_author_email'] ) {
+		return $approved;
+	}
+
+	return 1;
+}
+add_filter( 'pre_comment_approved', 'cacsp_approve_loggedin_comments', 10, 2 );
+
+/**
  * Template tag to output pagination on archive page.
  *
  * Pagination resembles the markup from BuddyPress.
