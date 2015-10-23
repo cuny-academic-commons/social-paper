@@ -162,34 +162,54 @@ function cacsp_asset_enqueue_handler() {
 
 	$styles = wp_styles();
 
-	// wipe out all styles and only enqueue the ones we need
-	$styles->queue = array(
-		'social-paper-single',
+	$theme_handle = '';
+	foreach ( $styles->registered as $queue => $arg ) {
+		if ( false !== strpos( $arg->src, get_stylesheet_uri() ) ) {
+			$theme_handle = $arg->handle;
+			break;
+		}
+	}
 
-		// wp-side-comments
-		'side-comments-style',
-		'side-comments-theme',
+	// Found the theme's stylesheet!  Remove it!
+	if ( ! empty( $theme_handle ) ) {
+		wp_deregister_style( $theme_handle );
 
-		// inline-comments
-		'incom-style',
+	// Brute-force: wipe out all styles and only enqueue the ones we need.
+	// Do this just to remove the theme's stylesheet! :(
+	} else {
+		$styles->queue = array(
+			'social-paper-single',
 
-		// wp-front-end-editor
-		#'wp-core-ui',
-		'media-views',
-		'wp-core-ui-colors',
-		'buttons',
-		'wp-auth-check',
-		'fee-modal',
-		'fee-link-modal',
-		'tinymce-core',
-		'tinymce-view',
-		'fee',
-		'dashicons',
+			// wp-side-comments
+			'side-comments-style',
+			'side-comments-theme',
 
-		// adminbar
-		'admin-bar',
-		'fee-adminbar'
-	);
+			// inline-comments
+			'incom-style',
+
+			// wp-front-end-editor
+			#'wp-core-ui',
+			'media-views',
+			'wp-core-ui-colors',
+			'buttons',
+			'wp-auth-check',
+			'fee-modal',
+			'fee-link-modal',
+			'tinymce-core',
+			'tinymce-view',
+			'fee',
+			'dashicons',
+
+			// adminbar
+			'admin-bar',
+			'fee-adminbar',
+
+			// buddypress
+			'bp-mentions-css'
+
+		);
+
+	}
 
 	// enqueue our styles
 	wp_enqueue_style( 'social-paper-single', Social_Paper::$URL . '/assets/css/single.css' );
@@ -198,12 +218,6 @@ function cacsp_asset_enqueue_handler() {
 	if ( function_exists( 'bp_is_active' ) && bp_is_active( 'groups' ) ) {
 		$select2_css_url = set_url_scheme( 'http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css' );
 		wp_enqueue_style( 'social-paper-select2', $select2_css_url );
-	}
-
-	// Somehow we lose BP's original enqueue, so let's add it back.
-	if ( function_exists( 'bp_is_active' ) && bp_is_active( 'activity' ) ) {
-		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.min' : '';
-		wp_enqueue_style( 'bp-mentions-css', buddypress()->plugin_url . "bp-activity/css/mentions{$min}.css", array(), bp_get_version() );
 	}
 
 	// Register scripts.
