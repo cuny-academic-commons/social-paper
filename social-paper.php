@@ -197,6 +197,10 @@ class Social_Paper {
 				require dirname( __FILE__ ) . '/includes/hooks-buddypress-notifications.php';
 			}
 
+			if ( class_exists( 'BP_Follow_Component' ) ) {
+				require dirname( __FILE__ ) . '/includes/hooks-buddypress-followers.php';
+				buddypress()->follow->papers = new BP_Follow_Papers();
+			}
 		}
 	}
 
