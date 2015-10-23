@@ -200,6 +200,11 @@ function cacsp_asset_enqueue_handler() {
 		wp_enqueue_style( 'social-paper-select2', $select2_css_url );
 	}
 
+	// Somehow we lose BP's original enqueue, so let's add it back.
+	if ( function_exists( 'bp_is_active' ) && bp_is_active( 'activity' ) ) {
+		wp_enqueue_style( 'bp-mentions-css', buddypress()->plugin_url . "bp-activity/css/mentions{$min}.css", array(), bp_get_version() );
+	}
+
 	// Register scripts.
 	$sp_js_deps = array( 'jquery' );
 	if ( function_exists( 'bp_is_active' ) && bp_is_active( 'groups' ) ) {
