@@ -124,8 +124,8 @@ class Social_Paper {
 			if ( current_user_can( 'install_plugins' ) ) {
 				$notice = sprintf(
 					__( 'Social Paper requires the %s plugin to be enabled.  Please download it %shere%s.', 'social-paper' ),
-					'<strong>' . __( 'Inline Comments', 'social-paper' ). '</strong>',
-					'<a target="_blank" href="https://wordpress.org/plugins/inline-comments/">',
+					'<strong>' . __( 'Front-end Editor', 'social-paper' ). '</strong>',
+					'<a target="_blank" href="https://wordpress.org/plugins/wp-front-end-editor/">',
 					'</a>'
 				);
 
