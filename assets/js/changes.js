@@ -422,17 +422,24 @@ jQuery(document).ready( function($) {
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_PASTE_COMPLETE', event );
 
-			var tag, identifier, number, subsequent, wp_view,
+			var tag, identifier, number, subsequent, wp_view, container,
 				current_items = [], paras = [], filtered = [],
 				previous_element = false, stop_now = false;
 
+			// What editor are we using?
+			if ( typeof wa_fronted !== 'undefined' ) {
+				container = '.entry-content.wa-fronted-editor';
+			} else {
+				container = '.fee-content-body';
+			}
+
 			// get current identifiers
-			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
+			$( container ).find( '[data-incom]' ).each( function( i, element ) {
 				current_items.push( $(element).attr( 'data-incom' ) );
 			});
 
 			// get current paras
-			paras = $('.fee-content-body p');
+			paras = $( container + ' p');
 
 			// try to find the para prior to the first unidentified para
 			paras.each( function( i, element ) {
@@ -681,12 +688,19 @@ jQuery(document).ready( function($) {
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_ENTER' );
 
-			var node, item, tag, identifier, number, subsequent,
+			var node, item, tag, identifier, number, subsequent, container,
 				current_items = [], missing = [],
 				original_num;
 
+			// What editor are we using?
+			if ( typeof wa_fronted !== 'undefined' ) {
+				container = '.entry-content.wa-fronted-editor';
+			} else {
+				container = '.fee-content-body';
+			}
+
 			// get keyup identifiers
-			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
+			$( container ).find( '[data-incom]' ).each( function( i, element ) {
 				current_items.push( $(element).attr( 'data-incom' ) );
 			});
 
@@ -817,11 +831,18 @@ jQuery(document).ready( function($) {
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_DELETE' );
 
-			var node, item, tag, identifier, number, subsequent,
+			var node, item, tag, identifier, number, subsequent, container,
 				current_items = [], missing = [];
 
+			// What editor are we using?
+			if ( typeof wa_fronted !== 'undefined' ) {
+				container = '.entry-content.wa-fronted-editor';
+			} else {
+				container = '.fee-content-body';
+			}
+
 			// get current identifiers
-			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
+			$( container ).find( '[data-incom]' ).each( function( i, element ) {
 				current_items.push( $(element).attr( 'data-incom' ) );
 			});
 
@@ -915,14 +936,21 @@ jQuery(document).ready( function($) {
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_PRINTING_CHAR' );
 
-			var node, item, tag, identifier, number, subsequent,
+			var node, item, tag, identifier, number, subsequent, container,
 				current_items = [], missing = [];
+
+			// What editor are we using?
+			if ( typeof wa_fronted !== 'undefined' ) {
+				container = '.entry-content.wa-fronted-editor';
+			} else {
+				container = '.fee-content-body';
+			}
 
 			// get current identifiers on keydown
 			if ( ! me.instance.selection.isCollapsed() && keystate == 'keydown' ) {
 				me.keydown_items = [];
 				item = $( me.instance.selection.getNode() );
-				if ( item.hasClass( 'fee-content-body' ) ) {
+				if ( item.hasClass( 'fee-content-body' ) || ( item.hasClass( 'entry-content' ) && item.hasClass( 'wa-fronted-editor' ) ) ) {
 					item.children( 'p' ).each(function ( i, el ) {
 						me.keydown_items.push( $(el).attr( 'data-incom' ) );
 					});
@@ -941,7 +969,7 @@ jQuery(document).ready( function($) {
 			}
 
 			// get keyup identifiers
-			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
+			$( container ).find( '[data-incom]' ).each( function( i, element ) {
 				current_items.push( $(element).attr( 'data-incom' ) );
 			});
 
@@ -1041,8 +1069,17 @@ jQuery(document).ready( function($) {
 		 */
 		this.copy_original = function() {
 
+			var container;
+
+			// What editor are we using?
+			if ( typeof wa_fronted !== 'undefined' ) {
+				container = '.entry-content';
+			} else {
+				container = '.fee-content-original';
+			}
+
 			// replace content of editor with original
-			me.instance.setContent( $('.fee-content-original').html(), {format : 'html'} );
+			me.instance.setContent( $( container ).html(), {format : 'html'} );
 
 			// clear the undo queue so we can't undo beyond here
 			me.instance.undoManager.clear();
