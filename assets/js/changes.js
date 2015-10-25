@@ -59,8 +59,17 @@ jQuery(document).ready( function($) {
 
 			me.data = [];
 
+			var data, container;
+
+			// What editor are we using?
+			if ( typeof wa_fronted !== 'undefined' ) {
+				container = '.entry-content';
+			} else {
+				container = '.fee-content-original';
+			}
+
 			// get current
-			$('.fee-content-original').find( '[data-incom]' ).each( function( i, element ) {
+			$( container ).find( '[data-incom]' ).each( function( i, element ) {
 
 				// construct default data
 				var data = {
@@ -83,8 +92,17 @@ jQuery(document).ready( function($) {
 
 			me.data = [];
 
+			var data, container;
+
+			// What editor are we using?
+			if ( typeof wa_fronted !== 'undefined' ) {
+				container = '.entry-content.wa-fronted-editor';
+			} else {
+				container = '.fee-content-body';
+			}
+
 			// get current
-			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
+			$( container ).find( '[data-incom]' ).each( function( i, element ) {
 
 				// construct default data
 				var data = {

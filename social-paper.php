@@ -118,16 +118,17 @@ class Social_Paper {
 			return;
 		}
 
-		// Bail if the "Front-end Editor" plugin is not enabled
-		if ( ! class_exists( 'FEE' ) ) {
+		// Bail if a frontend editor plugin is not enabled
+		if ( ! class_exists( 'FEE' ) && ! class_exists( 'WA_Fronted' ) ) {
 			// Show admin notice
 			if ( current_user_can( 'install_plugins' ) ) {
-				$notice = sprintf(
-					__( 'Social Paper requires the %s plugin to be enabled.  Please download it %shere%s.', 'social-paper' ),
-					'<strong>' . __( 'Inline Comments', 'social-paper' ). '</strong>',
-					'<a target="_blank" href="https://wordpress.org/plugins/inline-comments/">',
-					'</a>'
-				);
+				$notice = __( 'Social Paper requires a frontend editor plugin to be enabled. Please download and activate either:', 'social-paper' );
+				$notice .= '<br />';
+				$notice .= '&middot; ';
+				$notice .= sprintf( '<a target="_blank" href="https://wordpress.org/plugins/wp-front-end-editor/">%s</a>', __( 'Front-End Editor', 'social-paper' ) );
+				$notice .= '<br />';
+				$notice .= '&middot; ';
+				$notice .= sprintf( '<a target="_blank" href="https://github.com/jesperbjerke/wa-fronted/">%s</a>', __( 'WA Fronted', 'social-paper' ) );
 
 				add_action( 'admin_notices', create_function( '', "
 					echo '<div class=\"error\"><p>" . $notice . "</p></div>';
@@ -173,6 +174,10 @@ class Social_Paper {
 		// WP FEE integration
 		if ( class_exists( 'FEE' ) ) {
 			require dirname( __FILE__ ) . '/includes/hooks-wp-fee.php';
+
+		// WA Fronted integration
+		} elseif ( class_exists( 'WA_Fronted' ) ) {
+			require dirname( __FILE__ ) . '/includes/hooks-wa-fronted.php';
 		}
 
 		// Inline Comments integration

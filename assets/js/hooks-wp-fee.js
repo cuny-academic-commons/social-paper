@@ -32,7 +32,14 @@ jQuery(document).ready( function($) {
 
 
 		var me = this, // prevent reference collisions
-			active = false;
+			active = false,
+			container;
+
+		if ( typeof wa_fronted !== 'undefined' ) {
+			container = '.entry-content';
+		} else {
+			container = '.fee-content-original';
+		}
 
 		/**
 		 * Enable reassignment of comments
@@ -55,7 +62,7 @@ jQuery(document).ready( function($) {
 			});
 
 			// get all droppable items
-			droppers = $('.fee-content-original').find( '[data-incom]' );
+			droppers = $( container ).find( '[data-incom]' );
 
 			// make textblocks droppable
 			droppers.droppable({
@@ -67,7 +74,7 @@ jQuery(document).ready( function($) {
 
 				activate: function( event, ui ) {
 
-					$( '.fee-content-original [data-incom]' ).removeClass( 'suppress-highlight' );
+					$( container + ' [data-incom]' ).removeClass( 'suppress-highlight' );
 
 					// get existing attribute from either bubble or comment
 					incom_attr = ui.draggable.data( 'incomBubble' );
@@ -75,12 +82,12 @@ jQuery(document).ready( function($) {
 						incom_attr = $(ui.draggable).closest('li.incom').attr( 'data-incom-comment' );
 					}
 
-					$( '.fee-content-original [data-incom="' + incom_attr + '"]' ).addClass( 'suppress-highlight' );
+					$( container + ' [data-incom="' + incom_attr + '"]' ).addClass( 'suppress-highlight' );
 
 				},
 
 				deactivate: function( event, ui ) {
-					$( '.fee-content-original [data-incom]' ).removeClass( 'suppress-highlight' );
+					$( container + ' [data-incom]' ).removeClass( 'suppress-highlight' );
 				},
 
 				// when the button is dropped
@@ -172,9 +179,9 @@ jQuery(document).ready( function($) {
 			}
 
 			// destroy droppable if present
-			drop = $('.fee-content-original').find( '[data-incom]' ).droppable( 'instance' );
+			drop = $(container).find( '[data-incom]' ).droppable( 'instance' );
 			if ( 'undefined' !== typeof drop ) {
-				$('.fee-content-original').find( '[data-incom]' ).droppable( 'destroy' );
+				$(container).find( '[data-incom]' ).droppable( 'destroy' );
 			}
 
 		};
@@ -258,35 +265,7 @@ jQuery(document).ready( function($) {
 	/**
 	 * Hook into WP FEE initialisation.
 	 */
-	$(document).on( 'fee-editor-init', function( event ) {
-
-		// store editor in our "global" if not already done
-		if ( $.isEmptyObject( SocialPaper.editor ) ) {
-			SocialPaper.editor = tinyMCE.get( window.wpActiveEditor );
-		}
-
-		// Add the Settings button to fee-toolbar, if necessary.
-		$( '.fee-toolbar' ).prepend( '<div class="fee-toolbar-left"><button class="button button-large fee-button-settings"><div class="dashicons dashicons-admin-generic"></div></button></div>' );
-
-		// Set up Settings toggle.
-		$sidebar = $( '.entry-sidebar' );
-		$settings_toggle = $( '.fee-button-settings' );
-		$settings_toggle.on( 'click', function( e ) {
-			$sidebar.toggleClass( 'toggle-on' );
-			$( e.target ).toggleClass( 'active' );
-		} );
-
-		// Set up Readers hide/show.
-		$readers_subsection = $( '.sidebar-section-subsection-readers' );
-		$( 'input[name="cacsp-paper-status"]' ).on( 'change', function() {
-			var self = $(this);
-			if ( 'public' === self.val() ) {
-				$readers_subsection.addClass( 'hidden' );
-			} else {
-				$readers_subsection.removeClass( 'hidden' );
-			}
-		} );
-	} );
+	$(document).on( 'fee-editor-init', cacsp_paper_on_init );
 
 	/**
 	 * Hook into WP FEE activation
@@ -435,6 +414,42 @@ jQuery(document).ready( function($) {
 
 	});
 
+	/**
+	 * WA Fronted hooks.
+	 */
+	if ( typeof wa_fronted !== 'undefined' ) {
+		//wa_fronted.add_action( 'on_init', cacsp_paper_on_init );
+	}
+
+	function cacsp_paper_on_init( event ) {
+
+		// store editor in our "global" if not already done
+		if ( $.isEmptyObject( SocialPaper.editor ) ) {
+			SocialPaper.editor = tinyMCE.get( window.wpActiveEditor );
+		}
+
+		// Add the Settings button to fee-toolbar, if necessary.
+		$( '.fee-toolbar' ).prepend( '<div class="fee-toolbar-left"><button class="button button-large fee-button-settings"><div class="dashicons dashicons-admin-generic"></div></button></div>' );
+
+		// Set up Settings toggle.
+		$sidebar = $( '.entry-sidebar' );
+		$settings_toggle = $( '.fee-button-settings' );
+		$settings_toggle.on( 'click', function( e ) {
+			$sidebar.toggleClass( 'toggle-on' );
+			$( e.target ).toggleClass( 'active' );
+		} );
+
+		// Set up Readers hide/show.
+		$readers_subsection = $( '.sidebar-section-subsection-readers' );
+		$( 'input[name="cacsp-paper-status"]' ).on( 'change', function() {
+			var self = $(this);
+			if ( 'public' === self.val() ) {
+				$readers_subsection.addClass( 'hidden' );
+			} else {
+				$readers_subsection.removeClass( 'hidden' );
+			}
+		} );
+	}
 });
 
 
