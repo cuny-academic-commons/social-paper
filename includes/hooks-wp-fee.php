@@ -341,3 +341,22 @@ function cacsp_wp_fee_suppress() {
 	remove_action( 'init', array( $wordpress_front_end_editor, 'init' ) );
 
 }
+
+/**
+ * AJAX callback for sample permalink generation on entry-title blur.
+ *
+ * @since 1.0.0
+ */
+function cacsp_sample_permalink_cb() {
+	$post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
+	if ( ! $post_id || ! current_user_can( 'edit_paper', $_POST['post_id'] ) ) {
+		wp_send_json_error( -1 );
+	}
+
+	// @todo nonce check
+	$title = isset( $_POST['new_title'] ) ? stripslashes( $_POST['new_title'] ) : '';
+
+	$permalink = get_sample_permalink( $post_id, $title, $title );
+	wp_send_json_success( $permalink );
+}
+add_action( 'wp_ajax_cacsp_sample_permalink', 'cacsp_sample_permalink_cb' );

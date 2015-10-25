@@ -896,6 +896,13 @@ body.fee-on .fee-url {
 .fee-slug,
 .incom-active {
 	background: #ff9;
+	opacity: 1;
+	transition: opacity .5s;
+}
+
+.fee-slug.slug-loading {
+	opacity: .5;
+	transition: opacity .5s;
 }
 
 .incom-ref {

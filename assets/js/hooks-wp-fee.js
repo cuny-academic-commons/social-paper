@@ -320,6 +320,50 @@ jQuery(document).ready( function($) {
 		$sidebar.addClass( 'toggle-on' );
 		$settings_toggle.addClass( 'active' );
 
+		var $entry_title = $( '.entry-title' );
+		var $entry_slug = $( '.fee-slug' );
+		var slug_editor, current_title, current_slug;
+		$.each( window.tinymce.editors, function( i, ed ) {
+			if ( ed.id == $entry_slug.attr( 'id' ) ) {
+				slug_editor = ed;
+				current_slug = slug_editor.getContent();
+			}
+
+			if ( ed.id == $entry_title.attr( 'id' ) ) {
+				current_title = ed.getContent();
+
+				ed.on( 'blur', function() {
+					var new_title = this.getContent();
+
+					// No change? Nothing to do here.
+					if ( new_title == current_title ) {
+						return;
+					} else {
+						current_title = new_title;
+					}
+
+					// We only auto-update the slug for non-published posts.
+					if ( 'publish' == window.wp.fee.postOnServer.post_status ) {
+						return;
+					}
+
+					$( slug_editor.getElement() ).addClass( 'slug-loading' );
+
+					$.post( ajaxurl, {
+						action: 'cacsp_sample_permalink',
+						new_title: new_title,
+						post_id: window.wp.fee.post.post_ID
+					},
+					function( response ) {
+						if ( response.success && slug_editor ) {
+							slug_editor.setContent( response.data[1] );
+							slug_editor.setProgressState( false );
+							$( slug_editor.getElement() ).removeClass( 'slug-loading' );
+						}
+					} );
+				} );
+			}
+		} );
 	});
 
 	/**
