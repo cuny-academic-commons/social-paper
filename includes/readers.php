@@ -33,6 +33,7 @@ function cacsp_paper_reader_selector( $paper_id ) {
 	$users = bp_core_get_users( array(
 		'include' => array_merge( $paper_reader_ids, $group_member_ids, $friend_member_ids ),
 		'type' => 'alphabetical',
+		'per_page' => 0,
 	) );
 
 	$user_data = array();
