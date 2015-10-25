@@ -893,7 +893,7 @@ body.fee-on .fee-url {
 	text-decoration: none;
 }
 
-.fee-slug,
+.fee-slug.mce-edit-focus,
 .incom-active {
 	background: #ff9;
 }
