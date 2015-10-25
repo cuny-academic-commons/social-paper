@@ -420,16 +420,28 @@ function _cacsp_archive_ob_end( $q ) {
 add_action( 'loop_end', '_cacsp_archive_ob_end', 999 );
 
 /**
- * Add a generic title in the loop if no title is added for a paper.
+ * Things we do at the beginning of a paper loop.
+ *
+ * Currently, we add a placeholder title if no title was added for a paper.
+ *
+ * @param WP_Query $q
+ */
+function cacsp_loop_start( $q ) {
+	if ( empty( $q->query['post_type'] ) || 'cacsp_paper' !== $q->query['post_type'] ) {
+		return;
+	}
+
+	add_filter( 'the_title', 'cacsp_loop_add_placeholder_title' );
+}
+add_action( 'loop_start', 'cacsp_loop_start' );
+
+/**
+ * Filters the post title to add a placeholder if it is omitted from a paper.
  *
  * @param  string $retval
  * @return string
  */
 function cacsp_loop_add_placeholder_title( $retval = '' ) {
-	if ( 'cacsp_paper' !== get_query_var( 'post_type' ) ) {
-		return $retval;
-	}
-
 	if ( is_singular( 'cacsp_paper' ) ) {
 		return $retval;
 	}
@@ -440,7 +452,6 @@ function cacsp_loop_add_placeholder_title( $retval = '' ) {
 
 	return __( '(Untitled)', 'social-paper' );
 }
-add_filter( 'the_title', 'cacsp_loop_add_placeholder_title' );
 
 /**
  * Wrap comment content in an identifer div
