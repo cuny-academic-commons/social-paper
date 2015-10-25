@@ -568,3 +568,24 @@ function cacsp_update_comment_references( $post_id ) {
 
 }
 add_action( 'save_post', 'cacsp_update_comment_references' );
+
+/**
+ * Strip the 'data-incom' attribute from paper content.
+ *
+ * Inline Comments adds a 'data-incom' attribute to the content.  When a
+ * frontend editor is enabled, this attribute should not be saved into the DB
+ * as it interferes with comment positioning.
+ *
+ * @param  array $retval Post data.
+ * @param  array $post   Post attributes.
+ * @return array
+ */
+function cacsp_inline_comments_strip_data_incom_attribute( $retval, $post ) {
+	if ( 'cacsp_paper' !== $post['post_type'] ) {
+		return $retval;
+	}
+
+	$retval['post_content'] = preg_replace('/(<[^>]+) data-incom=".*?"/i', '$1', $retval['post_content'] );
+	return $retval;
+}
+add_filter( 'wp_insert_post_data', 'cacsp_inline_comments_strip_data_incom_attribute', 10, 2 );
