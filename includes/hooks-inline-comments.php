@@ -363,7 +363,7 @@ function cacsp_ic_inline_js() {
 
 		});
 
-		var para = window.location.search.split('=')[1];
+		var para = window.location.search.split('para=')[1];
 
 		if ( null === para ) {
 			return;
