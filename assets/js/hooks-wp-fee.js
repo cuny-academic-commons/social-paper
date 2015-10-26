@@ -24,6 +24,8 @@ SocialPaper.editor = {};
  * When the page is ready
  */
 jQuery(document).ready( function($) {
+	var $settings_toggle,
+		$sidebar;
 
 	/**
 	 * Create Drag-n-drop object.
@@ -243,6 +245,12 @@ jQuery(document).ready( function($) {
 
 	};
 
+	var toggle_sidebar = function( setting ) {
+		$sidebar.toggleClass( 'toggle-on' );
+		$( 'body' ).toggleClass( 'sidebar-on' );
+		$settings_toggle.toggleClass( 'active' );
+	}
+
 	/**
 	 * Hook into window load
 	 */
@@ -272,8 +280,7 @@ jQuery(document).ready( function($) {
 		$sidebar = $( '.entry-sidebar' );
 		$settings_toggle = $( '.fee-button-settings' );
 		$settings_toggle.on( 'click', function( e ) {
-			$sidebar.toggleClass( 'toggle-on' );
-			$( e.target ).toggleClass( 'active' );
+			toggle_sidebar();
 		} );
 
 		// Set up Readers hide/show.
@@ -316,9 +323,11 @@ jQuery(document).ready( function($) {
 		// switch editing toggle button text
 		$('#wp-admin-bar-edit span').text( Social_Paper_FEE.i18n.button_disable );
 
-		// Toggle Settings sidebar.
-		$sidebar.addClass( 'toggle-on' );
-		$settings_toggle.addClass( 'active' );
+		// Turn Settings sidebar on, if there's room for it.
+		var slug_offset = $( '.fee-url' ).offset();
+		if ( slug_offset.left > 275 ) {
+			toggle_sidebar();
+		}
 
 		var $entry_title = $( '.entry-title' );
 		var $entry_slug = $( '.fee-slug' );

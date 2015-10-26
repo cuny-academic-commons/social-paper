@@ -483,6 +483,12 @@ h1.entry-title, .entry-content, .entry-footer,
 	border-radius: 0 3px 3px 0;
 	height: 85%;
 	padding: 5% 12px 5% 22px;
+	z-index: 10001;
+}
+
+/* Groan */
+#fee-notice-area {
+	z-index: 10002;
 }
 
 .entry-sidebar.toggle-on {
