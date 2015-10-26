@@ -481,7 +481,7 @@ h1.entry-title, .entry-content, .entry-footer,
 	background: #f5f5f5;
 	border: 1px solid #dedede;
 	border-radius: 0 3px 3px 0;
-	height: 85%;
+	min-height: 85%;
 	padding: 5% 12px 5% 22px;
 	z-index: 10001;
 }
@@ -500,8 +500,13 @@ h1.entry-title, .entry-content, .entry-footer,
 	font-weight: 400;
 }
 
-.sidebar-section p {
+.sidebar-section p,
+.sidebar-section ol {
 	font-size: 16px;
+}
+
+.sidebar-section-subsection {
+	margin-bottom: 30px;
 }
 
 .sidebar-section .select2-container {
@@ -510,6 +515,39 @@ h1.entry-title, .entry-content, .entry-footer,
 
 .select2-results__options {
 	font-size: 60%;
+}
+
+.sidebar-section-subsection-unapproved-comments ol {
+	padding-left: 0;
+	list-style-type: none;
+	font-size: 12px;
+}
+
+.sidebar-section-subsection-unapproved-comments li {
+	margin-bottom: 15px;
+	padding-bottom: 15px;
+	border-bottom: 1px solid #ccc;
+}
+
+.sidebar-section-subsection-unapproved-comments li:last-child {
+	border-bottom: none;
+}
+
+.sidebar-section-subsection-unapproved-comments blockquote {
+	margin-left: 0;
+}
+
+.unapproved-comment-timestamp {
+	opacity: .5;
+}
+
+.comment-actions .approve {
+	color: #006505;
+}
+
+.comment-actions .trash,
+.comment-actions .spam {
+	color: #a00;
 }
 
 article {

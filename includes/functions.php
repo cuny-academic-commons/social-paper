@@ -219,6 +219,21 @@ function cacsp_approve_loggedin_comments( $approved, $commentdata ) {
 add_filter( 'pre_comment_approved', 'cacsp_approve_loggedin_comments', 10, 2 );
 
 /**
+ * Get unapproved comments for a paper.
+ *
+ * @since 1.0.0
+ *
+ * @param int $paper_id ID of the paper.
+ * @return array
+ */
+function cacsp_get_unapproved_comments( $paper_id ) {
+	return get_comments( array(
+		'post_id' => $paper_id,
+		'status' => 0,
+	) );
+}
+
+/**
  * Template tag to output pagination on archive page.
  *
  * Pagination resembles the markup from BuddyPress.

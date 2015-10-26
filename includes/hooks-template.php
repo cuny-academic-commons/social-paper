@@ -483,6 +483,113 @@ function cacsp_comment_text( $comment_content, $comment, $args ) {
 add_filter( 'get_comment_text', 'cacsp_comment_text', 1000, 3 );
 
 /**
+ * Generate unapproved comment action links.
+ *
+ * @since 1.0.0
+ *
+ * @param object $comment Comment object.
+ */
+function cacsp_unapproved_comment_links( $comment ) {
+	$post_permalink = get_permalink( $comment->comment_post_ID );
+
+	$links = array();
+
+	// Approve
+	$approve_link = add_query_arg(
+		'cacsp_approve',
+		intval( $comment->comment_ID ),
+		$post_permalink
+	);
+
+	$links[] = sprintf(
+		'<a class="approve" href="%s">' . __( 'Approve', 'social-paper' ) . '</a>',
+		wp_nonce_url( $approve_link, 'cacsp_approve_comment-' . $comment->comment_ID, '_cacsp_approve_nonce' )
+	);
+
+	// Spam
+	$spam_link = add_query_arg(
+		'cacsp_spam',
+		intval( $comment->comment_ID ),
+		$post_permalink
+	);
+
+	$links[] = sprintf(
+		'<a class="spam confirm" href="%s">' . __( 'Spam', 'social-paper' ) . '</a>',
+		wp_nonce_url( $spam_link, 'cacsp_spam_comment-' . $comment->comment_ID, '_cacsp_spam_nonce' )
+	);
+
+	// Trash
+	$trash_link = add_query_arg(
+		'cacsp_trash',
+		intval( $comment->comment_ID ),
+		$post_permalink
+	);
+
+	$links[] = sprintf(
+		'<a class="trash confirm" href="%s">' . __( 'Trash', 'social-paper' ) . '</a>',
+		wp_nonce_url( $trash_link, 'cacsp_trash_comment-' . $comment->comment_ID, '_cacsp_trash_nonce' )
+	);
+
+
+	echo implode( ' | ', $links );
+}
+
+/**
+ * Catch comment moderation actions.
+ *
+ * @since 1.0.0
+ */
+function cacsp_catch_comment_moderation() {
+	$actions = array( 'cacsp_approve', 'cacsp_spam', 'cacsp_trash' );
+
+	foreach ( $actions as $_action ) {
+		if ( isset( $_GET[ $_action ] ) ) {
+			$action = $_action;
+			$comment_id = intval( $_GET[ $action ] );
+			break;
+		}
+	}
+
+	if ( ! isset( $action ) ) {
+		return;
+	}
+
+	$nonce_key = '_' . $action . '_nonce';
+	$nonce = isset( $_GET[ $nonce_key ] ) ? urldecode( $_GET[ $nonce_key ] ) : '';
+	$nonce_action = $action . '_comment-' . $comment_id;
+
+	if ( ! wp_verify_nonce( $nonce, $nonce_action ) ) {
+		return;
+	}
+
+	// @todo Better permission check.
+	if ( ! current_user_can( 'edit_paper', get_queried_object_id() ) ) {
+		return;
+	}
+
+	switch ( $action ) {
+		case 'cacsp_approve' :
+			wp_set_comment_status( $comment_id, 'approve' );
+			$redirect = add_query_arg( 'approved', 1, get_comment_link( $comment_id ) );
+			break;
+
+		case 'cacsp_spam' :
+			wp_spam_comment( $comment_id );
+			$redirect = add_query_arg( 'spammed', 1, get_permalink( get_queried_object_id() ) );
+			break;
+
+		case 'cacsp_trash' :
+			wp_trash_comment( $comment_id );
+			$redirect = add_query_arg( 'spammed', 1, get_permalink( get_queried_object_id() ) );
+			break;
+	}
+
+	wp_redirect( $redirect );
+	die();
+}
+add_action( 'template_redirect', 'cacsp_catch_comment_moderation', 100 );
+
+/**
  * bp-default theme comment overrides.
  *
  * Disables the avatar from showing atop the comment form.
