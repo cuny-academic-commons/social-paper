@@ -169,7 +169,7 @@ jQuery(document).ready( function($) {
 
 			// destroy draggable if present
 			drag = $( '.incom-bubble, li.incom.depth-1 > .comment-body .incom-permalink' ).draggable( 'instance' );
-			if ( 'undefined' !== typeof drag ) {
+			if ( 'function' === typeof drag.destroy ) {
 				drag.destroy();
 			}
 
