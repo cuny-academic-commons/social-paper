@@ -132,6 +132,31 @@ function cacsp_format_activity_action( $action, $activity ) {
 }
 
 /**
+ * Turn off activity commenting for our paper activity types.
+ *
+ * @param  bool   $retval
+ * @param  string $type Activity type.
+ * @return bool
+ */
+function cacsp_activity_can_comment( $retval, $type = '' ) {
+	switch( $type ) {
+		// @todo Revisit when activity comment syncing is enabled for post types
+		case 'new_cacsp_paper' :
+		case 'new_cacsp_comment' :
+
+		case 'new_cacsp_edit' :
+		case 'cacsp_paper_added_to_group' :
+			return false;
+			break;
+
+		default :
+			return $retval;
+			break;
+	}
+}
+add_filter( 'bp_activity_can_comment', 'cacsp_activity_can_comment', 10, 2 );
+
+/**
  * Create activity items for paper comments.
  *
  * @param int        $comment_id ID of the comment.
