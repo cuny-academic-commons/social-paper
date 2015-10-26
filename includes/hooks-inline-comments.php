@@ -363,13 +363,13 @@ function cacsp_ic_inline_js() {
 
 		});
 
-		var para = window.location.search.split('para=')[1];
+		var pmatch = window.location.search.match(/para\=([^&]+)/);
 
-		if ( null === para ) {
+		if ( null === pmatch ) {
 			return;
 		}
 
-		jQuery(document).arrive('[data-incom-bubble=' + para + ']', function() {
+		jQuery(document).arrive('[data-incom-bubble=' + pmatch[1] + ']', function() {
 			// manually trigger click so IC will display the comment tree
 			jQuery(this).click();
 
