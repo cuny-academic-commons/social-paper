@@ -11,7 +11,7 @@
 			} );
 		}
 
-		if ( 'undefined' !== typeof bp.mentions.users ) {
+		if ( 'undefined' !== typeof bp && 'undefined' !== typeof bp.mentions.users ) {
 			var $incom_text = $( '#incom-commentform textarea' );
 			$incom_text.bp_mentions( bp.mentions.users );
 
