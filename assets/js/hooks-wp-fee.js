@@ -488,8 +488,18 @@ jQuery(document).ready( function($) {
 	 * Hook into WP FEE after save
 	 */
 	$(document).on( 'fee-after-save', function( event ) {
-
-		//console.log( 'fee-after-save' );
+		// FEE tells us the term IDs, but nothing else, so back to the server we go.
+		$.post(
+			Social_Paper_FEE.ajax_url, {
+				action: 'cacsp_get_tag_data',
+				post_id: window.wp.fee.post.post_ID
+			},
+			function( response ) {
+				if ( response.success ) {
+					$tag_list = $( '.paper-tags-list' ).html( response.data );
+				}
+			}
+		);
 
 	});
 

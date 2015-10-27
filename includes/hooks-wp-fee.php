@@ -375,7 +375,24 @@ function cacsp_save_tags( $post_id ) {
 		return;
 	}
 
+	if ( ! isset( $_POST['cacsp_paper_tags'] ) ) {
+		return;
+	}
+
 	$tags = explode( ',', $_POST['cacsp_paper_tags'] );
 	wp_set_object_terms( $post_id, $tags, 'cacsp_paper_tag' );
 }
 add_action( 'save_post', 'cacsp_save_tags' );
+
+/**
+ * Get tag data.
+ *
+ * @since 1.0.0
+ */
+function cacsp_get_tag_data_cb() {
+	$post_id = (int) $_POST['post_id'];
+	$links = cacsp_get_paper_tags_links( $post_id );
+
+	wp_send_json_success( implode( ', ', $links ) );
+}
+add_action( 'wp_ajax_cacsp_get_tag_data', 'cacsp_get_tag_data_cb' );

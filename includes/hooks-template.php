@@ -459,7 +459,24 @@ function cacsp_loop_add_placeholder_title( $retval = '' ) {
  * @since 1.0.0
  */
 function cacsp_show_paper_tags_in_paper_meta() {
-	$tags = wp_get_object_terms( get_queried_object_id(), 'cacsp_paper_tag' );
+	$links = cacsp_get_paper_tags_links( get_queried_object_id() );
+
+	echo '<span class="paper-tags"><br />';
+	printf( __( 'Tags: <span class="paper-tags-list">%s</span>', 'social-paper' ), implode( ', ', $links ) );
+	echo '</span>';
+}
+add_action( 'cacsp_after_paper_meta', 'cacsp_show_paper_tags_in_paper_meta', 100 );
+
+/**
+ * Get an array of tag archive links for a post.
+ *
+ * @since 1.0.0
+ *
+ * @param int $post_id ID of the post.
+ * @return array
+ */
+function cacsp_get_paper_tags_links( $post_id ) {
+	$tags = wp_get_object_terms( $post_id, 'cacsp_paper_tag' );
 
 	if ( empty( $tags ) ) {
 		return;
@@ -475,11 +492,8 @@ function cacsp_show_paper_tags_in_paper_meta() {
 		);
 	}
 
-	echo '<span class="paper-tags"><br />';
-	printf( __( 'Tags: %s', 'social-paper' ), implode( ', ', $links ) );
-	echo '</span>';
+	return $links;
 }
-add_action( 'cacsp_after_paper_meta', 'cacsp_show_paper_tags_in_paper_meta', 100 );
 
 /**
  * Wrap comment content in an identifer div
