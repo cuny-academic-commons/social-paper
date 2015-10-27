@@ -968,3 +968,11 @@ body.fee-on .fee-url {
 	padding: 0;
 	margin: 0;
 }
+
+.tagchecklist > span {
+	padding-right: 10px;
+}
+
+.tagchecklist a {
+	cursor: pointer;
+}
