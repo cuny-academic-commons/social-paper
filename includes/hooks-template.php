@@ -454,6 +454,34 @@ function cacsp_loop_add_placeholder_title( $retval = '' ) {
 }
 
 /**
+ * Display tag data in paper meta area.
+ *
+ * @since 1.0.0
+ */
+function cacsp_show_paper_tags_in_paper_meta() {
+	$tags = wp_get_object_terms( get_queried_object_id(), 'cacsp_paper_tag' );
+
+	if ( empty( $tags ) ) {
+		return;
+	}
+
+	$links = array();
+	foreach ( $tags as $tag ) {
+		$tag_archive = add_query_arg( 'cacsp_paper_tag', $tag->slug, get_post_type_archive_link( 'cacsp_paper' ) );
+		$links[] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( $tag_archive ),
+			esc_html( $tag->name )
+		);
+	}
+
+	echo '<span class="paper-tags"><br />';
+	printf( __( 'Tags: %s', 'social-paper' ), implode( ', ', $links ) );
+	echo '</span>';
+}
+add_action( 'cacsp_after_paper_meta', 'cacsp_show_paper_tags_in_paper_meta', 100 );
+
+/**
  * Wrap comment content in an identifer div
  *
  * @param str $comment_content The comment content
