@@ -477,6 +477,11 @@ jQuery(document).ready( function($) {
 		wp.fee.post.social_paper_readers = function() {
 			return $( '#cacsp-reader-selector' ).val();
 		};
+
+		wp.fee.post.cacsp_paper_tags = function() {
+			SocialPaperTagBox.flushTags( $( '#cacsp_paper_tag' ), false );
+			return $( '#cacsp_paper_tag' ).find( '.the-tags' ).val();
+		}
 	});
 
 	/**

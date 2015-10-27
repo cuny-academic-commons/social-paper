@@ -20,6 +20,8 @@
 				e.stopPropagation();
 			});
 		}
+
+		window.SocialPaperTagBox && window.SocialPaperTagBox.init();
 	} );
 
 }( jQuery ) );

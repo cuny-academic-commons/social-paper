@@ -239,6 +239,10 @@ function cacsp_wp_fee_enqueue_scripts() {
 			// add style for dialog
 			wp_enqueue_style( 'wp-jquery-ui-dialog' );
 
+			wp_enqueue_script( 'social-paper-tags-box', Social_Paper::$URL . '/assets/js/tags-box.js', array( 'jquery', 'suggest' ), false, true );
+			wp_localize_script( 'social-paper-tags-box', 'tagsBoxL10n', array(
+				'tagDelimiter' => _x( ',', 'tag delimiter', 'social-paper' ),
+			) );
 		}
 
 		// localise
@@ -285,7 +289,7 @@ function cacsp_wp_fee_tax_buttons( $post ) {
 	}
 
 	if ( in_array( 'cacsp_paper_tag', get_object_taxonomies( $post ) ) ) { ?>
-		<button class="button button-large fee-button-cacsp_paper_tag"><div class="dashicons dashicons-tag dashicons-cacsp_paper_tag"></div></button>
+		<button data-toggle="modal" data-target=".fee-cacsp_paper_tag-modal" class="button button-large fee-button-cacsp_paper_tag"><div class="dashicons dashicons-tag dashicons-cacsp_paper_tag"></div></button>
 	<?php }
 }
 add_action( 'fee_tax_buttons', 'cacsp_wp_fee_tax_buttons' );
@@ -360,3 +364,18 @@ function cacsp_sample_permalink_cb() {
 	wp_send_json_success( $permalink );
 }
 add_action( 'wp_ajax_cacsp_sample_permalink', 'cacsp_sample_permalink_cb' );
+
+/**
+ * Save tags sent via AJAX.
+ *
+ * @param int $post_id ID of the post.
+ */
+function cacsp_save_tags( $post_id ) {
+	if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+		return;
+	}
+
+	$tags = explode( ',', $_POST['cacsp_paper_tags'] );
+	wp_set_object_terms( $post_id, $tags, 'cacsp_paper_tag' );
+}
+add_action( 'save_post', 'cacsp_save_tags' );
