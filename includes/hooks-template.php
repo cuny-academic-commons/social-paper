@@ -188,7 +188,7 @@ function cacsp_asset_enqueue_handler() {
 			'incom-style',
 
 			// wp-front-end-editor
-			#'wp-core-ui',
+			'wp-core-ui',
 			'media-views',
 			'wp-core-ui-colors',
 			'buttons',
