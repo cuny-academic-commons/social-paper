@@ -523,16 +523,21 @@ function cacsp_save_group_connection( $post_id ) {
 add_action( 'save_post', 'cacsp_save_group_connection' );
 
 /**
- * Add group information to the paper meta area.
+ * Get a list of group links corresponding to a paper.
+ *
+ * Will only return groups that the current user has access to.
  *
  * @since 1.0.0
+ *
+ * @param int $paper_id ID of the paper.
+ * @return array
  */
-function cacsp_show_group_info_in_paper_meta() {
-	$paper = new CACSP_Paper( get_queried_object_id() );
+function cacsp_get_group_links_for_paper( $paper_id ) {
+	$paper = new CACSP_Paper( $paper_id );
 	$group_ids = $paper->get_group_ids();
 
 	if ( empty( $group_ids ) ) {
-		return;
+		return array();
 	}
 
 	$groups = groups_get_groups( array(
@@ -547,6 +552,17 @@ function cacsp_show_group_info_in_paper_meta() {
 			$show_groups[] = sprintf( '<a href="%s">%s</a>', esc_url( bp_get_group_permalink( $group ) ) . 'papers/', esc_html( stripslashes( $group->name ) ) );
 		}
 	}
+
+	return $show_groups;
+}
+
+/**
+ * Add group information to the paper meta area.
+ *
+ * @since 1.0.0
+ */
+function cacsp_show_group_info_in_paper_meta() {
+	$show_groups = cacsp_get_group_links_for_paper( get_queried_object_id() );
 
 	if ( empty( $show_groups ) ) {
 		return;
