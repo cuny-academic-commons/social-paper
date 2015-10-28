@@ -1,5 +1,7 @@
 ( function( $ ){
 	$( document ).ready( function(){
+		$( 'body' ).removeClass( 'no-js' ).addClass( 'js' );
+
 		if ( 'undefined' !== typeof CACSP_Potential_Readers ) {
 			$( '#cacsp-group-selector' ).select2( {
 				placeholder: SocialPaperL18n.group_placeholder
