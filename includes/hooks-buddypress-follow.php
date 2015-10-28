@@ -524,6 +524,9 @@ function cacsp_follow_add_follow_button_to_paper_loop() {
 	// Button time!
 	bp_follow_activity_button( array(
 		'leader_id' => cacsp_follow_get_activity_id( get_post()->ID ),
+		'wrapper_class' => 'paper-button',
+		'link_class' => '',
+		'wrapper' => 'div'
 	) );
 }
 
