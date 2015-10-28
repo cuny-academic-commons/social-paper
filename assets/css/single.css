@@ -437,7 +437,7 @@ th {
 body {
 	color: rgba(0, 0, 0, 0.8);
 	font-family: Georgia,Cambria,"Times New Roman",Times,serif;
-	font-size: 22px;
+	font-size: 18px;
 	font-style: normal;
 	font-weight: 400;
 	letter-spacing: 0.01rem;
@@ -581,7 +581,7 @@ h1 {
 }
 
 h1.entry-title {
-	font-size: 48px;
+	font-size: 44px;
 	text-align: center;
 	margin-top: 1em;
 	margin-bottom: 1em;
