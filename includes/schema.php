@@ -69,6 +69,9 @@ function cacsp_register_taxonomies() {
 			'with_front' => false,
 			'slug' => 'tag',
 		),
+		'capabilities' => array(
+			'assign_terms' => 'edit_paper',
+		),
 	) );
 
 	// "Readers".
