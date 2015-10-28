@@ -51,6 +51,8 @@ function cacsp_register_post_types() {
 		'has_archive' => true,
 		'bp_activity' => array(
 			'format_callback' => 'cacsp_format_activity_action',
+			'follow_type'   => 'cacsp_paper',
+			'follow_button' => true
 		),
 		'show_in_admin_bar' => false,
 	) );

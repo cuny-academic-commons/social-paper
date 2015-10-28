@@ -197,6 +197,10 @@ class Social_Paper {
 				require dirname( __FILE__ ) . '/includes/hooks-buddypress-notifications.php';
 			}
 
+			// BP Follow - requires BP Follow v1.3-bleeding
+			if ( bp_is_active( 'follow' ) && class_exists( 'BP_Follow_Activity_Core' ) ) {
+				require dirname( __FILE__ ) . '/includes/hooks-buddypress-follow.php';
+			}
 		}
 	}
 

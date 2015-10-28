@@ -167,6 +167,8 @@ class CACSP_Profile {
 			'href'   => cacsp_get_the_new_paper_link()
 		);
 
+		$wp_admin_nav = apply_filters( 'bp_papers_admin_nav', $wp_admin_nav );
+
 		// Add each admin menu
 		foreach( $wp_admin_nav as $admin_menu ) {
 			$GLOBALS['wp_admin_bar']->add_menu( $admin_menu );

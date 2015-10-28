@@ -144,11 +144,26 @@ function cacsp_notification_added_reader( CACSP_Paper $paper, $user_id ) {
 	) );
 
 	$text = sprintf( __( '%s has added you as a reader on the paper "%s".', 'social-paper' ), bp_core_get_user_displayname( bp_loggedin_user_id() ), $paper->post_title );
+
 	$link = wp_login_url( get_permalink( $paper->ID ) );
 	$content = sprintf( __(
 '%1$s
 
 Visit the paper: %2$s', 'social-paper' ), $text, $link );
+
+	if ( bp_is_active( 'follow' ) ) {
+		$content .= "\n\n";
+
+$content .= sprintf( __(
+'Since you were added as a reader, you are now also following activity for this paper.  You can view all activity for your papers at:
+%1$s
+
+To view a list of papers you are following, visit this page:
+%2$s
+', 'social-paper' ), bp_core_get_user_domain( $user_id ) . bp_get_activity_slug() . "/papers/", bp_core_get_user_domain( $user_id ) . "/papers/follow/" );
+
+		$content .= "\n\n";
+	}
 
 	cacsp_send_notification_email( array(
 		'recipient_user_id' => $user_id,
@@ -219,6 +234,15 @@ function cacsp_notification_mypaper_comment( $comment_id ) {
 		'component_name' => 'cacsp',
 		'component_action' => $type,
 	) );
+
+	// Comment authors automatically follow the paper that they replied to
+	if ( bp_is_active( 'follow' ) && ! empty( $comment->user_id ) ) {
+		bp_follow_start_following( array(
+			'leader_id'   => cacsp_follow_get_activity_id( $paper->ID ),
+			'follower_id' => (int) $comment->user_id,
+			'follow_type' => 'cacsp_paper'
+		) );
+	}
 
 	$subject = sprintf( __( 'New comment on your paper "%s"', 'social-paper' ), $paper->post_title );
 
@@ -327,8 +351,6 @@ add_action( 'wp_insert_comment', 'cacsp_notification_mythread_comment' );
  *
  * @todo This will produce duplicate comment notifications in some cases. Figure out the precedence, and how to
  *       keep track and deduplicate.
- * @todo Maybe this should be replaced with (or at least integrated tightly with) Follow. Ie, when you comment
- *       on a paper, you automatically follow it. This wouldn't be thread-specific.
  *
  * @since 1.0.0
  *
@@ -473,3 +495,102 @@ function cacsp_mark_notifications_read_on_paper_view() {
 	cacsp_mark_notifications_read( bp_loggedin_user_id(), $queried_object->ID );
 }
 add_action( 'bp_actions', 'cacsp_mark_notifications_read_on_paper_view' );
+
+/** Follow ******************************************************************/
+
+add_action( 'bp_follow_start_following_cacsp_paper',  'cacsp_follow_send_email_notification_to_author' );
+add_action( 'bp_follow_screen_notification_settings', 'cacsp_follow_notification_screen_settings' );
+
+/**
+ * Send a notification to the paper author when a user follows their paper.
+ *
+ * We only send a notification when a paper is followed manually.  Not via
+ * auto-follows from comment replying or reader additions.
+ *
+ * @param BP_Follow $follow
+ */
+function cacsp_follow_send_email_notification_to_author( BP_Follow $follow ) {
+	// Bail from comment auto-follows
+	if ( did_action( 'bp_notification_after_save' ) ) {
+		return;
+	}
+
+	// Bail from reader auto-follows
+	if ( did_action( 'cacsp_added_reader_to_paper' ) ) {
+		return;
+	}
+
+	$activity = new BP_Activity_Activity( $follow->leader_id );
+
+	// Bail if author is the same as the follower
+	if ( $follow->follower_id == $activity->user_id ) {
+		return;
+	}
+
+	// Bail if author doesn't want to be notified via email
+	$notify = bp_get_user_meta( $activity->user_id, 'notification_starts_following_paper', true );
+	if ( 'no' === $notify ) {
+		return;
+	}
+
+	$paper = get_post( $activity->secondary_item_id );
+
+	$follower_name = wp_specialchars_decode( bp_core_get_user_displayname( $follow->follower_id ), ENT_QUOTES );
+
+	$subject = sprintf( __( '%1$s is now following your paper "%2$s"', 'social-paper' ), $follower_name, $paper->post_title );
+	$message = sprintf( __(
+'%1$s is now following your paper "%2$s".
+
+View %1$s\'s profile: %3$s
+View your paper: %4$s', 'social-paper' ), $follower_name, $paper->post_title, bp_core_get_user_domain( $follow->follower_id ), get_permalink( $paper->ID ) );
+
+	// Add notifications link if settings component is enabled
+	if ( bp_is_active( 'settings' ) ) {
+		$settings_link = bp_core_get_user_domain( $follow->follower_id ) . bp_get_settings_slug() . '/notifications/';
+		$message .= "\n\n";
+		$message .= sprintf( __(
+'---------------------
+To disable these notifications please log in and go to:
+%s', 'social-paper' ), $settings_link );
+	}
+
+	/**
+	 * Do this later.
+	 *
+	$added = bp_notifications_add_notification( array(
+		'user_id' => $paper->post_author,
+		'item_id' => $paper->ID,
+		'component_name' => 'cacsp',
+		'component_action' => 'follow_paper',
+	) );
+	*/
+
+	// Email time!
+	cacsp_send_notification_email( array(
+		'recipient_user_id' => $paper->post_author,
+		'paper_id' => $paper->ID,
+		'subject' => $subject,
+		'content' => $message,
+		'type' => 'follow_paper'
+	) );
+}
+
+
+/**
+ * Show paper email options under a user's "Settings > Email" page.
+ */
+function cacsp_follow_notification_screen_settings() {
+	if ( ! $notify = bp_get_user_meta( bp_displayed_user_id(), 'notification_starts_following_paper', true ) ) {
+		$notify = 'yes';
+	}
+?>
+
+	<tr>
+		<td></td>
+		<td><?php _e( 'A member manually follows a paper that you authored', 'social-paper' ) ?></td>
+		<td class="yes"><input type="radio" name="notifications[notification_starts_following_paper]" value="yes" <?php checked( $notify, 'yes', true ) ?>/></td>
+		<td class="no"><input type="radio" name="notifications[notification_starts_following_paper]" value="no" <?php checked( $notify, 'no', true ) ?>/></td>
+	</tr>
+
+<?php
+}
