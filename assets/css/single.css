@@ -513,7 +513,7 @@ h1.entry-title, .entry-content, .entry-footer,
 	margin-top: 10px;
 }
 
-.select2-dropdown {
+.single-cacsp_paper .select2-dropdown {
 	z-index: 10005; /* Life is amazing */
 }
 
