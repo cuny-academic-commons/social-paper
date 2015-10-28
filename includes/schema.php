@@ -101,7 +101,15 @@ function cacsp_map_basic_meta_caps( $caps, $cap, $user_id, $args ) {
 		case 'edit_paper' :
 		case 'delete_paper' :
 		case 'read_paper' :
-			$post = get_post( $args[0] );
+			// I strongly dislike doing this, but `post_tags_meta_box()` needs it.
+			$post_id = 0;
+			if ( isset( $args[0] ) ) {
+				$post_id = get_post( $args[0] );
+			} elseif ( $qo = get_queried_object() ) {
+				$post_id = $qo->ID;
+			}
+
+			$post = get_post( $post_id );
 			$post_type = get_post_type_object( $post->post_type );
 
 			// Set an empty array for the caps
