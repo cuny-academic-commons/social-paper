@@ -335,6 +335,19 @@ function cacsp_create_edit_activity( $post_id, WP_Post $post_after, WP_Post $pos
 add_action( 'post_updated', 'cacsp_create_edit_activity', 10, 3 );
 
 /**
+ * Delete associated paper activity when a paper is deleted.
+ *
+ * @param int $post_id The paper ID.
+ */
+function cacsp_delete_all_activity_items_for_paper( $post_id = 0 ) {
+	bp_activity_delete( array(
+		'component' => 'cacsp',
+		'secondary_item_id' => $post_id
+	) );
+}
+add_action( 'delete_post', 'cacsp_delete_all_activity_items_for_paper', 99 );
+
+/**
  * Access protection in the activity feed.
  *
  * Users should not see activity related to papers to which they do not have access.
