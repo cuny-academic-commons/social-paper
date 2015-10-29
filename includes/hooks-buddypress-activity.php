@@ -348,6 +348,20 @@ function cacsp_delete_all_activity_items_for_paper( $post_id = 0 ) {
 add_action( 'delete_post', 'cacsp_delete_all_activity_items_for_paper', 99 );
 
 /**
+ * Encode paper content into HTML entities before insertion.
+ *
+ * Groan.  Damn you, FEE!
+ *
+ * @param BP_Activity_Activity $activity
+ */
+function cacsp_before_activity_save( $activity ) {
+	if ( 'new_cacsp_paper' === $activity->type ) {
+		$activity->content = htmlentities( $activity->content );
+	}
+}
+add_action( 'bp_activity_before_save', 'cacsp_before_activity_save' );
+
+/**
  * Access protection in the activity feed.
  *
  * Users should not see activity related to papers to which they do not have access.
