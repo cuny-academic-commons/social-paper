@@ -488,6 +488,22 @@ jQuery(document).ready( function($) {
 	 * Hook into WP FEE after save
 	 */
 	$(document).on( 'fee-after-save', function( event ) {
+		// Dynamically do some stuff after a paper is first published
+		if ( -1 !== event.currentTarget.URL.indexOf( '#edit=true' ) ) {
+			// Change the current URL to the full paper URL using HTML5 history
+			if ( typeof ( history.replaceState ) != "undefined" ) {
+				history.replaceState( {}, wp.fee.post.post_title(), event.currentTarget.URL.substr( 0, event.currentTarget.URL.indexOf( '?' ) ) + 'papers/' + wp.fee.post.post_name() + '/' );
+			}
+
+			// Hide various UI items
+			$( '#fee-post-status' ).hide();
+			$( 'button.fee-save' ).remove();
+
+			// Change 'Publish' button text to 'Update'
+			$( 'button.fee-publish' ).html( Social_Paper_FEE.i18n.button_update ).removeClass( 'fee-publish' ).addClass( 'fee-save' );
+		}
+
+
 		// FEE tells us the term IDs, but nothing else, so back to the server we go.
 		$.post(
 			Social_Paper_FEE.ajax_url, {

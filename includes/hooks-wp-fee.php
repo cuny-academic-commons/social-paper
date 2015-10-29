@@ -272,6 +272,7 @@ function cacsp_wp_fee_localise() {
 		'body' => __( 'Are you sure you want to assign the comment and its replies to the paragraph? This action cannot be undone.', 'social-paper' ),
 		'submit' => __( 'Submitting...', 'social-paper' ),
 		'message' => __( 'Please wait while the comments are reassigned. The page will refresh when this has been done.', 'social-paper' ),
+		'button_update' => __( 'Update', 'social-paper' )
 	);
 
 	return $translations;
