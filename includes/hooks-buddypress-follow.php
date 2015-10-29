@@ -655,6 +655,14 @@ function cacsp_follow_clear_cache_on_activity_delete( $activities ) {
 
 		// delete queried papers that user was following
 		wp_cache_delete( $activity->follower_id, 'bp_follow_user_cacsp_paper_following_query' );
+
+		// Delete the follow entry
+		// @todo Need a mass bulk-delete method
+		bp_follow_stop_following( array(
+			'leader_id'   => $activity->leader_id,
+			'follower_id' => $activity->follower_id,
+			'follow_type' => 'cacsp_paper'
+		) );
 	}
 }
 
