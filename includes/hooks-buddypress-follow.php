@@ -232,6 +232,7 @@ function cacsp_followed_papers_screen_content() {
 
 add_action( 'bp_before_activity_type_tab_favorites', 'cacsp_follow_add_activity_directory_tab' );
 add_filter( 'bp_activity_set_papers_scope_args', 'cacsp_follow_filter_activity_scope', 10, 2 );
+add_filter( 'bp_activity_user_can_delete', 'cacsp_activity_user_cannot_delete_new_paper_activity_items', 10, 2 );
 
 add_action( 'bp_papers_directory_tabs',  'cacsp_follow_add_paper_directory_tab' );
 add_filter( 'bp_papers_ajax_query_args', 'cacsp_follow_paper_directory_ajax_query_args', 10, 2 );
@@ -373,6 +374,23 @@ function cacsp_follow_filter_activity_scope( $retval = array(), $filter = array(
 	);
 
 	return $retval;
+}
+
+/**
+ * Users should not able to delete 'new_cacsp_paper' activity items.
+ *
+ * Paper following relies on this activity item, so we enforce this here.
+ *
+ * @param  bool                 $retval   Current permissions.
+ * @param  BP_Activity_Activity $activity Current activity entry.
+ * @return bool
+ */
+function cacsp_activity_user_cannot_delete_new_paper_activity_items( $retval, $activity ) {
+	if ( 'new_cacsp_paper' !== $activity->type ) {
+		return $retval;
+	}
+
+	return false;
 }
 
 /**
