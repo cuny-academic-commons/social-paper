@@ -356,7 +356,7 @@ add_action( 'delete_post', 'cacsp_delete_all_activity_items_for_paper', 99 );
  */
 function cacsp_before_activity_save( $activity ) {
 	if ( 'new_cacsp_paper' === $activity->type ) {
-		$activity->content = htmlentities( $activity->content );
+		$activity->content = trim( htmlentities( $activity->content ) );
 	}
 }
 add_action( 'bp_activity_before_save', 'cacsp_before_activity_save' );
