@@ -328,25 +328,6 @@ function cacsp_filter_ajax_query_attachments( $retval ) {
 add_filter( 'ajax_query_attachments_args', 'cacsp_filter_ajax_query_attachments' );
 
 /**
- * Prevent WP FEE from loading
- *
- * Utility that can be called before 'init' to suppress WP FEE from loading.
- * Will only work with a fork of WP FEE where PRs from @christianwach have been
- * merged.
- *
- * @see https://github.com/iseulde/wp-front-end-editor/pull/227
- * @see https://github.com/iseulde/wp-front-end-editor/pull/228
- * @see https://github.com/iseulde/wp-front-end-editor/pull/229
- * @see https://github.com/iseulde/wp-front-end-editor/pull/230
- */
-function cacsp_wp_fee_suppress() {
-
-	global $wordpress_front_end_editor;
-	remove_action( 'init', array( $wordpress_front_end_editor, 'init' ) );
-
-}
-
-/**
  * AJAX callback for sample permalink generation on entry-title blur.
  *
  * @since 1.0.0
