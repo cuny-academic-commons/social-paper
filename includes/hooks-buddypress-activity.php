@@ -340,8 +340,17 @@ add_action( 'post_updated', 'cacsp_create_edit_activity', 10, 3 );
  * @param int $post_id The paper ID.
  */
 function cacsp_delete_all_activity_items_for_paper( $post_id = 0 ) {
+	// handle edits and comments
 	bp_activity_delete( array(
 		'component' => 'cacsp',
+		'secondary_item_id' => $post_id
+	) );
+
+	// main activity entry
+	bp_activity_delete( array(
+		'component' => 'activity',
+		'type' => 'new_cacsp_paper',
+		'item_id' => get_current_blog_id(),
 		'secondary_item_id' => $post_id
 	) );
 }
