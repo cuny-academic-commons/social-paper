@@ -330,10 +330,16 @@ jQuery(document).ready( function($) {
 		// switch editing toggle button text
 		$('#wp-admin-bar-edit span').text( Social_Paper_FEE.i18n.button_disable );
 
-		// Turn Settings sidebar on, if the paper is unpublished and there's room for it.
-		var slug_offset = $( '.fee-url' ).offset();
-		if ( 'publish' != wp.fee.post.post_status() && slug_offset.left > 275 ) {
-			toggle_sidebar();
+		/*
+		 * When entering Edit mode, slide out the Settings sidebar if:
+		 * a. The paper is not yet published OR the paper has unapproved comments;
+		 * b. AND there's enough room to show the sidebar.
+		 */
+		if ( 'publish' != wp.fee.post.post_status() || SocialPaperL18n.unapproved_comment_count > 0 ) {
+			var slug_offset = $( '.fee-url' ).offset();
+			if ( slug_offset.left > 275 ) {
+				toggle_sidebar();
+			}
 		}
 
 		var $entry_title = $( '.entry-title' );
