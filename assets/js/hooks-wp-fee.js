@@ -323,9 +323,9 @@ jQuery(document).ready( function($) {
 		// switch editing toggle button text
 		$('#wp-admin-bar-edit span').text( Social_Paper_FEE.i18n.button_disable );
 
-		// Turn Settings sidebar on, if there's room for it.
+		// Turn Settings sidebar on, if the paper is unpublished and there's room for it.
 		var slug_offset = $( '.fee-url' ).offset();
-		if ( slug_offset.left > 275 ) {
+		if ( 'publish' != wp.fee.post.post_status() && slug_offset.left > 275 ) {
 			toggle_sidebar();
 		}
 
