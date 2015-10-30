@@ -640,16 +640,13 @@ To disable these notifications please log in and go to:
 %s', 'social-paper' ), $settings_link );
 	}
 
-	/**
-	 * Do this later.
-	 *
 	$added = bp_notifications_add_notification( array(
 		'user_id' => $paper->post_author,
 		'item_id' => $paper->ID,
+		'secondary_item_id' => $follow->follower_id,
 		'component_name' => 'cacsp',
-		'component_action' => 'follow_paper',
+		'component_action' => "follow_paper_{$paper->ID}",
 	) );
-	*/
 
 	// Email time!
 	cacsp_send_notification_email( array(

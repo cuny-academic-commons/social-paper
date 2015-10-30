@@ -68,6 +68,91 @@ function cacsp_auto_follow_for_new_reader( $paper, $user_id ) {
 	) );
 }
 
+/** NOTIFICATIONS ********************************************************/
+
+add_filter( 'cacsp_custom_notification_format', 'cacsp_follow_format_notifications', 10, 2 );
+add_action( 'bp_follow_stop_following_cacsp_paper', 'cacsp_follow_notifications_remove_on_unfollow' );
+add_action( 'bp_actions', 'cacsp_follow_notifications_mark_follower_profile_as_read' );
+
+/**
+ * Formats follow notifications.
+ *
+ * @param  bool  $retval False by default.
+ * @param  array $args   Notification args.
+ * @return array
+ */
+function cacsp_follow_format_notifications( $retval, $args ) {
+	if ( 0 !== strpos( $args['action'], 'follow_paper_' ) ) {
+		return $retval;
+	}
+
+	$paper = new CACSP_Paper( $args['paper_id'] );
+
+	if ( (int) $args['count'] > 1 ) {
+		$text = sprintf( __( '%d members started following your paper "%s"', 'social-paper' ), $args['count'], $paper->post_title );
+		$link = add_query_arg( 'spfilter', 'follow_paper', bp_get_notifications_unread_permalink() );
+	} else {
+		$text = sprintf( __( '%s started following your paper "%s"', 'social-paper' ), bp_core_get_user_displayname( $args['secondary_item_id'] ), $paper->post_title );
+
+		$link = add_query_arg( 'spf_read', $paper->id, bp_core_get_user_domain( $args['secondary_item_id'] ) );
+
+		if ( bp_is_current_action( 'read' ) ) {
+			// If we're in the notifications loop, remove query arg
+			if ( ! did_action( 'bp_after_member_body' ) ) {
+				$link = remove_query_arg( 'spf_read', $link );
+			}
+		}
+	}
+
+	return array(
+		'text' => $text,
+		'link' => $link
+	);
+}
+
+/**
+ * Removes notification when a user unfollows another user.
+ *
+ * @param BP_Follow $follow
+ */
+function cacsp_follow_notifications_remove_on_unfollow( BP_Follow $follow ) {
+	$post_id = cacsp_follow_get_paper_ids_from_activity_ids( $follow->leader_id );
+
+	if ( ! empty( $post_id[0] ) ) {
+		$post_id = $post_id[0];
+	} else {
+		return $retval;
+	}
+
+	$paper = get_post( $post_id );
+
+	// $user_id, $item_id, $component_name, $component_action, $secondary_item_id = false
+	bp_notifications_delete_notifications_by_item_id( $paper->post_author, $paper->ID, 'cacsp', "follow_paper_{$paper->ID}", $follow->follower_id );
+}
+
+/**
+ * Mark notification as read when a user visits their paper follower's page.
+ *
+ * Looks for our special 'spf_read' query arg to do this.
+ */
+function cacsp_follow_notifications_mark_follower_profile_as_read() {
+	if ( ! bp_is_user() ) {
+		return;
+	}
+
+	if ( ! isset( $_GET['spf_read'] ) ) {
+		return;
+	}
+
+	$paper_id = (int) $_GET['spf_read'];
+	if ( empty( $paper_id ) ) {
+		return;
+	}
+
+	// mark notification as read
+	cacsp_mark_notifications_read( bp_loggedin_user_id(), $paper_id, "follow_paper_{$paper_id}", bp_displayed_user_id() );
+}
+
 /** NAV ******************************************************************/
 
 add_action( 'bp_setup_nav', 'cacsp_follow_setup_nav', 101 );
@@ -588,8 +673,8 @@ function cacsp_follow_filter_feedback_message( $retval = '', $action = '', $acti
 /** CACHE ****************************************************************/
 
 add_action( 'bp_follow_setup_globals',               'cacsp_follow_setup_global_cachegroups' );
-add_action( 'bp_follow_start_following_cacsp_paper', 'cacsp_follow_clear_cache_on_follow' );
-add_action( 'bp_follow_stop_following_cacsp_paper',  'cacsp_follow_clear_cache_on_follow' );
+add_action( 'bp_follow_start_following_cacsp_paper', 'cacsp_follow_clear_cache_on_follow', 99 );
+add_action( 'bp_follow_stop_following_cacsp_paper',  'cacsp_follow_clear_cache_on_follow', 99 );
 add_action( 'bp_follow_before_remove_data',          'cacsp_follow_clear_cache_on_user_delete' );
 add_action( 'bp_activity_after_delete',              'cacsp_follow_clear_cache_on_activity_delete' );
 
@@ -694,6 +779,8 @@ function cacsp_follow_clear_cache_on_activity_delete( $activities ) {
  */
 function cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids = array() ) {
 	$post_ids = array();
+
+	$activity_ids = (array) $activity_ids;
 
 	// This block is similar to BP_Activity_Activity:get_activity_data().
 	$uncached_ids = bp_get_non_cached_ids( $activity_ids, 'bp_activity' );
