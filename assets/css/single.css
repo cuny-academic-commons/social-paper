@@ -910,6 +910,13 @@ body.admin-bar #cacsp-edit-paper {
 .single-cacsp_paper #fee-notice-area {
 	/* this prevents fee-toolbar from overlapping it */
 	bottom: 50px;
+	left: 50% !important;
+	margin-left: -150px;
+}
+
+.single-cacsp_paper #fee-notice-area > div {
+	border-left: 0;
+	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 }
 
 /* Feature image support */
