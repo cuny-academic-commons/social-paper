@@ -234,6 +234,17 @@ function cacsp_get_unapproved_comments( $paper_id ) {
 }
 
 /**
+ * Get the max length (in characters) of the Description field.
+ *
+ * @since 1.0.0
+ *
+ * @return int
+ */
+function cacsp_get_description_max_length() {
+	return (int) apply_filters( 'cacsp_get_description_max_length', 200 );
+}
+
+/**
  * Template tag to output pagination on archive page.
  *
  * Pagination resembles the markup from BuddyPress.

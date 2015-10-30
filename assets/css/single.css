@@ -472,6 +472,8 @@ h1.entry-title, .entry-content, .entry-footer,
 	}
 }
 
+/* Settings sidebar */
+
 .entry-sidebar {
 	position: absolute;
 	width: 250px;
@@ -485,6 +487,17 @@ h1.entry-title, .entry-content, .entry-footer,
 	padding: 35px 12px 5% 22px;
 	z-index: 10001;
 	font-size: 14px;
+}
+
+.entry-sidebar input[type='text'],
+.entry-sidebar textarea {
+	width: 100%;
+}
+
+p.description {
+	font-size: 12px;
+	font-style: italic;
+	margin: .5em 0;
 }
 
 /* Groan */
@@ -503,6 +516,18 @@ h1.entry-title, .entry-content, .entry-footer,
 
 .sidebar-section-subsection {
 	margin-bottom: 30px;
+}
+
+.cacsp-description-char-ratio {
+	font-family: monospace;
+}
+
+.cacsp-description-char-ratio.red {
+		color: red;
+}
+
+.cacsp-description-char-ratio.orange {
+		color: orange;
 }
 
 .sidebar-section .select2-container {

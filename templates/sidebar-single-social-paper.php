@@ -2,6 +2,15 @@
 	<h2><?php esc_html_e( 'Settings', 'social-paper' ); ?></h2>
 
 	<div class="sidebar-section-subsection">
+		<?php $excerpt = get_the_excerpt(); ?>
+		<h3><?php esc_html_e( 'Description', 'social-paper' ); ?></h3>
+		<p><label for="cacsp-paper-description"><?php esc_html_e( 'A description of your paper, in 300 characters or less, to be displayed in directories.', 'social-paper' ); ?></label> <span class="cacsp-description-char-ratio">(<span><?php echo strlen( $excerpt ); ?></span>/<?php echo cacsp_get_description_max_length(); ?>)</span></p>
+		<textarea name="cacsp-paper-description" class="cacsp-paper-description" id="cacsp-paper-description" /><?php echo esc_textarea( $excerpt ); ?></textarea>
+		<p class="description"><?php esc_html_e( 'If blank, an excerpt will be used.', 'social-paper' ); ?></p>
+		<?php wp_nonce_field( 'cacsp-paper-description-' . get_queried_object_id(), 'cacsp-paper-description-nonce', false, true ); ?>
+	</div>
+
+	<div class="sidebar-section-subsection">
 		<h3><?php esc_html_e( 'Access', 'social-paper' ); ?></h3>
 		<?php $protected = cacsp_paper_is_protected( get_queried_object_id() ); ?>
 		<p>

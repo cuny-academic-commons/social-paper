@@ -478,9 +478,15 @@ jQuery(document).ready( function($) {
 			return $( '#cacsp-reader-selector' ).val();
 		};
 
+		// Tags input.
 		wp.fee.post.cacsp_paper_tags = function() {
 			SocialPaperTagBox.flushTags( $( '#cacsp_paper_tag' ), false );
 			return $( '#cacsp_paper_tag' ).find( '.the-tags' ).val();
+		}
+
+		// Paper description - let FEE handle it as post_excerpt.
+		wp.fee.post.post_excerpt = function() {
+			return $( '#cacsp-paper-description' ).val();
 		}
 	});
 

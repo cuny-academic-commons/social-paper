@@ -1,4 +1,8 @@
 ( function( $ ){
+	var $description,
+		$description_char_ratio,
+		$description_char_count;
+
 	$( document ).ready( function(){
 		$( 'body' ).removeClass( 'no-js' ).addClass( 'js' );
 
@@ -23,7 +27,32 @@
 			});
 		}
 
+		// Initialize the tags interface.
 		window.SocialPaperTagBox && window.SocialPaperTagBox.init();
+
+		// Character count for the Description field.
+		$description = $( '#cacsp-paper-description' );
+		$description_char_ratio = $( '.cacsp-description-char-ratio' );
+		$description_char_count = $description_char_ratio.find( 'span' );
+		$description.on( 'input', function() {
+			update_description_char_count();
+		} );
 	} );
+
+	update_description_char_count = function() {
+		var count = $description.val().length;
+		var class_to_add;
+
+		$description_char_count.html( count );
+
+		if ( count > SocialPaperL18n.description_max_length ) {
+			class_to_add = 'red';
+		} else if ( count > ( SocialPaperL18n.description_max_length * .75 ) ) {
+			class_to_add = 'orange';
+		}
+
+		$description_char_ratio.removeClass( 'red orange' );
+		$description_char_ratio.addClass( class_to_add );
+	}
 
 }( jQuery ) );
