@@ -37,6 +37,12 @@
 		$description.on( 'input', function() {
 			update_description_char_count();
 		} );
+
+		// Run right away, to color the counts.
+		update_description_char_count();
+
+		// Autogrow the description field.
+		$description.autogrow();
 	} );
 
 	update_description_char_count = function() {

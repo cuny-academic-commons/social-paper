@@ -21,6 +21,10 @@
 							<span class="activity"><?php cacsp_the_loop_date(); ?></span>
 						</div>
 
+						<div class="item-description">
+							<?php the_excerpt(); ?>
+						</div>
+
 						<?php
 
 						/**

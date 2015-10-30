@@ -241,7 +241,7 @@ function cacsp_get_unapproved_comments( $paper_id ) {
  * @return int
  */
 function cacsp_get_description_max_length() {
-	return (int) apply_filters( 'cacsp_get_description_max_length', 200 );
+	return (int) apply_filters( 'cacsp_get_description_max_length', 250 );
 }
 
 /**

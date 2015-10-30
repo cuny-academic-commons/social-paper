@@ -2,10 +2,16 @@
 	<h2><?php esc_html_e( 'Settings', 'social-paper' ); ?></h2>
 
 	<div class="sidebar-section-subsection">
-		<?php $excerpt = get_the_excerpt(); ?>
+		<?php
+		$excerpt = get_the_excerpt();
+
+		// Er. (~30 chars per row x ~22px per row)
+		$start_height = ( strlen( $excerpt ) / 30 ) * 22;
+
+		?>
 		<h3><?php esc_html_e( 'Description', 'social-paper' ); ?></h3>
-		<p><label for="cacsp-paper-description"><?php esc_html_e( 'A description of your paper, in 300 characters or less, to be displayed in directories.', 'social-paper' ); ?></label> <span class="cacsp-description-char-ratio">(<span><?php echo strlen( $excerpt ); ?></span>/<?php echo cacsp_get_description_max_length(); ?>)</span></p>
-		<textarea name="cacsp-paper-description" class="cacsp-paper-description" id="cacsp-paper-description" /><?php echo esc_textarea( $excerpt ); ?></textarea>
+		<p><label for="cacsp-paper-description"><?php esc_html_e( 'A description of your paper, to be displayed in directories.', 'social-paper' ); ?></label> <span class="cacsp-description-char-ratio">(<span><?php echo strlen( $excerpt ); ?></span>/<?php echo cacsp_get_description_max_length(); ?>)</span></p>
+		<textarea name="cacsp-paper-description" class="cacsp-paper-description" id="cacsp-paper-description" style="height:<?php echo (int) $start_height; ?>px;" /><?php echo esc_textarea( $excerpt ); ?></textarea>
 		<p class="description"><?php esc_html_e( 'If blank, an excerpt will be used.', 'social-paper' ); ?></p>
 		<?php wp_nonce_field( 'cacsp-paper-description-' . get_queried_object_id(), 'cacsp-paper-description-nonce', false, true ); ?>
 	</div>

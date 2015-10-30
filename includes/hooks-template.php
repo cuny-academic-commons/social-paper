@@ -215,18 +215,20 @@ function cacsp_asset_enqueue_handler() {
 	wp_enqueue_style( 'social-paper-single', Social_Paper::$URL . '/assets/css/single.css' );
 	wp_enqueue_style( 'social-paper-single-print', Social_Paper::$URL . '/assets/css/print.css', array('social-paper-single'), '0.1', 'print' );
 
-	if ( function_exists( 'bp_is_active' ) && bp_is_active( 'groups' ) ) {
-		$select2_css_url = set_url_scheme( 'http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css' );
-		wp_enqueue_style( 'social-paper-select2', $select2_css_url );
-	}
+	$select2_css_url = set_url_scheme( 'http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css' );
+	wp_enqueue_style( 'social-paper-select2', $select2_css_url );
 
 	// Register scripts.
 	$sp_js_deps = array( 'jquery' );
 
 	// Select2 (Readers and Groups).
 	$select2_js_url = set_url_scheme( 'http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.js' );
-	wp_register_script( 'social-paper-select2', $select2_js_url, array( 'jquery' ) );
-	$sp_js_deps[] = 'social-paper-select2';
+	wp_register_script( 'select2', $select2_js_url, array( 'jquery' ) );
+	$sp_js_deps[] = 'select2';
+
+	$autogrow_js_url = set_url_scheme( Social_Paper::$URL . '/lib/js/autogrow.min.js' );
+	wp_register_script( 'autogrow', $autogrow_js_url, array( 'jquery' ) );
+	$sp_js_deps[] = 'autogrow';
 
 	wp_enqueue_script( 'social-paper-single', Social_Paper::$URL . '/assets/js/single.js', $sp_js_deps );
 
