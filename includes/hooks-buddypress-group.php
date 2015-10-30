@@ -496,6 +496,10 @@ function cacsp_save_group_connection( $post_id ) {
 		return;
 	}
 
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		return;
+	}
+
 	$paper = new CACSP_Paper( $post_id );
 	$results = array();
 

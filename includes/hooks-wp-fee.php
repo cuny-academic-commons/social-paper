@@ -361,6 +361,10 @@ function cacsp_save_tags( $post_id ) {
 		return;
 	}
 
+	if ( ! current_user_can( 'edit_paper', $post_id ) ) {
+		return;
+	}
+
 	$tags = explode( ',', $_POST['cacsp_paper_tags'] );
 	wp_set_object_terms( $post_id, $tags, 'cacsp_paper_tag' );
 }

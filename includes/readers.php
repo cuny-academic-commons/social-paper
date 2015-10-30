@@ -92,6 +92,10 @@ function cacsp_save_reader_connection( $post_id ) {
 		return;
 	}
 
+	if ( ! current_user_can( 'edit_paper', $post_id ) ) {
+		return;
+	}
+
 	$paper = new CACSP_Paper( $post_id );
 	$results = array();
 
@@ -133,6 +137,10 @@ function cacsp_save_paper_status( $post_id ) {
 	}
 
 	if ( ! wp_verify_nonce( $_POST['social_paper_status_nonce'], 'cacsp-paper-status' ) ) {
+		return;
+	}
+
+	if ( ! current_user_can( 'edit_paper', $post_id ) ) {
 		return;
 	}
 
