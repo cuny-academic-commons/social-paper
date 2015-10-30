@@ -484,6 +484,7 @@ h1.entry-title, .entry-content, .entry-footer,
 	min-height: 85%;
 	padding: 35px 12px 5% 22px;
 	z-index: 10001;
+	font-size: 14px;
 }
 
 /* Groan */
@@ -498,11 +499,6 @@ h1.entry-title, .entry-content, .entry-footer,
 .sidebar-section h2,
 .sidebar-section h3 {
 	font-weight: 400;
-}
-
-.sidebar-section p,
-.sidebar-section ol {
-	font-size: 16px;
 }
 
 .sidebar-section-subsection {
