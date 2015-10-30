@@ -462,6 +462,10 @@ function cacsp_loop_add_placeholder_title( $retval = '' ) {
 function cacsp_show_paper_tags_in_paper_meta() {
 	$links = cacsp_get_paper_tags_links( get_queried_object_id() );
 
+	if ( ! $links ) {
+		$links = array();
+	}
+
 	echo '<span class="paper-tags"><br />';
 	printf( __( 'Tags: <span class="paper-tags-list">%s</span>', 'social-paper' ), implode( ', ', $links ) );
 	echo '</span>';
