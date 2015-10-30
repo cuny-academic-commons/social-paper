@@ -466,6 +466,50 @@ function cacsp_notification_comment_mention( $activity_id, $user_ids ) {
 }
 add_action( 'wp_insert_comment', 'cacsp_notification_mythread_comment' );
 
+/** User notifications page **************************************************/
+
+/**
+ * Filter notifications by component action.
+ *
+ * Only applicable in BuddyPress 2.1+.
+ *
+ * @param array $retval Current notification parameters.
+ * @return array
+ */
+function cacsp_filter_unread_notifications( $retval ) {
+	// Make sure we're on a user's notification page
+	if ( ! bp_is_user_notifications() ) {
+		return $retval;
+	}
+
+	// Only do this on the 'unread' page
+	if ( ! bp_is_current_action( 'unread' ) ) {
+		return $retval;
+	}
+
+	// Make sure we're doing this for the main notifications loop
+	if ( ! did_action( 'bp_before_member_body' ) ) {
+		return $retval;
+	}
+
+	// Filter notifications by action
+	if ( ! empty( $_GET['spfilter'] ) ) {
+		$retval['component_action'] = sanitize_title( $_GET['spfilter'] );
+
+		// Wildcard filter to show paper followers for all papers
+		if ( 0 === strpos( $retval['component_action'], 'follow_paper' ) ) {
+			$retval['search_terms'] = $retval['component_action'] . '_';
+			$retval['component_action'] = false;
+		}
+
+		// Remove this filter to prevent any other notification loop getting filtered
+		remove_filter( 'bp_after_has_notifications_parse_args', 'cacsp_filter_unread_notifications' );
+	}
+
+	return $retval;
+}
+add_filter( 'bp_after_has_notifications_parse_args', 'cacsp_filter_unread_notifications' );
+
 /** Marking read / delete ****************************************************/
 
 /**
