@@ -1,6 +1,46 @@
 <div class="sidebar-section sidebar-section-settings" id="sidebar-section-settings">
 	<h2><?php esc_html_e( 'Settings', 'social-paper' ); ?></h2>
 
+	<?php if ( $unapproved = cacsp_get_unapproved_comments( get_queried_object_id() ) ) : ?>
+	<div class="sidebar-section-subsection sidebar-section-subsection-unapproved-comments">
+		<h3><?php esc_html_e( 'Unapproved Comments', 'social-paper' ); ?></h3>
+
+		<ol>
+		<?php foreach ( $unapproved as $u_comment ) : ?>
+			<li>
+			<?php printf( __( 'Author:&nbsp;%s', 'social-paper' ), esc_html( $u_comment->comment_author ) ); ?><br />
+			<?php printf( __( 'Email:&nbsp; %s', 'social-paper' ), esc_html( $u_comment->comment_author_email ) ); ?><br />
+			<?php if ( $u_comment->comment_author_url ) : ?>
+				<?php printf( __( 'URL:&nbsp; %s', 'social-paper' ), esc_url( $u_comment->comment_author_url ) ); ?><br />
+			<?php endif; ?>
+
+			<blockquote><?php echo esc_html( $u_comment->comment_content ); ?></blockquote>
+
+			<?php
+			$in_response_to = false;
+			if ( $u_comment->comment_parent ) {
+				$in_response_to = sprintf( '<a target="_blank" href="%s">#</a>', esc_url( get_comment_link( $u_comment->comment_parent ) ) );
+			} elseif ( '' !== $pnum = get_comment_meta( $u_comment->comment_ID, 'data_incom', true ) ) {
+				$in_response_to = sprintf( '<a target="_blank" href="%s">#</a>', esc_url( add_query_arg( 'para', $pnum, get_permalink( get_queried_object() ) ) ) );
+			}
+
+			if ( $in_response_to ) {
+				printf( esc_html__( 'In response to:&nbsp;%s', 'social-paper' ) . '<br />', $in_response_to );
+			}
+			?>
+
+			<span class="unapproved-comment-timestamp"><?php echo date( 'M j, Y H:i:s', strtotime( $u_comment->comment_date ) ) ?></span><br />
+
+			<span class="comment-actions">
+				<?php cacsp_unapproved_comment_links( $u_comment ); ?>
+			</span>
+			</li>
+
+		<?php endforeach; ?>
+		</ol>
+	</div>
+	<?php endif; ?>
+
 	<div class="sidebar-section-subsection">
 		<?php
 		$excerpt = get_the_excerpt();
@@ -42,45 +82,6 @@
 		<?php cacsp_paper_reader_selector( get_queried_object_id() ); ?>
 	</div>
 
-	<?php if ( $unapproved = cacsp_get_unapproved_comments( get_queried_object_id() ) ) : ?>
-	<div class="sidebar-section-subsection sidebar-section-subsection-unapproved-comments">
-		<h3><?php esc_html_e( 'Unapproved Comments', 'social-paper' ); ?></h3>
-
-		<ol>
-		<?php foreach ( $unapproved as $u_comment ) : ?>
-			<li>
-			<?php printf( __( 'Author:&nbsp;%s', 'social-paper' ), esc_html( $u_comment->comment_author ) ); ?><br />
-			<?php printf( __( 'Email:&nbsp; %s', 'social-paper' ), esc_html( $u_comment->comment_author_email ) ); ?><br />
-			<?php if ( $u_comment->comment_author_url ) : ?>
-				<?php printf( __( 'URL:&nbsp; %s', 'social-paper' ), esc_url( $u_comment->comment_author_url ) ); ?><br />
-			<?php endif; ?>
-
-			<blockquote><?php echo esc_html( $u_comment->comment_content ); ?></blockquote>
-
-			<?php
-			$in_response_to = false;
-			if ( $u_comment->comment_parent ) {
-				$in_response_to = sprintf( '<a target="_blank" href="%s">#</a>', esc_url( get_comment_link( $u_comment->comment_parent ) ) );
-			} elseif ( '' !== $pnum = get_comment_meta( $u_comment->comment_ID, 'data_incom', true ) ) {
-				$in_response_to = sprintf( '<a target="_blank" href="%s">#</a>', esc_url( add_query_arg( 'para', $pnum, get_permalink( get_queried_object() ) ) ) );
-			}
-
-			if ( $in_response_to ) {
-				printf( esc_html__( 'In response to:&nbsp;%s', 'social-paper' ) . '<br />', $in_response_to );
-			}
-			?>
-
-			<span class="unapproved-comment-timestamp"><?php echo date( 'M j, Y H:i:s', strtotime( $u_comment->comment_date ) ) ?></span><br />
-
-			<span class="comment-actions">
-				<?php cacsp_unapproved_comment_links( $u_comment ); ?>
-			</span>
-			</li>
-
-		<?php endforeach; ?>
-		</ol>
-	</div>
-	<?php endif; ?>
 </div>
 
 <?php /*

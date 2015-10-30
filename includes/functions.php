@@ -234,6 +234,21 @@ function cacsp_get_unapproved_comments( $paper_id ) {
 }
 
 /**
+ * Get unapproved comment count for a paper.
+ *
+ * Calls cacsp_get_unapproved_comments(). Shouldn't matter for performance, since `get_comments()` will cache.
+ *
+ * @since 1.0.0
+ *
+ * @param int $post_id ID of the post.
+ * @return int
+ */
+function cacsp_get_unapproved_comment_count( $paper_id ) {
+	$unapproved_comments = cacsp_get_unapproved_comments( $paper_id );
+	return count( $unapproved_comments );
+}
+
+/**
  * Get the max length (in characters) of the Description field.
  *
  * @since 1.0.0

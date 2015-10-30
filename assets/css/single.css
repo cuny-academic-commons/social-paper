@@ -866,6 +866,37 @@ body.admin-bar #cacsp-edit-paper {
 	float: left;
 }
 
+.fee-button-settings {
+	position: relative;
+}
+
+.unapproved-comment-count {
+	position: absolute;
+	background: #f00;
+	color: #fff;
+	display: block;
+	bottom: -10px;
+	right: -10px;
+	height: 20px;
+	width: 20px;
+	font-size: 12px;
+	border-radius: 10px;
+	line-height: 20px;
+	text-align: center;
+	border: 1px solid #666;
+}
+
+.sidebar-section-subsection-unapproved-comments h3 {
+	position: relative;
+	padding-left: 28px;
+}
+
+.sidebar-section-subsection-unapproved-comments h3 .unapproved-comment-count {
+	right: auto;
+	bottom: 0;
+	left: 0;
+}
+
 .wp-core-ui select {
 	padding: 2px;
 	line-height: 28px;

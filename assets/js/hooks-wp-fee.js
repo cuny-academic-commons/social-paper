@@ -283,6 +283,13 @@ jQuery(document).ready( function($) {
 			toggle_sidebar();
 		} );
 
+		// If the current post has unapproved comments, show a count.
+		if ( SocialPaperL18n.unapproved_comment_count > 0 ) {
+			var unapproved_span = '<span class="unapproved-comment-count" title="' + SocialPaperL18n.unapproved_comment_alt + '">' + SocialPaperL18n.unapproved_comment_count * 1 + '</span>';
+			$settings_toggle.append( unapproved_span );
+			$( '.sidebar-section-subsection-unapproved-comments h3' ).append( unapproved_span );
+		}
+
 		// Set up Readers hide/show.
 		$readers_subsection = $( '.sidebar-section-subsection-readers' );
 		$( 'input[name="cacsp-paper-status"]' ).on( 'change', function() {
