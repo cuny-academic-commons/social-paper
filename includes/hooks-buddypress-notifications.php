@@ -70,6 +70,31 @@ function cacsp_format_notifications( $action, $paper_id, $secondary_item_id, $co
 			}
 
 			break;
+
+		default :
+			/**
+			 * Filter for custom paper screen notifications.
+			 *
+			 * Must return an array with 'text' and 'link' keys.
+			 *
+			 * @param bool  $retval Defaults to false
+			 * @param array $args   Current notification parameters.
+			 */
+			$notification = apply_filters( 'cacsp_custom_notification_format', false, compact(
+				'action',
+				'paper_id',
+				'secondary_item_id',
+				'count'
+			) );
+
+			$text = '';
+			$link = '';
+
+			if ( ! empty( $notification['link'] ) && ! empty( $notification['text'] ) ) {
+				$link = esc_url( $notification['link'] );
+				$text = esc_attr( $notification['text'] );
+			}
+			break;
 	}
 
 	if ( 'array' === $format ) {
