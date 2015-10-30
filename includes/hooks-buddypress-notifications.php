@@ -441,7 +441,24 @@ function cacsp_notification_comment_mention( $activity_id, $user_ids ) {
 }
 add_action( 'wp_insert_comment', 'cacsp_notification_mythread_comment' );
 
-/** Marking read *************************************************************/
+/** Marking read / delete ****************************************************/
+
+/**
+ * Delete paper notifications when a paper is deleted.
+ *
+ * @param int $post_id Post ID
+ */
+function cacsp_delete_notifications_on_paper_delete( $post_id ) {
+	// Check if a paper is being deleted
+	$post = new CACSP_Paper( $post_id );
+	if ( empty( $post->id ) ) {
+		return;
+	}
+
+	// $item_id, $component_name, $component_action = false, $secondary_item_id = false
+	bp_notifications_delete_all_notifications_by_type( $post->id, 'cacsp' );
+}
+add_action( 'delete_post', 'cacsp_delete_notifications_on_paper_delete' );
 
 /**
  * Mark all notifications read for a user + paper combination.
