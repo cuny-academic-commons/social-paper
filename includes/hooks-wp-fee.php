@@ -280,6 +280,37 @@ function cacsp_wp_fee_localise() {
 }
 
 /**
+ * Strip paragraph tags during autosave.
+ *
+ * FEE adds wpautop to the paper content, which interferes with revisions during
+ * autosave.
+ *
+ * @param  array $retval Post data.
+ * @param  array $post   Post attributes.
+ * @return array
+ */
+function cacsp_wp_fee_strip_paragraph_element_on_autosave( $retval, $post ) {
+	// auto-save
+	if ( 'revision' === $post['post_type'] ) {
+		$parent = get_post( $post['post_parent'] );
+		if ( 'cacsp_paper' !== $parent->post_type ) {
+			return $retval;
+		}
+
+		// remove data-incom attribute added by Inline Comments
+		$retval['post_content'] = preg_replace('/(<[^>]+) data-incom=".*?"/i', '$1', wp_unslash( $retval['post_content'] ) );
+		$retval['post_content'] = wp_slash( $retval['post_content'] );
+
+		// reverse autop
+		$retval['post_content'] = str_replace( '<p>', '', $retval['post_content'] );
+		$retval['post_content'] = str_replace( '</p>', "\n\n", $retval['post_content'] );
+	}
+
+	return $retval;
+}
+add_filter( 'wp_insert_post_data', 'cacsp_wp_fee_strip_paragraph_element_on_autosave', 10, 2 );
+
+/**
  * Add button to WP FEE's toolbar
  *
  * @param object $post The WordPress post object
