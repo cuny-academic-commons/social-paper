@@ -472,10 +472,12 @@ function cacsp_loop_add_placeholder_title( $retval = '' ) {
  * @since 1.0.0
  */
 function cacsp_show_paper_tags_in_paper_meta() {
-	$links = cacsp_get_paper_tags_links( get_queried_object_id() );
+	$post_id = get_queried_object_id() ? get_queried_object_id() : $GLOBALS['post']->ID;
+
+	$links = cacsp_get_paper_tags_links( $post_id );
 
 	if ( ! $links ) {
-		$links = array();
+		return;
 	}
 
 	echo '<span class="paper-tags"><br />';
