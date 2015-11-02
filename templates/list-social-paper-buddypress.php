@@ -18,10 +18,18 @@
 						</div>
 
 						<div class="item-meta">
-							<span class="activity"><?php cacsp_the_loop_date(); ?></span>
+							<span class="item-paper-creator"><?php cacsp_the_loop_author(); ?></span>
+							<span class="item-paper-date"><?php cacsp_the_loop_date(); ?></span>
+
+							<?php
+
+							/**
+							 * Fires inside the display of the directory paper's meta section.
+							 */
+							do_action( 'bp_directory_papers_item_meta' ); ?>
 						</div>
 
-						<div class="item-description">
+						<div class="item-desc">
 							<?php the_excerpt(); ?>
 						</div>
 
@@ -34,8 +42,6 @@
 					</div>
 
 					<div class="action">
-						<span class="item-site-creator" style="font-size:90%;"><?php cacsp_the_loop_author(); ?></span>
-
 						<?php
 
 						/**

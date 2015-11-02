@@ -485,6 +485,7 @@ function cacsp_show_paper_tags_in_paper_meta() {
 	echo '</span>';
 }
 add_action( 'cacsp_after_paper_meta', 'cacsp_show_paper_tags_in_paper_meta', 100 );
+add_action( 'bp_directory_papers_item_meta', 'cacsp_show_paper_tags_in_paper_meta' );
 
 /**
  * Get an array of tag archive links for a post.
