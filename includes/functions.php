@@ -332,13 +332,27 @@ function cacsp_the_loop_author() {
 		return;
 	}
 
+	$group_links = array();
+	if ( function_exists( 'buddypress' ) && bp_is_active( 'groups' ) ) {
+		$group_links = cacsp_get_group_links_for_paper( $GLOBALS['post']->ID );
+	}
+
+
 	if ( (int) $GLOBALS['post']->post_author === bp_loggedin_user_id() ) {
 		if ( is_archive() ) {
-			_e( 'Written by you.', 'social-paper' );
+			if ( ! empty( $group_links ) ) {
+				printf( __( 'Written by you in %s', 'social-paper' ), implode( ',', $group_links ) );
+			} else {
+				_e( 'Written by you.', 'social-paper' );
+			}
 		}
 
 	} else {
-		printf( __( 'Written by %s', 'social-paper' ), '<a href="' . bp_core_get_user_domain( $GLOBALS['post']->post_author ) . '">' . bp_core_get_username( $GLOBALS['post']->post_author )  . '</a>' );
+		if ( ! empty( $group_links ) ) {
+			printf( __( 'Written by %s in %s', 'social-paper' ), '<a href="' . bp_core_get_user_domain( $GLOBALS['post']->post_author ) . '">' . bp_core_get_username( $GLOBALS['post']->post_author )  . '</a>', implode( ',', $group_links ) );
+		} else {
+			printf( __( 'Written by %s', 'social-paper' ), '<a href="' . bp_core_get_user_domain( $GLOBALS['post']->post_author ) . '">' . bp_core_get_username( $GLOBALS['post']->post_author )  . '</a>' );
+		}
 	}
 }
 
