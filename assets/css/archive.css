@@ -1,0 +1,19 @@
+#buddypress .papers  ul.item-list li img.avatar {
+	margin-bottom: 5em;
+}
+
+#buddypress .papers .item-meta span {
+	display: block;
+}
+
+#buddypress .papers .item-meta span.paper-tags-list {
+	display: inline-block;
+}
+
+#buddypress .papers .item-meta br {
+	display: none;
+}
+
+#buddypress .papers ul.item-list li div.item-desc {
+	width: 100%;
+}

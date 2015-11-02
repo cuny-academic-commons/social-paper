@@ -155,7 +155,7 @@ add_filter( 'comments_template', 'cacsp_comments_template_loader' );
  *
  * @todo maybe do the same for scripts?
  */
-function cacsp_asset_enqueue_handler() {
+function cacsp_asset_single_enqueue_handler() {
 	if ( ! cacsp_is_page() || is_404() ) {
 		return;
 	}
@@ -248,7 +248,19 @@ function cacsp_asset_enqueue_handler() {
 		'unapproved_comment_alt' => $unapproved_comment_alt,
 	) );
 }
-add_action( 'wp_enqueue_scripts', 'cacsp_asset_enqueue_handler', 999 );
+add_action( 'wp_enqueue_scripts', 'cacsp_asset_single_enqueue_handler', 999 );
+
+/**
+ * Asset enqueue handler on the social paper archive page.
+ */
+function cacsp_asset_archive_enqueue_handler() {
+	if ( ! is_post_type_archive( 'cacsp_paper' ) ) {
+		return;
+	}
+
+	wp_enqueue_style( 'social-paper-archive', Social_Paper::$URL . '/assets/css/archive.css' );
+}
+add_action( 'wp_enqueue_scripts', 'cacsp_asset_archive_enqueue_handler' );
 
 /**
  * Set our page markers to determine if we're on a Social Paper page.
