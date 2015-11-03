@@ -544,7 +544,10 @@ function cacsp_follow_paper_directory_ajax_query_args( $retval, $scope ) {
  */
 function cacsp_follow_add_follower_count_to_action_metadata( $chunks ) {
 	$activity_id = cacsp_follow_get_activity_id( get_post()->ID );
-	$count = BP_Follow::get_followers_count( $activity_id, 'cacsp_paper' );
+	$count = bp_follow_get_the_followers_count( array(
+		'object_id'   => $activity_id,
+		'follow_type' => 'cacsp_paper'
+	) );
 
 	if ( 1 == $count ) {
 		$chunks['followers'] = __( '1 follower', 'social-paper' );
