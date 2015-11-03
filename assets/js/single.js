@@ -8,11 +8,11 @@
 
 		if ( 'undefined' !== typeof CACSP_Potential_Readers && $.isFunction( $.fn.select2 ) ) {
 			$( '#cacsp-group-selector' ).select2( {
-				placeholder: SocialPaperL18n.group_placeholder
+				placeholder: SocialPaperI18n.group_placeholder
 			} );
 
 			$( '#cacsp-reader-selector' ).select2( {
-				placeholder: SocialPaperL18n.reader_placeholder,
+				placeholder: SocialPaperI18n.reader_placeholder,
 				data: CACSP_Potential_Readers
 			} );
 		}
@@ -59,9 +59,9 @@
 
 		$description_char_count.html( count );
 
-		if ( count > SocialPaperL18n.description_max_length ) {
+		if ( count > SocialPaperI18n.description_max_length ) {
 			class_to_add = 'red';
-		} else if ( count > ( SocialPaperL18n.description_max_length * .75 ) ) {
+		} else if ( count > ( SocialPaperI18n.description_max_length * .75 ) ) {
 			class_to_add = 'orange';
 		}
 

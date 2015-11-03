@@ -286,8 +286,8 @@ jQuery(document).ready( function($) {
 		} );
 
 		// If the current post has unapproved comments, show a count.
-		if ( SocialPaperL18n.unapproved_comment_count > 0 ) {
-			var unapproved_span = '<span class="unapproved-comment-count" title="' + SocialPaperL18n.unapproved_comment_alt + '">' + SocialPaperL18n.unapproved_comment_count * 1 + '</span>';
+		if ( SocialPaperI18n.unapproved_comment_count > 0 ) {
+			var unapproved_span = '<span class="unapproved-comment-count" title="' + SocialPaperI18n.unapproved_comment_alt + '">' + SocialPaperI18n.unapproved_comment_count * 1 + '</span>';
 			$settings_toggle.append( unapproved_span );
 			$( '.sidebar-section-subsection-unapproved-comments h3' ).append( unapproved_span );
 		}
@@ -308,9 +308,9 @@ jQuery(document).ready( function($) {
 		$status_toggle.on( 'change', function( e ) {
 			var protected = 'protected' === this.value;
 			if ( 'protected' === this.value ) {
-				$paper_status.html( SocialPaperL18n.protected_paper ).addClass( 'protected' );
+				$paper_status.html( SocialPaperI18n.protected_paper ).addClass( 'protected' );
 			} else {
-				$paper_status.html( SocialPaperL18n.public_paper ).removeClass( 'protected' );
+				$paper_status.html( SocialPaperI18n.public_paper ).removeClass( 'protected' );
 			}
 		} );
 	} );
@@ -348,7 +348,7 @@ jQuery(document).ready( function($) {
 		 * a. The paper is not yet published OR the paper has unapproved comments;
 		 * b. AND there's enough room to show the sidebar.
 		 */
-		if ( 'publish' != wp.fee.post.post_status() || SocialPaperL18n.unapproved_comment_count > 0 ) {
+		if ( 'publish' != wp.fee.post.post_status() || SocialPaperI18n.unapproved_comment_count > 0 ) {
 			var slug_offset = $( '.fee-url' ).offset();
 			if ( slug_offset.left > 275 ) {
 				toggle_sidebar();

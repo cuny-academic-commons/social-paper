@@ -240,7 +240,7 @@ function cacsp_asset_single_enqueue_handler() {
 	} else {
 		$unapproved_comment_alt = sprintf( _n( '%s unapproved comment', '%s unapproved comments', $unapproved_comment_count, 'social-paper' ), number_format_i18n( $unapproved_comment_count ) );
 	}
-	wp_localize_script( 'social-paper-single', 'SocialPaperL18n', array(
+	wp_localize_script( 'social-paper-single', 'SocialPaperI18n', array(
 		'group_placeholder' => __( 'Enter a group name', 'social-paper' ),
 		'reader_placeholder' => __( 'Enter a user name', 'social-paper' ),
 		'description_max_length' => cacsp_get_description_max_length(),
