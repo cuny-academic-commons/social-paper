@@ -486,6 +486,13 @@ function cacsp_activity_user_cannot_delete_new_paper_activity_items( $retval, $a
  * @param bool $retval Defaults to true.
  */
 function cacsp_activity_remove_favorite_functionality( $retval ) {
+	global $activities_template;
+
+	// If we're not in an activity loop, there's nothing to do here.
+	if ( empty( $activities_template->activity ) ) {
+		return $retval;
+	}
+
 	// Bail from favoriting if current activity item is paper-related
 	if ( 'cacsp' === bp_get_activity_object_name() || 'new_cacsp_paper' === bp_get_activity_type() || 'cacsp_paper_added_to_group' === bp_get_activity_type()) {
 		return false;
