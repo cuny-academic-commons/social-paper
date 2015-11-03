@@ -67,6 +67,12 @@
 		<?php wp_nonce_field( 'cacsp-paper-status', 'cacsp-paper-status-nonce' ); ?>
 	</div>
 
+	<div class="sidebar-section-subsection sidebar-section-subsection-readers <?php if ( ! cacsp_paper_is_protected( get_queried_object_id() ) ) : ?>hidden<?php endif; ?>">
+		<h3><?php esc_html_e( 'Readers', 'social-paper' ); ?></h3>
+		<p><?php esc_html_e( 'Readers are allowed to read and comment on your paper.', 'social-paper' ) ?>
+		<?php cacsp_paper_reader_selector( get_queried_object_id() ); ?>
+	</div>
+
 	<?php /* @todo separate out */ ?>
 	<?php if ( function_exists( 'bp_is_active' ) && bp_is_active( 'groups' ) ) : ?>
 		<div class="sidebar-section-subsection">
@@ -75,12 +81,6 @@
 			<?php cacsp_paper_group_selector( get_queried_object_id() ); ?>
 		</div>
 	<?php endif; ?>
-
-	<div class="sidebar-section-subsection sidebar-section-subsection-readers <?php if ( ! cacsp_paper_is_protected( get_queried_object_id() ) ) : ?>hidden<?php endif; ?>">
-		<h3><?php esc_html_e( 'Readers', 'social-paper' ); ?></h3>
-		<p><?php esc_html_e( 'Readers are allowed to read and comment on your paper.', 'social-paper' ) ?>
-		<?php cacsp_paper_reader_selector( get_queried_object_id() ); ?>
-	</div>
 
 </div>
 
