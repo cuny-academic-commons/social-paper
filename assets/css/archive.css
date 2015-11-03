@@ -1,19 +1,19 @@
-#buddypress .papers  ul.item-list li img.avatar {
+body.papers #buddypress ul.item-list li img.avatar {
 	margin-bottom: 5em;
 }
 
-#buddypress .papers .item-meta span {
+body.papers .item-meta span {
 	display: block;
 }
 
-#buddypress .papers .item-meta span.paper-tags-list {
+body.papers .item-meta span.paper-tags-list {
 	display: inline-block;
 }
 
-#buddypress .papers .item-meta br {
+body.papers .item-meta br {
 	display: none;
 }
 
-#buddypress .papers ul.item-list li div.item-desc {
-	width: 100%;
+body.papers #buddypress ul.item-list li div.item-desc {
+	width: 80%;
 }

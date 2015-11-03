@@ -254,11 +254,18 @@ add_action( 'wp_enqueue_scripts', 'cacsp_asset_single_enqueue_handler', 999 );
  * Asset enqueue handler on the social paper archive page.
  */
 function cacsp_asset_archive_enqueue_handler() {
-	if ( ! is_post_type_archive( 'cacsp_paper' ) ) {
-		return;
+	$enqueue = is_post_type_archive( 'cacsp_paper' );
+
+	if ( ! $enqueue && function_exists( 'buddypress' ) ) {
+		$enqueue = (
+			bp_is_user() && bp_is_current_component( 'papers' ) ||
+			bp_is_group() && bp_is_current_action( 'papers' )
+		);
 	}
 
-	wp_enqueue_style( 'social-paper-archive', Social_Paper::$URL . '/assets/css/archive.css' );
+	if ( $enqueue ) {
+		wp_enqueue_style( 'social-paper-archive', Social_Paper::$URL . '/assets/css/archive.css' );
+	}
 }
 add_action( 'wp_enqueue_scripts', 'cacsp_asset_archive_enqueue_handler' );
 
