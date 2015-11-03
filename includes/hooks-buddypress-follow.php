@@ -664,6 +664,11 @@ function cacsp_follow_add_follow_button_to_paper_loop() {
 		return;
 	}
 
+	// Authors shouldn't see a follow button for their own papers.
+	if ( bp_loggedin_user_id() === (int) get_post()->post_author ) {
+		return;
+	}
+
 	// Button time!
 	bp_follow_activity_button( array(
 		'leader_id' => cacsp_follow_get_activity_id( get_post()->ID ),
