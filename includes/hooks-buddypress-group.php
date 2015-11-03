@@ -608,6 +608,8 @@ function cacsp_get_groups_of_user( $user_id ) {
 			'show_hidden' => true,
 			'populate_extras' => false,
 			'orderby' => 'name',
+			'per_page' => null, // Show all
+			'page' => null,
 		) );
 
 		$group_ids = array();
