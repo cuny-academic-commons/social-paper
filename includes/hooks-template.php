@@ -554,9 +554,18 @@ function cacsp_directory_action_metadata() {
 		$chunks['paper_status'] = esc_html__( 'Public Paper', 'social-paper' );
 	}
 
+	/**
+	 * Filter the directory action metadata chunks before they're imploded for display.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $chunks
+	 */
+	$chunks = apply_filters( 'cacsp_directory_action_metadata', $chunks );
+
 	echo '<div class="meta">' . implode ( ' / ', $chunks ) . '</div>';
 }
-add_action( 'bp_directory_papers_actions', 'cacsp_directory_action_metadata', 50 );
+add_action( 'bp_directory_papers_actions', 'cacsp_directory_action_metadata', 150 );
 
 /**
  * Wrap comment content in an identifer div

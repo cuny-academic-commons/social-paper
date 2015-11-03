@@ -321,6 +321,7 @@ add_filter( 'bp_activity_user_can_delete', 'cacsp_activity_user_cannot_delete_ne
 
 add_action( 'bp_papers_directory_tabs',  'cacsp_follow_add_paper_directory_tab' );
 add_filter( 'bp_papers_ajax_query_args', 'cacsp_follow_paper_directory_ajax_query_args', 10, 2 );
+add_filter( 'cacsp_directory_action_metadata', 'cacsp_follow_add_follower_count_to_action_metadata', 20 );
 
 /**
  * Adds a "My Papers" tab to the activity directory.
@@ -531,6 +532,27 @@ function cacsp_follow_paper_directory_ajax_query_args( $retval, $scope ) {
 	$retval['post__in'] = $paper_ids;
 
 	return $retval;
+}
+
+/**
+ * Add 'x followers' to action metadata in paper directories.
+ *
+ * @since 1.0.0
+ *
+ * @param array $chunks Action metadata chunks.
+ * @return array
+ */
+function cacsp_follow_add_follower_count_to_action_metadata( $chunks ) {
+	$activity_id = cacsp_follow_get_activity_id( get_post()->ID );
+	$count = BP_Follow::get_followers_count( $activity_id, 'cacsp_paper' );
+
+	if ( 1 == $count ) {
+		$chunks['followers'] = __( '1 follower', 'social-paper' );
+	} elseif ( 1 < $count ) {
+		$chunks['followers'] = sprintf( _n( '%s follower', '%s followers', $count, 'social-paper' ), number_format_i18n( $count ) );
+	}
+
+	return $chunks;
 }
 
 /** RSS ******************************************************************/
