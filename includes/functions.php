@@ -341,7 +341,7 @@ function cacsp_the_loop_author() {
 	if ( (int) $GLOBALS['post']->post_author === bp_loggedin_user_id() ) {
 		if ( is_archive() ) {
 			if ( ! empty( $group_links ) ) {
-				printf( __( 'Written by you in %s', 'social-paper' ), implode( ',', $group_links ) );
+				printf( __( 'Written by you in %s', 'social-paper' ), implode( ', ', $group_links ) );
 			} else {
 				_e( 'Written by you.', 'social-paper' );
 			}
