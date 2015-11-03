@@ -50,7 +50,11 @@
 	} );
 
 	update_description_char_count = function() {
-		var count = $description.val().length;
+                var count = 0;
+                if ( $description.val() ) {
+                        count = $description.val().length;
+                }
+
 		var class_to_add;
 
 		$description_char_count.html( count );
