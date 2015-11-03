@@ -6,7 +6,7 @@
 	$( document ).ready( function(){
 		$( 'body' ).removeClass( 'no-js' ).addClass( 'js' );
 
-		if ( 'undefined' !== typeof CACSP_Potential_Readers && 'undefined' !== typeof select2 ) {
+		if ( 'undefined' !== typeof CACSP_Potential_Readers && $.isFunction( $.fn.select2 ) ) {
 			$( '#cacsp-group-selector' ).select2( {
 				placeholder: SocialPaperL18n.group_placeholder
 			} );
