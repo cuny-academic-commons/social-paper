@@ -568,7 +568,7 @@ function cacsp_loop_publish_button() {
 add_action( 'bp_directory_papers_actions', 'cacsp_loop_publish_button' );
 
 /**
- * Add the 'buddypress' CSS class when on the Paper archive page.
+ * Add the 'buddypress' and 'papers' CSS class when on the Paper archive page.
  *
  * Fixes display issues for BuddyPress companion stylesheets.
  *
@@ -581,6 +581,7 @@ function cacsp_directory_add_buddypress_body_class( $retval ) {
 	}
 
 	$retval[] = 'buddypress';
+	$retval[] = 'papers';
 	return $retval;
 }
 add_filter( 'body_class', 'cacsp_directory_add_buddypress_body_class' );
