@@ -535,6 +535,30 @@ function cacsp_get_paper_tags_links( $post_id ) {
 }
 
 /**
+ * Display paper metadata in directory 'action' sections.
+ *
+ * Includes:
+ *   - comment count
+ *   - follower count
+ *   - paper status
+ *
+ * @since 1.0.0
+ */
+function cacsp_directory_action_metadata() {
+	$chunks = array();
+
+	// Status.
+	if ( cacsp_paper_is_protected( get_the_ID() ) ) {
+		$chunks['paper_status'] = esc_html__( 'Private Paper', 'social-paper' );
+	} else {
+		$chunks['paper_status'] = esc_html__( 'Public Paper', 'social-paper' );
+	}
+
+	echo '<div class="meta">' . implode ( ' / ', $chunks ) . '</div>';
+}
+add_action( 'bp_directory_papers_actions', 'cacsp_directory_action_metadata', 50 );
+
+/**
  * Wrap comment content in an identifer div
  *
  * @param str $comment_content The comment content
