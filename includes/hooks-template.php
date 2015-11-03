@@ -549,10 +549,19 @@ function cacsp_directory_action_metadata() {
 
 	// Status.
 	if ( cacsp_paper_is_protected( get_the_ID() ) ) {
-		$chunks['paper_status'] = esc_html__( 'Private Paper', 'social-paper' );
+		$chunks['paper_status'] = __( 'Private Paper', 'social-paper' );
 	} else {
-		$chunks['paper_status'] = esc_html__( 'Public Paper', 'social-paper' );
+		$chunks['paper_status'] = __( 'Public Paper', 'social-paper' );
 	}
+
+	// Comment count.
+	$comment_count = (int) get_post()->comment_count;
+	if ( 1 === $comment_count ) {
+		$chunks['comment_count'] = __( '1 comment', 'social-paper' );
+	} elseif ( 1 < $comment_count ) {
+		$chunks['comment_Count'] = sprintf( _n( '%s comment', '%s comments', $comment_count, 'social-paper' ), number_format_i18n( $comment_count ) );
+	}
+
 
 	/**
 	 * Filter the directory action metadata chunks before they're imploded for display.
@@ -563,7 +572,7 @@ function cacsp_directory_action_metadata() {
 	 */
 	$chunks = apply_filters( 'cacsp_directory_action_metadata', $chunks );
 
-	echo '<div class="meta">' . implode ( ' / ', $chunks ) . '</div>';
+	echo '<div class="meta">' . implode ( ' / ', array_map( 'esc_html', $chunks ) ) . '</div>';
 }
 add_action( 'bp_directory_papers_actions', 'cacsp_directory_action_metadata', 150 );
 
