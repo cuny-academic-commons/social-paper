@@ -451,7 +451,8 @@ body {
 
 h1.entry-title, .entry-content, .entry-footer,
 #comments, #comments-and-form,
-.entry-header .fee-url {
+.entry-header .fee-url,
+.entry-header .entry-author {
 	margin: 0 auto;
 	width: 60%;
 }
@@ -719,7 +720,7 @@ a {
 }
 
 /* Article metadata */
-.entry-footer {
+.entry-author {
 	position: relative;
 }
 

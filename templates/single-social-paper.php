@@ -32,38 +32,8 @@ while ( have_posts() ) : the_post();
 					<?php echo get_the_post_thumbnail( get_the_ID(), 'cacsp-feature' ); ?>
 				</div>
 			<?php endif; ?>
-			<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
-		</header><!-- .entry-header -->
 
-		<div class="entry-content">
-			<?php
-				/* translators: %s: Name of current post */
-				the_content( sprintf(
-					__( 'Continue reading %s', 'twentyfifteen' ),
-					the_title( '<span class="screen-reader-text">', '</span>', false )
-				) );
-			?>
-
-			<?php
-				wp_link_pages( array(
-					'before'      => '<div class="page-links"><span class="page-links-title">' . __( 'Pages:', 'social-paper' ) . '</span>',
-					'after'       => '</div>',
-					'link_before' => '<span>',
-					'link_after'  => '</span>',
-					'pagelink'    => '<span class="screen-reader-text">' . __( 'Page', 'social-paper' ) . ' </span>%',
-					'separator'   => '<span class="screen-reader-text">, </span>',
-				) );
-			?>
-		</div><!-- .entry-content -->
-
-		<?php if ( current_user_can( 'edit_post', get_queried_object()->ID ) ) : ?>
-		<div class="entry-sidebar">
-			<?php cacsp_locate_template( 'sidebar-single-social-paper.php', true ); ?>
-		</div>
-		<?php endif; ?>
-
-		<?php if ( 'new' !== get_query_var( 'name' ) && 'auto-draft' !== get_queried_object()->post_status ) : ?>
-		<footer class="entry-footer">
+			<?php if ( 'new' !== get_query_var( 'name' ) && 'auto-draft' !== get_queried_object()->post_status ) : ?>
 			<div class="entry-author">
 				<div class="entry-author-avatar">
 					<a href="<?php the_author_meta( 'url' ); ?>"><?php echo get_avatar( $post->post_author, 50, 'mm', '', array(
@@ -97,16 +67,49 @@ while ( have_posts() ) : the_post();
 						do_action( 'cacsp_after_paper_meta' );
 					?>
 				</div>
-			</div>
 
-			<div class="paper-status <?php if ( cacsp_paper_is_protected( get_queried_object_id() ) ) : ?>protected<?php endif; ?>"><?php
-				if ( cacsp_paper_is_protected( get_queried_object_id() ) ) :
-					esc_html_e( 'Private Paper', 'social-paper' );
-				else :
-					esc_html_e( 'Public Paper', 'social-paper' );
-				endif; ?>
+				<div class="paper-status <?php if ( cacsp_paper_is_protected( get_queried_object_id() ) ) : ?>protected<?php endif; ?>"><?php
+					if ( cacsp_paper_is_protected( get_queried_object_id() ) ) :
+						esc_html_e( 'Private Paper', 'social-paper' );
+					else :
+						esc_html_e( 'Public Paper', 'social-paper' );
+					endif; ?>
+				</div>
 			</div>
+			<?php endif; /* don't show on new papers or auto-drafts */ ?>
 
+			<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			<?php
+				/* translators: %s: Name of current post */
+				the_content( sprintf(
+					__( 'Continue reading %s', 'twentyfifteen' ),
+					the_title( '<span class="screen-reader-text">', '</span>', false )
+				) );
+			?>
+
+			<?php
+				wp_link_pages( array(
+					'before'      => '<div class="page-links"><span class="page-links-title">' . __( 'Pages:', 'social-paper' ) . '</span>',
+					'after'       => '</div>',
+					'link_before' => '<span>',
+					'link_after'  => '</span>',
+					'pagelink'    => '<span class="screen-reader-text">' . __( 'Page', 'social-paper' ) . ' </span>%',
+					'separator'   => '<span class="screen-reader-text">, </span>',
+				) );
+			?>
+		</div><!-- .entry-content -->
+
+		<?php if ( current_user_can( 'edit_post', get_queried_object()->ID ) ) : ?>
+		<div class="entry-sidebar">
+			<?php cacsp_locate_template( 'sidebar-single-social-paper.php', true ); ?>
+		</div>
+		<?php endif; ?>
+
+		<?php if ( 'new' !== get_query_var( 'name' ) && 'auto-draft' !== get_queried_object()->post_status ) : ?>
+		<footer class="entry-footer">
 			<?php //edit_post_link( __( 'Edit', 'social-paper' ), '<span class="edit-link">', '</span>' ); ?>
 		</footer><!-- .entry-footer -->
 
