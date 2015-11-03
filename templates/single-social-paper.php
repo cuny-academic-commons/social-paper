@@ -99,6 +99,14 @@ while ( have_posts() ) : the_post();
 				</div>
 			</div>
 
+			<div class="paper-status <?php if ( cacsp_paper_is_protected( get_queried_object_id() ) ) : ?>protected<?php endif; ?>"><?php
+				if ( cacsp_paper_is_protected( get_queried_object_id() ) ) :
+					esc_html_e( 'Private Paper', 'social-paper' );
+				else :
+					esc_html_e( 'Public Paper', 'social-paper' );
+				endif; ?>
+			</div>
+
 			<?php //edit_post_link( __( 'Edit', 'social-paper' ), '<span class="edit-link">', '</span>' ); ?>
 		</footer><!-- .entry-footer -->
 

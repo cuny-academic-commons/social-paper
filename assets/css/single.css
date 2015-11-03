@@ -589,7 +589,8 @@ h1, h2, h3, h4, h5,
 #comments a.url,
 #comments .comment-meta a,
 a.comment-reply-link,
-.page-links {
+.page-links,
+.entry-footer {
 	font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
 }
 
@@ -718,6 +719,10 @@ a {
 }
 
 /* Article metadata */
+.entry-footer {
+	position: relative;
+}
+
 .entry-author {
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
@@ -743,6 +748,21 @@ a {
 
 .posted-in-groups a {
 	font-weight: 700;
+}
+
+.paper-status {
+	position: absolute;
+	right: 0;
+	bottom: 1em;
+	padding: 4px;
+	border: 1px solid #eaeaea;
+	border-radius: 2px;
+	font-size: 12px;
+	background: #99ef9d;
+}
+
+.paper-status.protected {
+	background: #efeeba;
 }
 
 /* Comments styling */

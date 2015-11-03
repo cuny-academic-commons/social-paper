@@ -246,6 +246,8 @@ function cacsp_asset_single_enqueue_handler() {
 		'description_max_length' => cacsp_get_description_max_length(),
 		'unapproved_comment_count' => $unapproved_comment_count,
 		'unapproved_comment_alt' => $unapproved_comment_alt,
+		'public_paper' => __( 'Public Paper', 'social-paper' ),
+		'protected_paper' => __( 'Private Paper', 'social-paper' ),
 	) );
 }
 add_action( 'wp_enqueue_scripts', 'cacsp_asset_single_enqueue_handler', 999 );

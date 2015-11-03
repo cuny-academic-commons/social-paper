@@ -24,8 +24,10 @@ SocialPaper.editor = {};
  * When the page is ready
  */
 jQuery(document).ready( function($) {
-	var $settings_toggle,
-		$sidebar;
+	var $paper_status,
+		$settings_toggle,
+		$sidebar,
+		$status_toggle;
 
 	/**
 	 * Create Drag-n-drop object.
@@ -298,6 +300,17 @@ jQuery(document).ready( function($) {
 				$readers_subsection.addClass( 'hidden' );
 			} else {
 				$readers_subsection.removeClass( 'hidden' );
+			}
+		} );
+
+		$paper_status = $( '.paper-status' );
+		$status_toggle = $( 'input.cacsp-paper-status' );
+		$status_toggle.on( 'change', function( e ) {
+			var protected = 'protected' === this.value;
+			if ( 'protected' === this.value ) {
+				$paper_status.html( SocialPaperL18n.protected_paper ).addClass( 'protected' );
+			} else {
+				$paper_status.html( SocialPaperL18n.public_paper ).removeClass( 'protected' );
 			}
 		} );
 	} );
