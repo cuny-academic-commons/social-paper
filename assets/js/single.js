@@ -42,7 +42,11 @@
 		update_description_char_count();
 
 		// Autogrow the description field.
-		$description.autogrow();
+		$description.autogrow( {
+			onInitialize: true,
+			fixMinHeight: false,
+			animate: false
+		} );
 	} );
 
 	update_description_char_count = function() {

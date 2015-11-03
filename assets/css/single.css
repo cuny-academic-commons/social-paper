@@ -518,6 +518,11 @@ p.description {
 	margin-bottom: 30px;
 }
 
+.entry-sidebar textarea.cacsp-paper-description {
+	padding: 4px 8px;
+	width: 92%;
+}
+
 .cacsp-description-char-ratio {
 	font-family: monospace;
 }
