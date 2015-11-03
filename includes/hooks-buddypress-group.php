@@ -607,6 +607,7 @@ function cacsp_get_groups_of_user( $user_id ) {
 			'update_meta_cache' => false,
 			'show_hidden' => true,
 			'populate_extras' => false,
+			'orderby' => 'name',
 		) );
 
 		$group_ids = array();
