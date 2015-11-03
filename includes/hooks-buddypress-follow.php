@@ -318,6 +318,7 @@ function cacsp_followed_papers_screen_content() {
 add_action( 'bp_before_activity_type_tab_favorites', 'cacsp_follow_add_activity_directory_tab' );
 add_filter( 'bp_activity_set_papers_scope_args', 'cacsp_follow_filter_activity_scope', 10, 2 );
 add_filter( 'bp_activity_user_can_delete', 'cacsp_activity_user_cannot_delete_new_paper_activity_items', 10, 2 );
+add_filter( 'bp_activity_can_favorite', 'cacsp_activity_remove_favorite_functionality' );
 
 add_action( 'bp_papers_directory_tabs',  'cacsp_follow_add_paper_directory_tab' );
 add_filter( 'bp_papers_ajax_query_args', 'cacsp_follow_paper_directory_ajax_query_args', 10, 2 );
@@ -477,6 +478,20 @@ function cacsp_activity_user_cannot_delete_new_paper_activity_items( $retval, $a
 	}
 
 	return false;
+}
+
+/**
+ * Remove activity favorites from paper-related items.
+ *
+ * @param bool $retval Defaults to true.
+ */
+function cacsp_activity_remove_favorite_functionality( $retval ) {
+	// Bail from favoriting if current activity item is paper-related
+	if ( 'cacsp' === bp_get_activity_object_name() || 'new_cacsp_paper' === bp_get_activity_type() || 'cacsp_paper_added_to_group' === bp_get_activity_type()) {
+		return false;
+	}
+
+	return $retval;
 }
 
 /**
