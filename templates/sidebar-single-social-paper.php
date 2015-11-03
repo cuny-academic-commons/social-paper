@@ -61,7 +61,7 @@
 		<?php $protected = cacsp_paper_is_protected( get_queried_object_id() ); ?>
 		<p>
 		<input type="radio" name="cacsp-paper-status" class="cacsp-paper-status" id="cacsp-paper-status-public" value="public" <?php checked( ! $protected ) ?> /> <label for="cacsp-paper-status-public"><strong><?php esc_html_e( 'Public', 'social-paper' ); ?></strong> &middot; <?php esc_html_e( 'Anyone can read and comment on my paper.', 'social-paper' ); ?></label><br />
-		<input type="radio" name="cacsp-paper-status" class="cacsp-paper-status" id="cacsp-paper-status-protected" value="protected" <?php checked( $protected ) ?> /> <label for="cacsp-paper-status-protected"><strong><?php esc_html_e( 'Protected', 'social-paper' ); ?></strong> &middot; <?php esc_html_e( 'Only the readers and group members specified below can read and comment on my paper.', 'social-paper' ); ?></label>
+		<input type="radio" name="cacsp-paper-status" class="cacsp-paper-status" id="cacsp-paper-status-protected" value="protected" <?php checked( $protected ) ?> /> <label for="cacsp-paper-status-protected"><strong><?php esc_html_e( 'Private', 'social-paper' ); ?></strong> &middot; <?php esc_html_e( 'Only the readers and group members specified below can read and comment on my paper.', 'social-paper' ); ?></label>
 		</p>
 
 		<?php wp_nonce_field( 'cacsp-paper-status', 'cacsp-paper-status-nonce' ); ?>
