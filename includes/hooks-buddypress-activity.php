@@ -406,6 +406,32 @@ function cacsp_access_protection_for_activity_feed( $where_conditions ) {
 add_filter( 'bp_activity_get_where_conditions', 'cacsp_access_protection_for_activity_feed' );
 
 /**
+ * Remove activity favorites from paper-related items.
+ *
+ * @param bool $retval Defaults to true.
+ */
+function cacsp_activity_remove_favorite_functionality( $retval ) {
+	global $activities_template;
+
+	// If we're not in an activity loop, there's nothing to do here.
+	if ( empty( $activities_template->activity ) ) {
+		return $retval;
+	}
+
+	// Bail from favoriting if current activity item is paper-related
+	if ( 'cacsp' === bp_get_activity_object_name()
+		|| 'new_cacsp_paper' === bp_get_activity_type()
+		|| 'new_cacsp_comment' === bp_get_activity_type()
+		|| 'cacsp_paper_added_to_group' === bp_get_activity_type()
+	) {
+		return false;
+	}
+
+	return $retval;
+}
+add_filter( 'bp_activity_can_favorite', 'cacsp_activity_remove_favorite_functionality' );
+
+/**
  * Prevent BP from sending its native notification emails for paper comment @-mentions.
  *
  * BP doesn't have any meaningful way to filter the subject and content of the emails, so we have to use this awful
