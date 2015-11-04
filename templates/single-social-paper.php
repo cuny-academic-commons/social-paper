@@ -33,6 +33,8 @@ while ( have_posts() ) : the_post();
 				</div>
 			<?php endif; ?>
 
+			<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+
 			<?php if ( 'new' !== get_query_var( 'name' ) && 'auto-draft' !== get_queried_object()->post_status ) : ?>
 			<div class="entry-author">
 				<div class="entry-author-avatar">
@@ -77,8 +79,6 @@ while ( have_posts() ) : the_post();
 				</div>
 			</div>
 			<?php endif; /* don't show on new papers or auto-drafts */ ?>
-
-			<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 		</header><!-- .entry-header -->
 
 		<div class="entry-content">

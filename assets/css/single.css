@@ -612,7 +612,7 @@ h1.entry-title {
 	font-size: 44px;
 	text-align: center;
 	margin-top: 1em;
-	margin-bottom: 1em;
+	margin-bottom: .5em;
 }
 
 @media all and (max-width: 600px) {
@@ -722,6 +722,10 @@ a {
 /* Article metadata */
 .entry-author {
 	position: relative;
+}
+
+.entry-header .entry-author {
+	margin-bottom: 2em;
 }
 
 .entry-author {
@@ -965,10 +969,11 @@ body.admin-bar #cacsp-edit-paper {
 body.fee-on .fee-url {
 	display: block !important;
 	height: auto !important;
+	margin-bottom: 1em !important;
 	margin-left: auto !important;
 	margin-right: auto !important;
 	position: relative;
-	top: -1.25em;
+	top: -.25em;
 }
 
 #fee-post-status option[value="pending"],
