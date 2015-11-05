@@ -35,7 +35,7 @@ function cacsp_ic_modify_selector( $retval ) {
 		return $retval;
 	}
 
-	return 'article:not(.post-password-required) .entry-content p:visible';
+	return apply_filters( 'cacsp_ic_modify_selector', 'article:not(.post-password-required) .entry-content p:visible' );
 }
 add_filter( 'option_multiselector', 'cacsp_ic_modify_selector' );
 add_filter( 'default_option_multiselector', 'cacsp_ic_modify_selector' );
