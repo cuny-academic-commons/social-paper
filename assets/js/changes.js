@@ -1032,6 +1032,19 @@ jQuery(document).ready( function($) {
 		};
 
 		/**
+		 * Strip Inline Comments 'data-incom' attributes from TinyMCE content.
+		 */
+		this.strip_atts = function() {
+
+			// remove class and data-incom attributes from any content
+			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
+				element.removeAttribute( 'data-incom' );
+				//element.removeAttribute( 'class' );
+			});
+
+		};
+
+		/**
 		 * Given an array of paragraph tags, filter out those which are used
 		 * for UI-related purposes, e.g. inside a .wpview-wrap container which
 		 * is used to wrap a "Page Break"
@@ -1254,6 +1267,35 @@ jQuery(document).ready( function($) {
 			// set attributes in TinyMCE content
 			//SocialPaperChange.tracker.rebuild();
 
+		}
+
+	});
+
+	/**
+	 * Hook into clicks on the "Disable Editing" button
+	 *
+	 * Hooking in here means we can manipulate the content of the editor before
+	 * FEE checks it for changes.
+	 */
+	$('a[href="#fee-edit-link"]').on( 'click', function( event ) {
+
+		// bail if not disabling editing
+		if ( ! $(this).hasClass( 'active' ) ) {
+			return;
+		}
+
+		// is the editor *really* dirty? - let FEE determine this by stripping
+		// just the 'data-incom' attributes from the editor before it does so
+		SocialPaperChange.editor.strip_atts();
+
+	});
+
+	// add keydown tracker code
+	$(document).on( 'keydown', function( event ) {
+
+		// check for ESC key
+		if ( event.keyCode === 27 ) {
+			SocialPaperChange.editor.strip_atts();
 		}
 
 	});
