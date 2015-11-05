@@ -357,7 +357,7 @@ function cacsp_delete_all_activity_items_for_paper( $post_id = 0 ) {
 add_action( 'delete_post', 'cacsp_delete_all_activity_items_for_paper', 99 );
 
 /**
- * Encode paper content into HTML entities before insertion.
+ * Strip invalid characters from new paper activity items before insertion.
  *
  * Groan.  Damn you, FEE!
  *
@@ -367,11 +367,11 @@ function cacsp_before_activity_save( $activity ) {
 	global $wpdb;
 
 	if ( 'new_cacsp_paper' !== $activity->type ) {
-		return $activity;
+		return;
 	}
 
 	if ( ! is_callable( array( $wpdb, 'strip_invalid_text_for_column' ) ) ) {
-		return $activity;
+		return;
 	}
 
 	$activity->content = $wpdb->strip_invalid_text_for_column( buddypress()->activity->table_name, 'content', $activity->content );
