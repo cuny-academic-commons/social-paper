@@ -717,6 +717,48 @@ function cacsp_catch_comment_moderation() {
 add_action( 'template_redirect', 'cacsp_catch_comment_moderation', 100 );
 
 /**
+ * Filter the content of WP's comment moderation emails.
+ *
+ * Regular SP users don't have the ability to moderate comments in the dashboard, so we send them to Edit Mode instead.
+ *
+ * @since 1.0.0
+ *
+ * @param array $emails
+ */
+function cacsp_filter_comment_moderation_text( $message, $comment_id ) {
+	$comment = get_comment( $comment_id );
+	if ( ! $comment ) {
+		return $message;
+	}
+
+	$paper = new CACSP_Paper( $comment->comment_post_ID );
+	$paper_id = $paper->ID;
+	if ( ! $paper_id ) {
+		return $message;
+	}
+
+	// Advanced Text Manipulation Alert
+	// My sincere apologies to speakers of languages other than English
+	$m = explode( "\n", $message );
+	foreach ( $m as $k => &$v ) {
+		if (    0 === strpos( $v, 'Approve it' )
+		     || 0 === strpos( $v, 'Trash it' )
+		     || 0 === strpos( $v, 'Spam it' )
+		) {
+			unset( $m[ $k ] );
+			continue;
+		}
+
+		$mod_url = add_query_arg( 'mod_comments', '1', get_permalink( $paper_id ) );
+		$v = str_replace( admin_url( 'edit-comments.php?comment_status=moderated' ), wp_login_url( $mod_url ), $v );
+	}
+
+	$m = array_values( $m );
+	return implode( "\n", $m );
+}
+add_filter( 'comment_moderation_text', 'cacsp_filter_comment_moderation_text', 10, 2 );
+
+/**
  * bp-default theme comment overrides.
  *
  * Disables the avatar from showing atop the comment form.

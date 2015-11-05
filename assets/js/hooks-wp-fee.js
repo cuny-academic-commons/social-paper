@@ -274,7 +274,7 @@ jQuery(document).ready( function($) {
 		}
 
 		// Enter Edit mode, if necessary.
-		if ( window.location.search.match( 'spammed=1' ) || window.location.search.match( 'trashed=1' ) ) {
+		if ( window.location.search.match( 'spammed=1' ) || window.location.search.match( 'trashed=1' ) || window.location.search.match( 'mod_comments=1' ) ) {
 			$( 'a[href="#fee-edit-link"]' ).trigger( 'click' );
 			toggle_sidebar( 'on' );
 		}
