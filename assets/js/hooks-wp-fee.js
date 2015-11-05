@@ -248,9 +248,19 @@ jQuery(document).ready( function($) {
 	};
 
 	var toggle_sidebar = function( setting ) {
-		$sidebar.toggleClass( 'toggle-on' );
-		$( 'body' ).toggleClass( 'sidebar-on' );
-		$settings_toggle.toggleClass( 'active' );
+		if ( 'undefined' === typeof setting ) {
+			setting = $sidebar.hasClass( 'toggle-on' ) ? 'off' : 'on';
+		}
+
+		if ( 'off' === setting ) {
+			$sidebar.removeClass( 'toggle-on' );
+			$( 'body' ).removeClass( 'sidebar-on' );
+			$settings_toggle.removeClass( 'active' );
+		} else {
+			$sidebar.addClass( 'toggle-on' );
+			$( 'body' ).addClass( 'sidebar-on' );
+			$settings_toggle.addClass( 'active' );
+		}
 	}
 
 	/**
@@ -266,6 +276,7 @@ jQuery(document).ready( function($) {
 		// Enter Edit mode, if necessary.
 		if ( window.location.search.match( 'spammed=1' ) || window.location.search.match( 'trashed=1' ) ) {
 			$( 'a[href="#fee-edit-link"]' ).trigger( 'click' );
+			toggle_sidebar( 'on' );
 		}
 	});
 
@@ -317,6 +328,18 @@ jQuery(document).ready( function($) {
 				$paper_status.html( SocialPaperI18n.public_paper ).removeClass( 'protected' );
 			}
 		} );
+
+		// Show a message for Spammed/Trashed.
+		var st_message;
+		if ( window.location.search.match( 'spammed=1' ) ) {
+			st_message = SocialPaperI18n.spammed;
+		} else if ( window.location.search.match( 'trashed=1' ) ) {
+			st_message = SocialPaperI18n.trashed;
+		}
+
+		if ( st_message ) {
+			addNotice( st_message, 'updated', true );
+		}
 	} );
 
 	/**
@@ -555,6 +578,34 @@ jQuery(document).ready( function($) {
 
 	});
 
+	/**
+	 * Yanked from FEE.
+	 */
+	var $noticeArea = $( '#fee-notice-area' ),
+	addNotice = function( html, type, remove ) {
+		var $notice = $( '<div>' ).addClass( type );
+
+		$notice.append(
+			'<p>' + html + '</p>' +
+			( remove === true ? '' : '<div class="dashicons dashicons-dismiss"></div>' )
+		);
+
+		$noticeArea.prepend( $notice );
+
+		$notice.find( '.dashicons-dismiss' ).on( 'click.fee', function() {
+			$notice.remove();
+
+			if ( remove !== true ) {
+		//		remove();
+			}
+		} );
+
+		remove === true && $notice.delay( 5000 ).fadeOut( 'slow', function() {
+			$notice.remove();
+		} );
+
+		return $notice;
+	}
 });
 
 

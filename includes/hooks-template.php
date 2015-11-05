@@ -248,6 +248,8 @@ function cacsp_asset_single_enqueue_handler() {
 		'unapproved_comment_alt' => $unapproved_comment_alt,
 		'public_paper' => __( 'Public Paper', 'social-paper' ),
 		'protected_paper' => __( 'Private Paper', 'social-paper' ),
+		'spammed' => __( 'You have successfuly marked the comment as spam.', 'social-paper' ),
+		'trashed' => __( 'You have successfuly trashed the comment.', 'social-paper' ),
 	) );
 }
 add_action( 'wp_enqueue_scripts', 'cacsp_asset_single_enqueue_handler', 999 );
