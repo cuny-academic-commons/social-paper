@@ -239,6 +239,11 @@ function cacsp_notification_mypaper_comment( $comment_id ) {
 		return;
 	}
 
+	// Don't send notifications of unapproved comments.
+	if ( '1' != $comment->comment_approved ) {
+		return;
+	}
+
 	$paper = new CACSP_Paper( $comment->comment_post_ID );
 	$paper_id = $paper->ID;
 	if ( ! $paper_id ) {
@@ -306,6 +311,11 @@ add_action( 'wp_insert_comment', 'cacsp_notification_mypaper_comment' );
 function cacsp_notification_mythread_comment( $comment_id ) {
 	$comment = get_comment( $comment_id );
 	if ( ! $comment ) {
+		return;
+	}
+
+	// Don't send notifications of unapproved comments.
+	if ( '1' != $comment->comment_approved ) {
 		return;
 	}
 
