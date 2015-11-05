@@ -364,9 +364,17 @@ add_action( 'delete_post', 'cacsp_delete_all_activity_items_for_paper', 99 );
  * @param BP_Activity_Activity $activity
  */
 function cacsp_before_activity_save( $activity ) {
-	if ( 'new_cacsp_paper' === $activity->type ) {
-		$activity->content = trim( htmlentities( $activity->content ) );
+	global $wpdb;
+
+	if ( 'new_cacsp_paper' !== $activity->type ) {
+		return $activity;
 	}
+
+	if ( ! is_callable( array( $wpdb, 'strip_invalid_text_for_column' ) ) ) {
+		return $activity;
+	}
+
+	$activity->content = $wpdb->strip_invalid_text_for_column( buddypress()->activity->table_name, 'content', $activity->content );
 }
 add_action( 'bp_activity_before_save', 'cacsp_before_activity_save' );
 
