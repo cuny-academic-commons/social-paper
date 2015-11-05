@@ -113,7 +113,7 @@ class CACSP_Profile {
 		) );
 
 		bp_core_new_subnav_item( array(
-			'name'            => __( 'New Paper', 'social-paper' ),
+			'name'            => __( 'Create New Paper', 'social-paper' ),
 			'slug'            => 'new-paper',
 			'link'            => cacsp_get_the_new_paper_link(),
 			'parent_url'      => $parent_url,
@@ -163,7 +163,7 @@ class CACSP_Profile {
 		$wp_admin_nav[] = array(
 			'parent' => 'my-account-' . $this->slug,
 			'id'     => 'my-account-' . $this->slug . '-new',
-			'title'  => __( 'New Paper', 'social-paper' ),
+			'title'  => __( 'Create New Paper', 'social-paper' ),
 			'href'   => cacsp_get_the_new_paper_link()
 		);
 

@@ -34,7 +34,7 @@
 				do_action( 'bp_papers_directory_tabs' ); ?>
 
 				<?php if ( is_user_logged_in() ) : ?>
-					<li id="papers-create"><a class="no-ajax" href="<?php cacsp_the_new_paper_link(); ?>"><?php _e( 'Create a Paper', 'social-paper' ); ?></a></li>
+					<li id="papers-create"><a class="no-ajax" href="<?php cacsp_the_new_paper_link(); ?>"><?php _e( 'Create New Paper', 'social-paper' ); ?></a></li>
 				<?php endif; ?>
 
 			</ul>
