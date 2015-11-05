@@ -410,6 +410,11 @@ function cacsp_get_tag_data_cb() {
 	$post_id = (int) $_POST['post_id'];
 	$links = cacsp_get_paper_tags_links( $post_id );
 
-	wp_send_json_success( implode( ', ', $links ) );
+	$data = '';
+	if ( $links ) {
+		$data = implode( ', ', $links );
+	}
+
+	wp_send_json_success( $data );
 }
 add_action( 'wp_ajax_cacsp_get_tag_data', 'cacsp_get_tag_data_cb' );
