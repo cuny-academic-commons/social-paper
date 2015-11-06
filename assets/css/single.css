@@ -872,6 +872,10 @@ body.admin-bar #cacsp-edit-paper {
 	top: 44px;
 }
 
+@media screen and (max-width: 782px) {
+	body.admin-bar #cacsp-edit-paper {top: 54px;}
+}
+
 #cacsp-edit-paper #wp-admin-bar-edit {
 	background: #eee;
 	border-radius: 6px;
