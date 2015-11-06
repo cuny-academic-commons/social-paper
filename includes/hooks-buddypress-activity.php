@@ -157,6 +157,28 @@ function cacsp_activity_can_comment( $retval, $type = '' ) {
 add_filter( 'bp_activity_can_comment', 'cacsp_activity_can_comment', 10, 2 );
 
 /**
+ * Use primary link as the permalink for paper-related activity items.
+ *
+ * @param string $retval   Current activity permalink
+ * @param object $activity Current activity object
+ */
+function cacsp_activity_get_permalink( $retval, $activity ) {
+	switch( $activity->type ) {
+		case 'new_cacsp_paper' :
+		case 'new_cacsp_comment' :
+		case 'new_cacsp_edit' :
+		case 'cacsp_paper_added_to_group' :
+			return $activity->primary_link;
+			break;
+
+		default :
+			return $retval;
+			break;
+	}
+}
+add_filter( 'bp_activity_get_permalink', 'cacsp_activity_get_permalink', 10, 2 );
+
+/**
  * Create activity items for paper comments.
  *
  * @param int        $comment_id ID of the comment.
