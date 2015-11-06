@@ -1027,6 +1027,7 @@ body.fee-on .fee-url {
 }
 
 #comments-and-form cite .comment-time a {
+	border-bottom: 1px dotted;
 	font-weight: normal;
 	text-decoration: none;
 }
