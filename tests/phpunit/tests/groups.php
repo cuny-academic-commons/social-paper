@@ -51,8 +51,8 @@ class CACSP_Tests_ClassCacspPaperGroupIntegration extends CACSP_UnitTestCase {
 	}
 
 	public function test_pre_get_posts_filter() {
-		$papers = $this->factory->paper->create_many( 3 );	
-		$groups = $this->factory->group->create_many( 3 );	
+		$papers = $this->factory->paper->create_many( 3 );
+		$groups = $this->factory->group->create_many( 3 );
 
 		$p0 = new CACSP_Paper( $papers[0] );
 		$p1 = new CACSP_Paper( $papers[1] );
