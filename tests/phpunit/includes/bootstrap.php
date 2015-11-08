@@ -35,8 +35,27 @@ function _bootstrap_test_requirements() {
 	if ( ! class_exists( 'FEE' ) ) {
 		class FEE {}
 	}
+
+	// Init buddypress-followers.
+	require dirname( __FILE__ ) . '/../../../../buddypress-followers/loader.php';
 }
 tests_add_filter( 'muplugins_loaded', '_bootstrap_test_requirements' );
+
+/**
+ * Load and install buddypress-followers.
+ *
+ * BP_Follow, you do not make this easy.
+ */
+function cacsptests_install_bpfollow() {
+	remove_action( 'bp_loaded', 'bp_follow_setup_component' );
+	bp_follow_setup_component();
+	require_once( buddypress()->follow->path . '/bp-follow-updater.php' );
+	require dirname( __FILE__ ) . '/bp-follow-updater.php';
+
+	$updater = new CACSP_BP_Follow_Updater();
+	$updater->run_install();
+}
+tests_add_filter( 'bp_loaded', 'cacsptests_install_bpfollow', 20 );
 
 // Bootstrap WordPress.
 require_once $wp_develop_dir . '/tests/phpunit/includes/bootstrap.php';
