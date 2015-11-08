@@ -349,7 +349,7 @@ function cacsp_the_loop_author() {
 
 	} else {
 		if ( ! empty( $group_links ) ) {
-			printf( __( 'Written by %s in %s', 'social-paper' ), '<a href="' . bp_core_get_user_domain( $GLOBALS['post']->post_author ) . '">' . bp_core_get_user_displayname( $GLOBALS['post']->post_author )  . '</a>', implode( ',', $group_links ) );
+			printf( __( 'Written by %s in %s', 'social-paper' ), '<a href="' . bp_core_get_user_domain( $GLOBALS['post']->post_author ) . '">' . bp_core_get_user_displayname( $GLOBALS['post']->post_author )  . '</a>', implode( ', ', $group_links ) );
 		} else {
 			printf( __( 'Written by %s', 'social-paper' ), '<a href="' . bp_core_get_user_domain( $GLOBALS['post']->post_author ) . '">' . bp_core_get_user_displayname( $GLOBALS['post']->post_author )  . '</a>' );
 		}
