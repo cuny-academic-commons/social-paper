@@ -84,11 +84,22 @@ function cacsp_unfollow_for_removed_reader( $paper, $user_id ) {
 		return;
 	}
 
-	bp_follow_stop_following( array(
-		'leader_id'   => cacsp_follow_get_activity_id( $paper->id ),
+	$leader_id = cacsp_follow_get_activity_id( $paper->ID );
+
+	// buddypress-followers throws a fit if we try to stop a follow that does not exist.
+	$is_following = bp_follow_is_following( array(
+		'leader_id'   => $leader_id,
 		'follower_id' => $user_id,
-		'follow_type' => 'cacsp_paper'
+		'follow_type' => 'cacsp_paper',
 	) );
+
+	if ( $is_following ) {
+		bp_follow_stop_following( array(
+			'leader_id'   => $leader_id,
+			'follower_id' => $user_id,
+			'follow_type' => 'cacsp_paper'
+		) );
+	}
 }
 
 /** NOTIFICATIONS ********************************************************/
