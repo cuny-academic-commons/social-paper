@@ -10,6 +10,7 @@
 
 add_action( 'bp_activity_post_type_published', 'cacsp_auto_follow_on_new_paper', 10, 3 );
 //add_action( 'cacsp_added_reader_to_paper',     'cacsp_auto_follow_for_new_reader', 10, 2 );
+add_action( 'cacsp_removed_reader_from_paper', 'cacsp_unfollow_for_removed_reader', 10, 2 );
 
 /**
  * Automatically provision users to follow their own written paper.
@@ -64,6 +65,26 @@ function cacsp_auto_follow_for_new_reader( $paper, $user_id ) {
 	}
 
 	bp_follow_start_following( array(
+		'leader_id'   => cacsp_follow_get_activity_id( $paper->id ),
+		'follower_id' => $user_id,
+		'follow_type' => 'cacsp_paper'
+	) );
+}
+
+/**
+ * Unfollow a user from a paper when the user is removed from the Readers list.
+ *
+ * @since 1.0.0
+ *
+ * @param CACSP_Paper $paper
+ * @param int         $user_id
+ */
+function cacsp_unfollow_for_removed_reader( $paper, $user_id ) {
+	if ( empty( $user_id ) ) {
+		return;
+	}
+
+	bp_follow_stop_following( array(
 		'leader_id'   => cacsp_follow_get_activity_id( $paper->id ),
 		'follower_id' => $user_id,
 		'follow_type' => 'cacsp_paper'

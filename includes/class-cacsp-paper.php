@@ -247,6 +247,16 @@ class CACSP_Paper {
 
 		$this->reader_ids = null;
 
+		if ( true === $removed ) {
+			/**
+			 * Fires when a reader has been removed from a paper.
+			 *
+			 * @param CACSP_Paper $paper   Paper object.
+			 * @param int         $user_id ID of the user removed.
+			 */
+			do_action( 'cacsp_removed_reader_from_paper', $this, $user_id );
+		}
+
 		return $removed;
 	}
 
