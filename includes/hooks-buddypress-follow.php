@@ -9,7 +9,7 @@
 /** FOLLOW API ***********************************************************/
 
 add_action( 'bp_activity_post_type_published', 'cacsp_auto_follow_on_new_paper', 10, 3 );
-add_action( 'cacsp_added_reader_to_paper',     'cacsp_auto_follow_for_new_reader', 10, 2 );
+//add_action( 'cacsp_added_reader_to_paper',     'cacsp_auto_follow_for_new_reader', 10, 2 );
 
 /**
  * Automatically provision users to follow their own written paper.
@@ -52,6 +52,8 @@ function cacsp_auto_follow_on_new_paper( $activity_id, $post, $activity_args ) {
 
 /**
  * Automatically provision readers to follow a paper.
+ *
+ * Disabled for the moment.
  *
  * @param CACSP_Paper $paper
  * @param int         $user_id
