@@ -279,6 +279,11 @@ function cacsp_filter_query_for_access_protection( $query ) {
 		return;
 	}
 
+	// Single pages are handled differently.
+	if ( $query->is_main_query() && $query->is_singular() ) {
+		return;
+	}
+
 	$protected_post_ids = cacsp_get_protected_papers_for_user( bp_loggedin_user_id() );
 
 	// Merge with query var.
@@ -287,3 +292,29 @@ function cacsp_filter_query_for_access_protection( $query ) {
 	$query->set( 'post__not_in', $post__not_in );
 }
 add_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
+
+/**
+ * Access protection for single papers.
+ *
+ * @since 1.0.0
+ */
+function cacsp_single_paper_access_protection() {
+	if ( ! cacsp_is_page() ) {
+		return;
+	}
+
+	$protected_post_ids = cacsp_get_protected_papers_for_user( bp_loggedin_user_id() );
+
+	if ( in_array( get_queried_object_id(), $protected_post_ids ) ) {
+		if ( is_user_logged_in() ) {
+			bp_core_add_message( __( 'You do not have access to that paper.', 'social-paper' ), 'error' );
+			$redirect_to = get_post_type_archive_link( 'cacsp_paper' );
+		} else {
+			$redirect_to = wp_login_url( get_permalink( get_post() ) );
+		}
+
+		wp_redirect( $redirect_to );
+		die();
+	}
+}
+add_action( 'template_redirect', 'cacsp_single_paper_access_protection', 0 );
