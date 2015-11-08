@@ -43,12 +43,11 @@ function cacsp_format_notifications( $action, $paper_id, $secondary_item_id, $co
 
 			break;
 
-		case 'mythread_comment' :
+		case 'followedpaper_comment' :
 			if ( (int) $count > 1 ) {
-				$text = __( 'There is new activity on papers where you have commented', 'social-paper' );
+				$text = __( 'There is new activity on papers you follow', 'social-paper' );
 
-				// @todo Notifications directory? Maybe only if corresponding to more than one paper?
-				$link = get_comment_link( $secondary_item_id );
+				$link = bp_loggedin_user_domain() . bp_get_notifications_slug();
 			} else {
 				$paper = new CACSP_Paper( $paper_id );
 				$text = sprintf( __( 'There is new activity on the paper "%s"', 'social-paper' ), $paper->post_title );
@@ -291,22 +290,13 @@ function cacsp_notification_mypaper_comment( $comment_id ) {
 add_action( 'wp_insert_comment', 'cacsp_notification_mypaper_comment' );
 
 /**
- * Notify a user when a comment is left on a thread where the user has commented.
- *
- * Excludes post authors, who are notified with 'mypost_comment'.
- *
- * Currently, the notifications fire for all users who have commented on the *post*.
- *
- * @todo A more fine-grained concept of "thread": comments belonging to a single paragraph; comments with common
- *       ancestors; a comment that is a direct descendant of the other.
- * @todo Maybe this should be replaced with (or at least integrated tightly with) Follow. Ie, when you comment
- *       on a paper, you automatically follow it. This wouldn't be thread-specific.
+ * Notify a user when a comment is left a paper she follows.
  *
  * @since 1.0.0
  *
  * @param int $comment_id ID of the comment.
  */
-function cacsp_notification_mythread_comment( $comment_id ) {
+function cacsp_notification_followedpaper_comment( $comment_id ) {
 	$comment = get_comment( $comment_id );
 	if ( ! $comment ) {
 		return;
@@ -323,59 +313,84 @@ function cacsp_notification_mythread_comment( $comment_id ) {
 		return;
 	}
 
-	// Fetch emails of previous commenters.
-	$comments = get_comments( array(
-		'comment_post_ID' => $paper_id,
-		'update_comment_meta_cache' => false,
-		'update_comment_post_cache' => false,
+	$type = 'followedpaper_comment';
+
+	$leader_id = cacsp_follow_get_activity_id( $paper->ID );
+	$followers = bp_follow_get_followers( array(
+		'object_id' => $leader_id,
+		'follow_type' => 'cacsp_paper',
 	) );
 
-	// @todo Can't use user_id because it's not always provided?
-	$emails = wp_list_pluck( $comments, 'comment_author_email' );
-	$emails = array_unique( array_filter( $emails ) );
-
-	if ( empty( $emails ) ) {
+	if ( empty( $followers ) ) {
 		return;
 	}
 
-	$type = 'mythread_comment';
+	// @todo I think this is a WP bug - 'user_id' is not always filled in.
+	$comment_author_id = 0;
+	if ( ! empty( $comment->user_id ) ) {
+		$comment_author_id = (int) $comment->user_id;
+	} else {
+		$comment_author = get_user_by( 'email', $comment->comment_author_email );
+		if ( $comment_author ) {
+			$comment_author_id = $comment_author->ID;
+		}
+	}
 
-	$email_subject = sprintf( __( 'New comment on the paper "%s"', 'social-paper' ), $paper->post_title );
-	$email_content  = sprintf( __( 'New comment on the paper "%s"', 'social-paper' ), $paper->post_title ) . "\r\n";
-	$email_content .= sprintf( __( 'Author: %s', 'social-paper' ), $comment->comment_author ) . "\r\n";
-	$email_content .= sprintf( __( 'Comment: %s', 'social-paper' ), "\r\n" . $comment->comment_content ) . "\r\n\r\n";
-	$email_content .= sprintf( __( 'View the commment: %s', 'social-paper' ), get_comment_link( $comment ) ) . "\r\n";
-	$email_content .= sprintf( __( 'Visit the paper: %s', 'social-paper' ), get_permalink( $paper->ID ) ) . "\r\n\r\n";
-
-	foreach ( $emails as $email ) {
-		$user = get_user_by( 'email', $email );
-		if ( ! $user ) {
+	foreach ( $followers as $follower_id ) {
+		// Don't notify authors of their own comments.
+		if ( $comment_author_id == $follower_id ) {
 			continue;
 		}
 
-		// We handle the post author elsewhere.
-		if ( $user->ID == $paper->post_author ) {
+		// Post author is handled elsewhere.
+		if ( $paper->post_author == $follower_id ) {
+			continue;
+		}
+
+		// Sanity check.
+		$follower = new WP_User( $follower_id );
+		if ( ! $follower->exists() ) {
 			continue;
 		}
 
 		$added = bp_notifications_add_notification( array(
-			'user_id' => $user->ID,
+			'user_id' => $follower_id,
 			'item_id' => $paper->ID,
 			'secondary_item_id' => $comment_id,
 			'component_name' => 'cacsp',
 			'component_action' => $type,
 		) );
 
+		$subject = sprintf( __( 'New comment on the paper "%s"', 'social-paper' ), $paper->post_title );
+
+		$content = sprintf(
+'New comment on the paper "%1$s"
+
+Author: %2$s
+Comment: %3$s
+View the comment: %4$s
+Visit the paper: %5$s
+
+You receieved this notification because you are following the paper "%6$s". To unfollow, visit %7$s and click the Unfollow button.',
+			$paper->post_title, // 1
+			$comment->comment_author, // 2
+			$comment->comment_content, // 3
+			get_comment_link( $comment ), // 4
+			get_permalink( $paper_id ), // 5
+			$paper->post_title, // 6
+			get_permalink( $paper_id ) // 7
+		);
+
 		cacsp_send_notification_email( array(
-			'recipient_user_id' => $user->ID,
+			'recipient_user_id' => $follower_id,
 			'paper_id' => $paper->ID,
-			'subject' => $email_subject,
-			'content' => $email_content,
+			'subject' => $subject,
+			'content' => $content,
 			'type' => $type,
 		) );
 	}
 }
-add_action( 'wp_insert_comment', 'cacsp_notification_mythread_comment' );
+add_action( 'wp_insert_comment', 'cacsp_notification_followedpaper_comment' );
 
 /**
  * Notify a user when a comment is left with an @-mention of a user.
