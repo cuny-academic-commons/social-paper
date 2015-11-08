@@ -393,6 +393,87 @@ You receieved this notification because you are following the paper "%6$s". To u
 add_action( 'wp_insert_comment', 'cacsp_notification_followedpaper_comment' );
 
 /**
+ * Notify a user when a followed paper is edited.
+ *
+ * Piggybacks on 'new_cacsp_edit', so that we take advantage of throttling there.
+ *
+ * @since 1.0.0
+ *
+ * @param int $activity_id ID of the 'new_cacsp_edit' activity item .
+ * @param int $post_id     ID of the paper.
+ */
+function cacsp_notification_followedpaper_edit( $activity_id, $paper_id ) {
+	$paper = new CACSP_Paper( $paper_id );
+	$paper_id = $paper->ID;
+	if ( ! $paper_id ) {
+		return;
+	}
+
+	$edit_activity = new BP_Activity_Activity( $activity_id );
+
+	$type = 'followedpaper_edit';
+
+	$leader_id = cacsp_follow_get_activity_id( $paper->ID );
+	$followers = bp_follow_get_followers( array(
+		'object_id' => $leader_id,
+		'follow_type' => 'cacsp_paper',
+	) );
+
+	if ( empty( $followers ) ) {
+		return;
+	}
+
+	$editor_name = bp_core_get_user_displayname( $edit_activity->user_id );
+
+	foreach ( $followers as $follower_id ) {
+		// Don't notify authors of their own edits.
+		if ( $edit_activity->user_id == $follower_id ) {
+			continue;
+		}
+
+		// Sanity check.
+		$follower = new WP_User( $follower_id );
+		if ( ! $follower->exists() ) {
+			continue;
+		}
+
+		$added = bp_notifications_add_notification( array(
+			'user_id' => $follower_id,
+			'item_id' => $paper->ID,
+			'secondary_item_id' => $comment_id,
+			'component_name' => 'cacsp',
+			'component_action' => $type,
+		) );
+
+		$subject = sprintf( __( 'The paper "%s" has been updated', 'social-paper' ), $paper->post_title );
+
+		$content = sprintf(
+'The paper "%1$s" has been updated
+
+Editor: %2$s
+Visit the paper: %3$s
+
+You receieved this notification because you are following the paper "%4$s". To unfollow, visit %5$s and click the Unfollow button.',
+			$paper->post_title, // 1
+			$editor_name, // 2
+			get_permalink( $paper_id ), // 3
+			$paper->post_title, // 4
+			get_permalink( $paper_id ) // 4
+		);
+
+		cacsp_send_notification_email( array(
+			'recipient_user_id' => $follower_id,
+			'paper_id' => $paper->ID,
+			'subject' => $subject,
+			'content' => $content,
+			'type' => $type,
+		) );
+	}
+}
+add_action( 'cacsp_created_edit_activity', 'cacsp_notification_followedpaper_edit', 10, 2 );
+
+
+/**
  * Notify a user when a comment is left with an @-mention of a user.
  *
  * Fired from cacsp_at_mention_send_notifications().
