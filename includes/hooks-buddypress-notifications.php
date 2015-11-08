@@ -168,7 +168,9 @@ function cacsp_notification_added_reader( CACSP_Paper $paper, $user_id ) {
 		'component_action' => $type,
 	) );
 
-	$text = sprintf( __( '%s has added you as a reader on the paper "%s".', 'social-paper' ), bp_core_get_user_displayname( bp_loggedin_user_id() ), $paper->post_title );
+	$adder_name = bp_core_get_user_displayname( bp_loggedin_user_id() );
+
+	$text = sprintf( __( '%s has added you as a reader on the paper "%s".', 'social-paper' ), $adder_name, $paper->post_title );
 
 	$link = wp_login_url( get_permalink( $paper->ID ) );
 	$content = sprintf( __(
@@ -179,13 +181,9 @@ Visit the paper: %2$s', 'social-paper' ), $text, $link );
 	if ( bp_is_active( 'follow' ) ) {
 		$content .= "\n\n";
 
-$content .= sprintf( __(
-'Since you were added as a reader, you are now also following activity for this paper.  You can view all activity for your papers at:
-%1$s
-
-To view a list of papers you are following, visit this page:
-%2$s
-', 'social-paper' ), bp_core_get_user_domain( $user_id ) . bp_get_activity_slug() . "/papers/", bp_core_get_user_domain( $user_id ) . "/papers/follow/" );
+		$content .= sprintf( __(
+'%1$s is a private paper, but %2$s has granted you permission to read and leave comments. To receive notifications when the paper is edited or receives comments, add yourself as a follower.
+', 'social-paper' ), $paper->post_title, $adder_name );
 
 		$content .= "\n\n";
 	}
