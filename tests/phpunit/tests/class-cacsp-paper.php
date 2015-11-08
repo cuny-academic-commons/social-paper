@@ -68,4 +68,57 @@ class CACSP_Tests_ClassCacspPaper extends CACSP_UnitTestCase {
 		$paper = new CACSP_Paper( $p );
 		$this->assertTrue( $paper->exists() );
 	}
+
+	public function test_set_status_should_return_false_for_invalid_status() {
+		$p = $this->factory->paper->create();
+		$paper = new CACSP_Paper( $p );
+		$this->assertFalse( $paper->set_status( 'foo' ) );
+	}
+
+	public function test_set_status_from_public_to_protected() {
+		$p = $this->factory->paper->create();
+		$this->assertFalse( cacsp_paper_is_protected( $p ) );
+
+		$paper = new CACSP_Paper( $p );
+		$this->assertTrue( $paper->set_status( 'protected' ) );
+		$this->assertTrue( cacsp_paper_is_protected( $p ) );
+	}
+
+	public function test_set_status_from_public_to_private() {
+		$p = $this->factory->paper->create();
+		$this->assertFalse( cacsp_paper_is_protected( $p ) );
+
+		$paper = new CACSP_Paper( $p );
+		$this->assertTrue( $paper->set_status( 'private' ) );
+		$this->assertTrue( cacsp_paper_is_protected( $p ) );
+	}
+
+	public function test_set_status_from_protected_to_public() {
+		$p = $this->factory->paper->create();
+		$paper = new CACSP_Paper( $p );
+		$paper->set_status( 'protected' );
+		$this->assertTrue( cacsp_paper_is_protected( $p ) );
+
+		$this->assertTrue( $paper->set_status( 'public' ) );
+		$this->assertFalse( cacsp_paper_is_protected( $p ) );
+	}
+
+	public function test_set_status_from_public_to_public() {
+		$p = $this->factory->paper->create();
+		$this->assertFalse( cacsp_paper_is_protected( $p ) );
+
+		$paper = new CACSP_Paper( $p );
+		$this->assertFalse( $paper->set_status( 'public' ) );
+		$this->assertFalse( cacsp_paper_is_protected( $p ) );
+	}
+
+	public function test_set_status_from_protected_to_protected() {
+		$p = $this->factory->paper->create();
+		$paper = new CACSP_Paper( $p );
+		$paper->set_status( 'protected' );
+		$this->assertTrue( cacsp_paper_is_protected( $p ) );
+
+		$this->assertFalse( $paper->set_status( 'protected' ) );
+		$this->assertTrue( cacsp_paper_is_protected( $p ) );
+	}
 }

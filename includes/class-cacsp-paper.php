@@ -271,6 +271,32 @@ class CACSP_Paper {
 		return $removed;
 	}
 
+	/**
+	 * Set the paper_status of the paper.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $status 'protected' or 'public'. 'private' is an alias of 'protected'.
+	 * @return bool True on success, false on failure.
+	 */
+	public function set_status( $status ) {
+		$set = false;
+
+		$is_protected = cacsp_paper_is_protected( $this->id );
+
+		if ( ! $is_protected && ( 'protected' === $status || 'private' === $status ) ) {
+			$set = wp_set_object_terms( $this->id, 'protected', 'cacsp_paper_status', false );
+		} elseif ( $is_protected && 'public' === $status ) {
+			$set = wp_remove_object_terms( $this->id, 'protected', 'cacsp_paper_status' );
+		}
+
+		if ( false === $set || is_wp_error( $set ) ) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	public function __get( $key ) {
 		$value = null;
 

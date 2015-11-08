@@ -149,10 +149,12 @@ function cacsp_save_paper_status( $post_id ) {
 		return;
 	}
 
-	if ( 'protected' === $_POST['social_paper_status'] ) {
-		wp_set_object_terms( $post_id, 'protected', 'cacsp_paper_status', false );
-	} else {
-		wp_remove_object_terms( $post_id, 'protected', 'cacsp_paper_status' );
+	$paper = new CACSP_Paper( $post_id );
+	if ( ! $paper->exists() ) {
+		return;
 	}
+
+	$status = 'protected' === $_POST['social_paper_status'] ? 'protected' : 'public';
+	$paper->set_status( $status );
 }
 add_action( 'save_post', 'cacsp_save_paper_status' );
