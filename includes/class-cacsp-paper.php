@@ -40,7 +40,7 @@ class CACSP_Paper {
 			$post_obj = get_post( $post_id );
 		}
 
-		if ( 'cacsp_paper' === $post_obj->post_type ) {
+		if ( $post_obj && 'cacsp_paper' === $post_obj->post_type ) {
 			$this->id = $post_id;
 			$this->post_obj = $post_obj;
 			$this->post_obj_pristine = clone( $post_obj );
