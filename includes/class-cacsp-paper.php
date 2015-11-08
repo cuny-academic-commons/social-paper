@@ -48,6 +48,17 @@ class CACSP_Paper {
 	}
 
 	/**
+	 * Does the paper exist?
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool Returns true if there is a cacsp_paper corresponding to the paper_id passed to the constructor.
+	 */
+	public function exists() {
+		return ! empty( $this->post_obj ) && $this->post_obj instanceof WP_Post && 'cacsp_paper' === $this->post_obj->post_type;
+	}
+
+	/**
 	 * Save changes to the database.
 	 *
 	 * @return bool True on success, false on failure.

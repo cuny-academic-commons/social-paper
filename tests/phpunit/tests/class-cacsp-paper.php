@@ -51,4 +51,21 @@ class CACSP_Tests_ClassCacspPaper extends CACSP_UnitTestCase {
 		$this->assertSame( 'Foo', $paper->post_title );
 		$this->assertSame( 'Bar', $paper->post_content );
 	}
+
+	public function test_exists_should_be_false_for_nonexistent_post() {
+		$paper = new CACSP_Paper( 12345 );
+		$this->assertFalse( $paper->exists() );
+	}
+
+	public function test_exists_should_be_false_for_post_of_wrong_type() {
+		$p = $this->factory->post->create( array( 'post_type' => 'post' ) );
+		$paper = new CACSP_Paper( $p );
+		$this->assertFalse( $paper->exists() );
+	}
+
+	public function test_exists_should_be_true_for_paper() {
+		$p = $this->factory->paper->create();
+		$paper = new CACSP_Paper( $p );
+		$this->assertTrue( $paper->exists() );
+	}
 }
