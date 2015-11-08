@@ -30,4 +30,20 @@ class CACSP_Tests_Caps extends CACSP_UnitTestCase {
 
 		$this->assertFalse( current_user_can( 'edit_paper', $p ) );
 	}
+
+	public function test_members_of_associated_group_should_be_able_to_read_protected_paper() {
+		$p = $this->factory->paper->create();
+		$u = $this->factory->user->create();
+		$g = $this->factory->group->create();
+		$this->add_user_to_group( $u, $g );
+
+		$paper = new CACSP_Paper( $p );
+		$paper->set_status( 'protected' );
+
+		$this->set_current_user( $u );
+		$this->assertFalse( current_user_can( 'read_paper', $p ) );
+
+		$paper->connect_to_group( $g );
+		$this->assertTrue( current_user_can( 'read_paper', $p ) );
+	}
 }

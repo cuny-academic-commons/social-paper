@@ -303,9 +303,7 @@ function cacsp_single_paper_access_protection() {
 		return;
 	}
 
-	$protected_post_ids = cacsp_get_protected_papers_for_user( bp_loggedin_user_id() );
-
-	if ( in_array( get_queried_object_id(), $protected_post_ids ) ) {
+	if ( ! current_user_can( 'read_paper', get_queried_object_id() ) ) {
 		if ( is_user_logged_in() ) {
 			bp_core_add_message( __( 'You do not have access to that paper.', 'social-paper' ), 'error' );
 			$redirect_to = get_post_type_archive_link( 'cacsp_paper' );
