@@ -641,6 +641,8 @@ function cacsp_follow_activity_feed_url_filter( $retval ) {
 
 add_action( 'bp_directory_papers_actions', 'cacsp_follow_add_follow_button_to_paper_loop', 50 );
 add_filter( 'bp_follow_activity_message_cacsp_paper', 'cacsp_follow_filter_feedback_message', 10, 4 );
+add_action( 'cacsp_paper_actions', 'cacsp_follow_add_follow_button_to_single_paper' );
+add_action( 'template_redirect', 'cacsp_catch_follow_requests' );
 
 /**
  * Adds a follow button to the paper loop.
@@ -663,6 +665,58 @@ function cacsp_follow_add_follow_button_to_paper_loop() {
 		'link_class' => '',
 		'wrapper' => 'div'
 	) );
+}
+
+/**
+ * Adds a follow button to single papers.
+ */
+function cacsp_follow_add_follow_button_to_single_paper() {
+	// Don't show this for drafts.
+	if ( 'draft' === get_post()->post_status ) {
+		return;
+	}
+
+	// Authors shouldn't see a follow button for their own papers.
+	if ( bp_loggedin_user_id() === (int) get_post()->post_author ) {
+		return;
+	}
+
+	// Set up the button arguments. (Should maybe break out button into separate function.)
+	$activity_id = (int) cacsp_follow_get_activity_id( get_post()->ID );
+	$is_following = bp_follow_is_following( array(
+		'leader_id'   => $activity_id,
+		'follower_id' => bp_loggedin_user_id(),
+		'follow_type' => 'cacsp_paper',
+	) );
+
+	if ( $is_following ) {
+		$class = 'following';
+		$action = 'unfollow';
+		$link_text = _x( 'Unfollow', 'Follow paper button', 'social-paper' );
+	} else {
+		$class = 'not-following';
+		$action = 'follow';
+		$link_text = _x( 'Follow', 'Follow paper button', 'social-paper' );
+	}
+
+	// Not using bp_button() because we don't have BP styles to fall back on anyway.
+	$button = sprintf(
+		'<form method="post" action="%s">
+		<button class="%s">%s</button>
+		<input type="hidden" name="follow-action" value="%s" />
+		<input type="hidden" name="follow-activity-id" value="%s" />
+		%s
+		</form>',
+		get_permalink( get_post() ),
+		esc_attr( $class ),
+		esc_html( $link_text ),
+		esc_html( $action ),
+		esc_attr( $activity_id ),
+		wp_nonce_field( 'cacsp_follow_' . $action . '_' . $activity_id, 'cacsp_follow_nonce', false, false ),
+		esc_html( $action )
+	);
+
+	echo $button;
 }
 
 /**
@@ -701,6 +755,45 @@ function cacsp_follow_filter_feedback_message( $retval = '', $action = '', $acti
 	return $retval;
 }
 
+/**
+ * Catch and process follow/unfollow requests on single papers.
+ *
+ * @since 1.0.0
+ */
+function cacsp_catch_follow_requests() {
+	if ( ! cacsp_is_page() ) {
+		return;
+	}
+
+	if ( ! isset( $_POST['cacsp_follow_nonce'] ) || ! isset( $_POST['follow-action'] ) || ! isset( $_POST['follow-activity-id'] ) ) {
+		return;
+	}
+
+	$activity_id = intval( $_POST['follow-activity-id'] );
+	$action = stripslashes( $_POST['follow-action'] );
+	if ( ! wp_verify_nonce( $_POST['cacsp_follow_nonce'], 'cacsp_follow_' . $action . '_' . $activity_id ) ) {
+		return;
+	}
+
+	if ( 'follow' === $action ) {
+		$result = bp_follow_start_following( array(
+			'leader_id'   => $activity_id,
+			'follower_id' => bp_loggedin_user_id(),
+			'follow_type' => 'cacsp_paper',
+		) );
+		$redirect = add_query_arg( 'followed', intval( $result ), get_permalink( get_post() ) );
+	} elseif ( 'unfollow' === $action ) {
+		$result = bp_follow_stop_following( array(
+			'leader_id'   => $activity_id,
+			'follower_id' => bp_loggedin_user_id(),
+			'follow_type' => 'cacsp_paper',
+		) );
+		$redirect = add_query_arg( 'unfollowed', intval( $result ), get_permalink( get_post() ) );
+	}
+
+	wp_redirect( $redirect );
+	die();
+}
 
 /** CACHE ****************************************************************/
 

@@ -52,6 +52,13 @@ while ( have_posts() ) : the_post();
 					}
 					?>
 
+					<p><div class="paper-status <?php if ( cacsp_paper_is_protected( get_queried_object_id() ) ) : ?>protected<?php endif; ?>"><?php
+						if ( cacsp_paper_is_protected( get_queried_object_id() ) ) :
+							esc_html_e( 'Private Paper', 'social-paper' );
+						else :
+							esc_html_e( 'Public Paper', 'social-paper' );
+					endif; ?></div></p>
+
 					<?php
 						$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
 
@@ -67,15 +74,19 @@ while ( have_posts() ) : the_post();
 						);
 
 						do_action( 'cacsp_after_paper_meta' );
+
 					?>
 				</div>
 
-				<div class="paper-status <?php if ( cacsp_paper_is_protected( get_queried_object_id() ) ) : ?>protected<?php endif; ?>"><?php
-					if ( cacsp_paper_is_protected( get_queried_object_id() ) ) :
-						esc_html_e( 'Private Paper', 'social-paper' );
-					else :
-						esc_html_e( 'Public Paper', 'social-paper' );
-					endif; ?>
+				<div class="paper-actions">
+					<?php
+					/**
+					 * Hook here to add paper action buttons.
+					 *
+					 * @since 1.0.0
+					 */
+					do_action( 'cacsp_paper_actions' );
+					?>
 				</div>
 			</div>
 			<?php endif; /* don't show on new papers or auto-drafts */ ?>

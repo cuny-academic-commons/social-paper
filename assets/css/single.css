@@ -756,9 +756,7 @@ a {
 }
 
 .paper-status {
-	position: absolute;
-	right: 0;
-	bottom: 1em;
+	display: inline;
 	padding: 4px;
 	border: 1px solid #eaeaea;
 	border-radius: 2px;
@@ -768,6 +766,25 @@ a {
 
 .paper-status.protected {
 	background: #efeeba;
+}
+
+.paper-actions {
+	position: absolute;
+	right: 0;
+	top: 1em;
+	text-align: right;
+}
+
+.paper-actions a {
+	text-decoration: none;
+}
+
+.paper-actions a span {
+	background-color: #1fb3dd;
+	color: #fff;
+	font-size: 10px;
+	border-radius: 10px;
+	padding: 2px 5px;
 }
 
 /* Comments styling */
