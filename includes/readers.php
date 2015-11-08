@@ -97,6 +97,11 @@ function cacsp_save_reader_connection( $post_id ) {
 	}
 
 	$paper = new CACSP_Paper( $post_id );
+	$_paper_id = $paper->ID;
+	if ( ! $_paper_id ) {
+		return;
+	}
+
 	$results = array();
 
 	$new_reader_ids      = array_map( 'intval', (array) $_POST['social_paper_readers'] );
