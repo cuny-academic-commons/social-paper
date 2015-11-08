@@ -440,7 +440,6 @@ function cacsp_notification_followedpaper_edit( $activity_id, $paper_id ) {
 		$added = bp_notifications_add_notification( array(
 			'user_id' => $follower_id,
 			'item_id' => $paper->ID,
-			'secondary_item_id' => $comment_id,
 			'component_name' => 'cacsp',
 			'component_action' => $type,
 		) );
