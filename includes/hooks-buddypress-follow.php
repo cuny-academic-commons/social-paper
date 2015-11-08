@@ -676,6 +676,11 @@ function cacsp_follow_add_follow_button_to_single_paper() {
 		return;
 	}
 
+	// Only logged-in users can follow papers.
+	if ( ! is_user_logged_in() ) {
+		return;
+	}
+
 	// Authors shouldn't see a follow button for their own papers.
 	if ( bp_loggedin_user_id() === (int) get_post()->post_author ) {
 		return;
