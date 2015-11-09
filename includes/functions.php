@@ -138,32 +138,74 @@ function cacsp_get_protected_papers_for_user( $user_id ) {
 	$protected_paper_ids = wp_cache_get( $cache_key, 'posts' );
 
 	if ( false === $protected_paper_ids ) {
-		remove_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
-		$protected = new WP_Query( array(
+		$base_args = array(
 			'post_type' => 'cacsp_paper',
 			'post_status' => 'any',
+			'fields' => 'ids',
+			'nopaging' => true,
+			'orderby' => false,
+		);
+
+		remove_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
+
+		/*
+		 * Three queries
+		 * 1. Papers where I'm a reader
+		 * 2. Papers where I'm a member of the associated group
+		 * 3. Papers that are protected but post__not_in the previous two
+		 */
+		$reader_args = array_merge( array(
 			'tax_query' => array(
-				'relation' => 'AND',
+				array(
+					'taxonomy' => 'cacsp_paper_reader',
+					'terms' => array( 'reader_' . $user_id ),
+					'field' => 'name',
+				)
+			),
+		), $base_args );
+		$reader_query = new WP_Query( $reader_args );
+		$reader_papers = $reader_query->posts;
+
+		$group_papers = array();
+		if ( bp_is_active( 'groups' ) ) {
+			$group_terms = array();
+			$group_ids = cacsp_get_groups_of_user( $user_id );
+			foreach ( $group_ids as $group_id ) {
+				$group_terms[] = 'group_' . $group_id;
+			}
+
+			if ( empty( $group_terms ) ) {
+				$group_papers = array();
+			} else {
+				$group_args = array_merge( array(
+					'tax_query' => array(
+						array(
+							'taxonomy' => 'cacsp_paper_group',
+							'terms' => $group_terms,
+							'field' => 'name',
+							'operator' => 'IN',
+						),
+					),
+				), $base_args );
+				$group_query = new WP_Query( $group_args );
+				$group_papers = $group_query->posts;
+			}
+		}
+
+		$protected_args = array_merge( array(
+			'tax_query' => array(
 				array(
 					'taxonomy' => 'cacsp_paper_status',
 					'terms' => array( 'protected' ),
 					'field' => 'name',
 				),
-				array(
-					'taxonomy' => 'cacsp_paper_reader',
-					'terms' => array( 'reader_' . get_current_user_id() ),
-					'field' => 'name',
-					'operator' => 'NOT IN',
-				),
 			),
-			'author__not_in' => get_current_user_id(),
-			'fields' => 'ids',
-			'nopaging' => true,
-			'orderby' => false,
-		) );
-		add_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
+			'post__not_in' => array_merge( $reader_papers, $group_papers ),
+		), $base_args );
+		$protected_query = new WP_Query( $protected_args );
+		$protected_paper_ids = $protected_query->posts;
 
-		$protected_paper_ids = $protected->posts;
+		add_action( 'pre_get_posts', 'cacsp_filter_query_for_access_protection' );
 
 		wp_cache_set( $cache_key, $protected_paper_ids, 'posts' );
 	}
