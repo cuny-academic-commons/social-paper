@@ -252,6 +252,8 @@ add_action( 'transition_comment_status', 'cacsp_handle_comment_activity_on_trans
  *
  * Edit activity is throttled: no more than one activity item per 60 minutes.
  *
+ * Fired on 'post_updated' with priority 20, so that WP's default revision handler can fire at 10.
+ *
  * @param int     $post_id     ID of the post.
  * @param WP_Post $post_after  New post.
  * @param WP_Post $post_before Old post.
@@ -354,7 +356,7 @@ function cacsp_create_edit_activity( $post_id, WP_Post $post_after, WP_Post $pos
 	 */
 	do_action( 'cacsp_created_edit_activity', $activity_id, $post_id, $post_after, $post_before );
 }
-add_action( 'post_updated', 'cacsp_create_edit_activity', 10, 3 );
+add_action( 'post_updated', 'cacsp_create_edit_activity', 20, 3 );
 
 /**
  * Delete associated paper activity when a paper is deleted.
