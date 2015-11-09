@@ -310,6 +310,10 @@ class CACSP_Paper {
 			}
 		}
 
+		if ( 'post_title' === $key && '' === $value ) {
+			$value = __( '(Untitled)', 'social-paper' );
+		}
+
 		return $value;
 	}
 
