@@ -567,7 +567,6 @@ function cacsp_notification_comment_mention( $activity_id, $user_ids ) {
 		) );
 	}
 }
-add_action( 'wp_insert_comment', 'cacsp_notification_mythread_comment' );
 
 /** User notifications page **************************************************/
 
