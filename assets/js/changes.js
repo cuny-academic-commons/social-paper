@@ -1312,4 +1312,17 @@ jQuery(document).ready( function($) {
 
 	});
 
+	/**
+	 * Hook into clicks on the "Cancel" button in the FEE "Leave" dialog
+	 *
+	 * Doing this means we can restore the Inline Comments attributes which have
+	 * been stripped in order to let FEE decide if the editor is dirty or not.
+	 */
+	$('.fee-leave').find( '.fee-cancel' ).on( 'click.fee', function() {
+
+		// the editor is visible, so rebuild
+		window.incom.rebuild();
+
+	} );
+
 });
