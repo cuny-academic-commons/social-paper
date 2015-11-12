@@ -206,12 +206,13 @@ jQuery(document).ready( function($) {
 
 		// non printing keycodes
 		me.non_printing = {
+			//'8': 'backspace', '9': 'tab', '13': 'enter',
 			'12': 'num lock (mac)', '16': 'shift', '17': 'ctrl', '18': 'alt',
 			'19': 'pause/break', '20': 'caps lock', '27': 'escape',
 			'33': 'page up', '34': 'page down',
 			'35': 'end', '36': 'home',
 			'37': 'left arrow', '38': 'up arrow', '39': 'right arrow', '40': 'down arrow',
-			'45': 'insert', '46': 'delete',
+			//'45': 'insert', '46': 'delete',
 			'91': 'left window', '92': 'right window', '93': 'select',
 			'112': 'f1', '113': 'f2', '114': 'f3', '115': 'f4', '116': 'f5',
 			'117': 'f6', '118': 'f7', '119': 'f8', '120': 'f9', '121': 'f10',
@@ -255,7 +256,10 @@ jQuery(document).ready( function($) {
 
 				// delete?
 				if ( event.which == tinymce.util.VK.DELETE || event.which == tinymce.util.VK.BACKSPACE ) {
-					me.handle_DELETE();
+					// Gecko behaves differently, so use keyup instead
+					if ( ! tinymce.Env.gecko ) {
+						me.handle_DELETE();
+					}
 					return;
 				}
 
@@ -264,6 +268,11 @@ jQuery(document).ready( function($) {
 					me.handle_PRINTING_CHAR( 'keydown' );
 				}
 
+			});
+
+			// add keypress tracker code
+			me.instance.on( 'keypress', function( event ) {
+				//console.log( 'keypress event code', event.keyCode );
 			});
 
 			// add keyup tracker code
@@ -279,7 +288,9 @@ jQuery(document).ready( function($) {
 
 				// delete?
 				if ( event.which == tinymce.util.VK.DELETE || event.which == tinymce.util.VK.BACKSPACE ) {
-					//me.handle_DELETE( 'keyup' );
+					if ( tinymce.Env.gecko ) {
+						me.handle_DELETE();
+					}
 					return;
 				}
 
@@ -823,6 +834,7 @@ jQuery(document).ready( function($) {
 
 			// find any missing items
 			missing = SocialPaperChange.tracker.get_missing( current_items );
+			//console.log( 'missing', missing );
 
 			// bail if there's no difference
 			if ( missing.length === 0 ) {
