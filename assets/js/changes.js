@@ -1095,6 +1095,65 @@ jQuery(document).ready( function($) {
 
 		var me = this;
 
+		// store original comment refs
+		me.data_original = [];
+
+		/**
+		 * Save original comments data
+		 */
+		this.original_save = function() {
+
+			// reassign comments to new item
+			$( 'li[data-incom-comment]' ).each( function( i, el ) {
+
+				var target, comment_id;
+
+				// get custom attribute
+				target = $(el).attr( 'data-incom-comment' );
+
+				// get comment ID
+				comment_id = $(el).prop( 'id' );
+
+				// add to array
+				me.data_original[comment_id] = target;
+
+			});
+
+		};
+
+		/**
+		 * Get original comments data
+		 */
+		this.original_get = function() {
+
+			// construct formatted array
+			var formatted = [], key;
+			for( key in me.data_original ) {
+				formatted.push({
+					comment_id: key,
+					original_value: me.data_original[key],
+				});
+			}
+
+			return formatted;
+
+		};
+
+		/**
+		 * Reset Inline Comments 'data-incom-comment' attributes to their original values
+		 */
+		this.original_reset = function() {
+
+			// get original data
+			data = me.original_get();
+
+			// reset each of the comments
+			data.forEach( function( item ) {
+				$( 'li#' + item.comment_id ).attr( 'data-incom-comment', item.original_value );
+			});
+
+		};
+
 		// tracks the comments that need their refs updated
 		me.data = [];
 
@@ -1220,6 +1279,9 @@ jQuery(document).ready( function($) {
 			// build tracker array
 			SocialPaperChange.tracker.init();
 
+			// build original comments array
+			SocialPaperChange.comments.original_save();
+
 			// set up attributes in TinyMCE content
 			SocialPaperChange.editor.copy_original();
 
@@ -1273,6 +1335,9 @@ jQuery(document).ready( function($) {
 			// force not dirty state
 			SocialPaperChange.editor.isNotDirty = 1;
 
+			// save comments as unmodified
+			SocialPaperChange.comments.original_save();
+
 			// build tracker array
 			//SocialPaperChange.tracker.init();
 
@@ -1322,6 +1387,19 @@ jQuery(document).ready( function($) {
 
 		// the editor is visible, so rebuild
 		window.incom.rebuild();
+
+	} );
+
+	/**
+	 * Hook into clicks on the "Leave" button in the FEE "Leave" dialog
+	 *
+	 * Doing this means we can reset the Inline Comments comment attributes
+	 * which have been modified during the unsaved edit.
+	 */
+	$('.fee-leave').find( '.fee-exit' ).on( 'click.fee', function() {
+
+		// reset comments to original state
+		SocialPaperChange.comments.original_reset();
 
 	} );
 
