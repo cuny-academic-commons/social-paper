@@ -548,7 +548,7 @@ jQuery(document).ready( function($) {
 	 */
 	$(document).on( 'fee-after-save', function( event ) {
 		// Dynamically do some stuff after a paper is first published
-		if ( -1 !== event.currentTarget.URL.indexOf( '#edit=true' ) ) {
+		if ( -1 !== event.currentTarget.URL.indexOf( '#edit=true' ) && 'publish' === wp.fee.postOnServer.post_status ) {
 			// Change the current URL to the full paper URL using HTML5 history
 			if ( typeof ( history.replaceState ) != "undefined" ) {
 				history.replaceState( {}, wp.fee.post.post_title(), event.currentTarget.URL.substr( 0, event.currentTarget.URL.indexOf( '?' ) ) + 'papers/' + wp.fee.post.post_name() + '/' );
