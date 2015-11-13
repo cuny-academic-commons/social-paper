@@ -321,6 +321,7 @@ function cacsp_followed_papers_screen_content() {
 		'post_type' => 'cacsp_paper',
 		'post__in' => $paper_ids,
 		'author__not_in' => (array) bp_displayed_user_id(),
+		'orderby' => 'modified',
 		'post_status' => bp_is_my_profile() ? array( 'publish', 'private' ) : array( 'publish' )
 	) );
 

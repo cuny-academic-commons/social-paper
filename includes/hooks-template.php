@@ -308,6 +308,9 @@ function _cacsp_set_markers( $q ) {
 		// always reset scope to all
 		@setcookie( 'bp-papers-scope', 'all', 0, '/' );
 
+		// Sort by last modified
+		$q->set( 'orderby', 'modified' );
+
 		if ( is_user_logged_in() ) {
 			$user_filter = false;
 
