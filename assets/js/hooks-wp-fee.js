@@ -541,6 +541,9 @@ jQuery(document).ready( function($) {
 		wp.fee.post.post_excerpt = function() {
 			return $( '#cacsp-paper-description' ).val();
 		}
+
+		// Save old paper status.
+		wp.fee.previous_post_status = wp.fee.postOnServer.post_status;
 	});
 
 	/**
@@ -579,6 +582,10 @@ jQuery(document).ready( function($) {
 			}
 		);
 
+		// On status change, refresh page.
+		if ( wp.fee.previous_post_status !== wp.fee.postOnServer.post_status ) {
+			document.location.reload( true );
+		}
 	});
 
 	/**
