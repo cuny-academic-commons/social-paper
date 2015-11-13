@@ -266,13 +266,13 @@ function cacsp_wp_fee_localise() {
 
 	// add translations for comment reassignment
 	$translations = array(
-		'button_enable' => __( 'Enable Editing', 'social-paper' ),
-		'button_disable' => __( 'Disable Editing', 'social-paper' ),
-		'title' => __( 'Are you sure?', 'social-paper' ),
 		'body' => __( 'Are you sure you want to assign the comment and its replies to the paragraph? This action cannot be undone.', 'social-paper' ),
-		'submit' => __( 'Submitting...', 'social-paper' ),
+		'button_disable' => __( 'Disable Editing', 'social-paper' ),
+		'button_enable' => __( 'Enable Editing', 'social-paper' ),
+		'button_update' => __( 'Update', 'social-paper' ),
 		'message' => __( 'Please wait while the comments are reassigned. The page will refresh when this has been done.', 'social-paper' ),
-		'button_update' => __( 'Update', 'social-paper' )
+		'submit' => __( 'Submitting...', 'social-paper' ),
+		'title' => __( 'Are you sure?', 'social-paper' ),
 	);
 
 	return $translations;
