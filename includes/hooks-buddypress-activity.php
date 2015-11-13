@@ -54,13 +54,18 @@ function cacsp_format_activity_action( $action, $activity ) {
 		return $action;
 	}
 
+	$has_title   = true;
 	$paper_title = $paper->post_title;
+	if ( cacsp_get_untitled_placeholder() === $paper_title ) {
+		$has_title = false;
+	}
+
 	$paper_link  = get_permalink( $paper->ID );
 	$user_link   = bp_core_get_userlink( $activity->user_id );
 
 	switch ( $activity->type ) {
 		case 'new_cacsp_paper' :
-			if ( $paper_title ) {
+			if ( $has_title ) {
 				$action = sprintf(
 					__( '%1$s created a new paper %2$s', 'social-paper' ),
 					$user_link,
@@ -90,7 +95,7 @@ function cacsp_format_activity_action( $action, $activity ) {
 				$commenter_link = esc_html( $comment->comment_author );
 			}
 
-			if ( $paper_title ) {
+			if ( $has_title ) {
 				$action = sprintf(
 					__( '%1$s commented on the paper %2$s', 'social-paper' ),
 					$commenter_link,
@@ -106,7 +111,7 @@ function cacsp_format_activity_action( $action, $activity ) {
 			break;
 
 		case 'new_cacsp_edit' :
-			if ( $paper_title ) {
+			if ( $has_title ) {
 				$action = sprintf(
 					__( '%1$s edited the paper %2$s', 'social-paper' ),
 					$user_link,
@@ -129,7 +134,7 @@ function cacsp_format_activity_action( $action, $activity ) {
 
 			$group = groups_get_group( array( 'group_id' => $activity->item_id ) );
 
-			if ( $paper_title ) {
+			if ( $has_title ) {
 				$action = sprintf(
 					__( '%1$s added the paper %2$s to the group %3$s', 'social-paper' ),
 					$user_link,

@@ -486,6 +486,17 @@ function cacsp_loop_add_placeholder_title( $retval = '' ) {
 		return $retval;
 	}
 
+	return cacsp_get_untitled_placeholder();
+}
+
+/**
+ * Get the 'untitled' placeholder string.
+ *
+ * @since 1.0.0
+ *
+ * @retrun string
+ */
+function cacsp_get_untitled_placeholder() {
 	return __( '(Untitled)', 'social-paper' );
 }
 
