@@ -152,7 +152,7 @@ function cacsp_get_protected_papers_for_user( $user_id ) {
 		 * Three queries
 		 * 1. Papers where I'm a reader
 		 * 2. Papers where I'm a member of the associated group
-		 * 3. Papers that are protected but post__not_in the previous two
+		 * 3. Papers that are protected and authored by someone else but post__not_in the previous two
 		 */
 		$reader_args = array_merge( array(
 			'tax_query' => array(
@@ -201,6 +201,7 @@ function cacsp_get_protected_papers_for_user( $user_id ) {
 				),
 			),
 			'post__not_in' => array_merge( $reader_papers, $group_papers ),
+			'author__not_in' => array( $user_id ),
 		), $base_args );
 		$protected_query = new WP_Query( $protected_args );
 		$protected_paper_ids = $protected_query->posts;
