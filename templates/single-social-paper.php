@@ -52,12 +52,7 @@ while ( have_posts() ) : the_post();
 					}
 					?>
 
-					<p><div class="paper-status <?php if ( cacsp_paper_is_protected( get_queried_object_id() ) ) : ?>protected<?php endif; ?>"><?php
-						if ( cacsp_paper_is_protected( get_queried_object_id() ) ) :
-							esc_html_e( 'Private Paper', 'social-paper' );
-						else :
-							esc_html_e( 'Public Paper', 'social-paper' );
-					endif; ?></div></p>
+					<p><?php cacsp_paper_status_notices(); ?></p>
 
 					<?php
 						$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';

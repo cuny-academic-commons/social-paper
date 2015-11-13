@@ -770,6 +770,39 @@ function cacsp_filter_comment_moderation_text( $message, $comment_id ) {
 add_filter( 'comment_moderation_text', 'cacsp_filter_comment_moderation_text', 10, 2 );
 
 /**
+ * Generate the Paper Status notices for display on single papers.
+ *
+ * @since 1.0.0
+ */
+function cacsp_paper_status_notices() {
+	$notices = array();
+
+	// Public/Private notice.
+	if ( cacsp_paper_is_protected( get_queried_object_id() ) ) {
+		$label = __( 'Private Paper', 'social-paper' );
+		$class = 'protected';
+	} else {
+		$label = __( 'Public Paper', 'social-paper' );
+		$class = '';
+	}
+
+	$notices[] = sprintf(
+		'<div class="paper-notice paper-status %s">%s</div>',
+		esc_attr( $class ),
+		esc_html( $label )
+	);
+
+	if ( 'publish' !== get_queried_object()->post_status ) {
+		$notices[] = sprintf(
+			'<div class="paper-notice paper-draft">%s</div>',
+			esc_html__( 'Draft', 'social-paper' )
+		);
+	}
+
+	echo implode( '', $notices );
+}
+
+/**
  * bp-default theme comment overrides.
  *
  * Disables the avatar from showing atop the comment form.

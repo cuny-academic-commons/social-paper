@@ -755,16 +755,24 @@ a {
 	font-weight: 700;
 }
 
-.paper-status {
+.paper-notice {
 	display: inline;
 	padding: 4px;
 	border: 1px solid #eaeaea;
 	border-radius: 2px;
 	font-size: 12px;
+	margin-right: 4px;
+}
+
+.paper-notice.paper-status {
 	background: #99ef9d;
 }
 
-.paper-status.protected {
+.paper-notice.paper-status.protected {
+	background: #efeeba;
+}
+
+.paper-notice.paper-draft {
 	background: #efeeba;
 }
 
