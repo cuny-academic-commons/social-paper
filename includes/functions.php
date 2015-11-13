@@ -405,14 +405,15 @@ function cacsp_the_loop_author() {
  * If published date doesn't exist, falls back to last modified date.
  */
 function cacsp_the_loop_date() {
-	$date = get_post_time( 'U', true );
+	$date_modified = get_post_modified_time( 'U', true );
+	$date_created  = get_post_time( 'U', true );
 
-	if ( (int) $date > 0 ) {
+	if ( $date_modified === $date_created ) {
 		/* translators: "Created [relative time since]" */
-		printf( __( 'Created %s', 'social-paper' ), bp_core_time_since( $date ) );
+		printf( __( 'Created %s', 'social-paper' ), bp_core_time_since( $date_created ) );
 	} else {
 		/* translators: "Updated [relative time since]" */
-		printf( __( 'Updated %s', 'social-paper' ), bp_core_time_since( get_post_modified_time( 'U', true ) ) );
+		printf( __( 'Updated %s', 'social-paper' ), bp_core_time_since( $date_modified ) );
 	}
 }
 
