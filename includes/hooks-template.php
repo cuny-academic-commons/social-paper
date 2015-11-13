@@ -246,8 +246,6 @@ function cacsp_asset_single_enqueue_handler() {
 		'description_max_length' => cacsp_get_description_max_length(),
 		'unapproved_comment_count' => $unapproved_comment_count,
 		'unapproved_comment_alt' => $unapproved_comment_alt,
-		'public_paper' => __( 'Public Paper', 'social-paper' ),
-		'protected_paper' => __( 'Private Paper', 'social-paper' ),
 		'spammed' => __( 'You have successfuly marked the comment as spam.', 'social-paper' ),
 		'trashed' => __( 'You have successfuly trashed the comment.', 'social-paper' ),
 	) );
@@ -792,14 +790,36 @@ function cacsp_paper_status_notices() {
 		esc_html( $label )
 	);
 
-	if ( 'publish' !== get_queried_object()->post_status ) {
-		$notices[] = sprintf(
-			'<div class="paper-notice paper-draft">%s</div>',
-			esc_html__( 'Draft', 'social-paper' )
-		);
-	}
+	$notices[] = sprintf(
+		'<div class="paper-notice paper-draft %s">%s</div>',
+		'publish' === get_queried_object()->post_status ? 'hidden' : '',
+		esc_html__( 'Draft', 'social-paper' )
+	);
 
 	echo implode( '', $notices );
+}
+
+/**
+ * Get a time string for display in the 'Published on' section of single papers.
+ *
+ * @since 1.0.0
+ *
+ * @return string
+ */
+function cacsp_get_paper_time_string() {
+	$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+
+	$time_string = sprintf( $time_string,
+		esc_attr( get_the_date( 'c' ) ),
+		get_the_date()
+	);
+
+	$time_string = sprintf( '<a href="%s" rel="bookmark">%s</a>',
+		esc_url( get_permalink() ),
+		$time_string
+	);
+
+	return $time_string;
 }
 
 /**

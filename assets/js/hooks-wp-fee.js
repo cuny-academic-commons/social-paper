@@ -562,6 +562,9 @@ jQuery(document).ready( function($) {
 			$( 'button.fee-publish' ).html( Social_Paper_FEE.i18n.button_update ).removeClass( 'fee-publish' ).addClass( 'fee-save' );
 		}
 
+		// Ensure that the UI matches the updated post.
+		match_draft_status();
+		match_published_on();
 
 		// FEE tells us the term IDs, but nothing else, so back to the server we go.
 		$.post(
@@ -605,6 +608,30 @@ jQuery(document).ready( function($) {
 		} );
 
 		return $notice;
+	}
+
+	/**
+	 * Ensure that Draft notice matches saved post.
+	 */
+	$draft_notice = $( '.paper-notice.paper-draft' );
+	match_draft_status = function() {
+		if ( 'publish' === wp.fee.postOnServer.post_status ) {
+			$draft_notice.addClass( 'hidden' );
+		} else {
+			$draft_notice.removeClass( 'hidden' );
+		}
+	}
+
+	/**
+	 * Ensure that the Published/Created notice matches saved post.
+	 */
+	$posted_on = $( '.posted-on' );
+	match_published_on = function() {
+		if ( 'publish' === wp.fee.postOnServer.post_status ) {
+			$posted_on.html( Social_Paper_FEE.i18n.published_on );
+		} else {
+			$posted_on.html( Social_Paper_FEE.i18n.created_on );
+		}
 	}
 });
 

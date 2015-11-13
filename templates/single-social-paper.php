@@ -55,26 +55,21 @@ while ( have_posts() ) : the_post();
 					<p><?php cacsp_paper_status_notices(); ?></p>
 
 					<?php
-						$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
-
-						$time_string = sprintf( $time_string,
-							esc_attr( get_the_date( 'c' ) ),
-							get_the_date()
-						);
-
 						if ( 'publish' === get_post()->post_status ) {
-							$published_on = _x( 'Published on', 'Used before publish date', 'social-paper' );
+							$published_on = _x( 'Published on %s', 'Used before publish date', 'social-paper' );
 						} else {
-							$published_on = _x( 'Created on', 'Used before publish date', 'social-paper' );
+							$published_on = _x( 'Created on %s', 'Used before publish date', 'social-paper' );
 						}
-						printf( '<span class="posted-on">%1$s <a href="%2$s" rel="bookmark">%3$s</a></span>',
-							$published_on,
-							esc_url( get_permalink() ),
-							$time_string
+
+						printf(
+							'<span class="posted-on">%s</span>',
+							sprintf(
+								$published_on,
+								cacsp_get_paper_time_string()
+							)
 						);
 
 						do_action( 'cacsp_after_paper_meta' );
-
 					?>
 				</div>
 

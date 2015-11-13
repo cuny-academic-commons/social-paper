@@ -772,6 +772,10 @@ a {
 	background: #efeeba;
 }
 
+.paper-notice.paper-draft.hidden {
+	display: none;
+}
+
 .paper-notice.paper-draft {
 	background: #efeeba;
 }

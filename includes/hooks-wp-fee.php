@@ -263,13 +263,17 @@ add_action( 'wp_enqueue_scripts', 'cacsp_wp_fee_enqueue_scripts', 999 );
  * @return array $translations The array of translations to pass to the script
  */
 function cacsp_wp_fee_localise() {
+	$time_string = cacsp_get_paper_time_string();
 
-	// add translations for comment reassignment
 	$translations = array(
 		'body' => __( 'Are you sure you want to assign the comment and its replies to the paragraph? This action cannot be undone.', 'social-paper' ),
 		'button_disable' => __( 'Disable Editing', 'social-paper' ),
 		'button_enable' => __( 'Enable Editing', 'social-paper' ),
 		'button_update' => __( 'Update', 'social-paper' ),
+		'created_on' => sprintf( _x( 'Created on %s', 'Used before publish date', 'social-paper' ), $time_string ),
+		'paper_notice_public' => esc_html__( 'Public Paper', 'social-paper' ),
+		'paper_notice_private' => esc_html__( 'Private Paper', 'social-paper' ),
+		'published_on' => sprintf( _x( 'Published on %s', 'Used before publish date', 'social-paper' ), $time_string ),
 		'message' => __( 'Please wait while the comments are reassigned. The page will refresh when this has been done.', 'social-paper' ),
 		'submit' => __( 'Submitting...', 'social-paper' ),
 		'title' => __( 'Are you sure?', 'social-paper' ),
