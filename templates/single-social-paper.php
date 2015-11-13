@@ -62,8 +62,13 @@ while ( have_posts() ) : the_post();
 							get_the_date()
 						);
 
+						if ( 'publish' === get_post()->post_status ) {
+							$published_on = _x( 'Published on', 'Used before publish date', 'social-paper' );
+						} else {
+							$published_on = _x( 'Created on', 'Used before publish date', 'social-paper' );
+						}
 						printf( '<span class="posted-on">%1$s <a href="%2$s" rel="bookmark">%3$s</a></span>',
-							_x( 'Published on', 'Used before publish date.', 'social-paper' ),
+							$published_on,
 							esc_url( get_permalink() ),
 							$time_string
 						);
