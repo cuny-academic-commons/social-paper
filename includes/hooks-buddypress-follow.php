@@ -320,6 +320,7 @@ function cacsp_followed_papers_screen_content() {
 	$q = new WP_Query( array(
 		'post_type' => 'cacsp_paper',
 		'post__in' => $paper_ids,
+		'author__not_in' => (array) bp_displayed_user_id(),
 		'post_status' => bp_is_my_profile() ? array( 'publish', 'private' ) : array( 'publish' )
 	) );
 
