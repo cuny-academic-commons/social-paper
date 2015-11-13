@@ -1009,6 +1009,7 @@ body.fee-on .fee-url {
 	top: -.25em;
 }
 
+label[for="fee-post-visibility"],
 #fee-post-status option[value="pending"],
 #fee-post-visibility option[value="sticky"] {
 	display: none;
