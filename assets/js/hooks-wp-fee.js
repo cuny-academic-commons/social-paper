@@ -27,7 +27,10 @@ jQuery(document).ready( function($) {
 	var $paper_status,
 		$settings_toggle,
 		$sidebar,
-		$status_toggle;
+		$status_toggle,
+		$window;
+
+	$window = $( window );
 
 	/**
 	 * Create Drag-n-drop object.
@@ -384,8 +387,15 @@ jQuery(document).ready( function($) {
 
 		var $entry_title = $( '.entry-title' );
 		var $entry_slug = $( '.fee-slug' );
+		var $entry_content = $( '.fee-content' );
 		var slug_editor, current_title, current_slug;
 		$.each( window.tinymce.editors, function( i, ed ) {
+			if ( ed.id == $entry_content.attr( 'id' ).replace( /\-content\-/, '-mce-' ) ) {
+				ed.on( 'keydown', function( ed, l ) {
+					maybe_scroll_window( this );
+				} );
+			}
+
 			if ( ed.id == $entry_slug.attr( 'id' ) ) {
 				slug_editor = ed;
 				current_slug = slug_editor.getContent();
@@ -638,6 +648,20 @@ jQuery(document).ready( function($) {
 			$posted_on.html( Social_Paper_FEE.i18n.published_on );
 		} else {
 			$posted_on.html( Social_Paper_FEE.i18n.created_on );
+		}
+	}
+
+	/**
+	 * Maybe scroll the browser window to ensure that contenteditable is visible.
+	 */
+	maybe_scroll_window = function( ed ) {
+		var wheight = $window.height();
+		var wtop = $window.scrollTop();
+		var wlimit = wtop + wheight - 60;
+
+		var $node = $( ed.selection.getNode() );
+		if ( ( $node.offset().top + $node.height() ) > wlimit ) {
+			$window.scrollTo( wtop + 60 );
 		}
 	}
 });
