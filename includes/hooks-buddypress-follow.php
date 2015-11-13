@@ -155,7 +155,7 @@ function cacsp_follow_notifications_remove_on_unfollow( BP_Follow $follow ) {
 	if ( ! empty( $post_id[0] ) ) {
 		$post_id = $post_id[0];
 	} else {
-		return $retval;
+		return $follow;
 	}
 
 	$paper = get_post( $post_id );
