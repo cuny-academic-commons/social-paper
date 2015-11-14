@@ -729,6 +729,35 @@ function cacsp_catch_comment_moderation() {
 add_action( 'template_redirect', 'cacsp_catch_comment_moderation', 100 );
 
 /**
+ * Filter the subject of WP's comment moderation emails.
+ *
+ * @since 1.0.0
+ *
+ * @param string $subject    Subject line from WP.
+ * @param int    $comment_id ID of the comment.
+ */
+function cacsp_filter_comment_moderation_subject( $subject, $comment_id ) {
+	$comment = get_comment( $comment_id );
+	if ( ! $comment ) {
+		return $subject;
+	}
+
+	$paper = new CACSP_Paper( $comment->comment_post_ID );
+	if ( ! $paper->exists() ) {
+		return $subject;
+	}
+
+	$subject = sprintf(
+		__( 'A comment is awaiting your approval on the paper "%1$s" [%2$s]', 'social-paper' ),
+		$paper->post_title,
+		wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES )
+	);
+
+	return $subject;
+}
+add_filter( 'comment_moderation_subject', 'cacsp_filter_comment_moderation_subject', 10, 2 );
+
+/**
  * Filter the content of WP's comment moderation emails.
  *
  * Regular SP users don't have the ability to moderate comments in the dashboard, so we send them to Edit Mode instead.
