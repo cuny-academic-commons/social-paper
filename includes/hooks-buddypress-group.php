@@ -599,6 +599,10 @@ add_action( 'init', 'cacsp_add_non_persistent_cache_group' );
  * @return array
  */
 function cacsp_get_groups_of_user( $user_id ) {
+	if ( ! $user_id ) {
+		return array();
+	}
+
 	$group_ids = wp_cache_get( $user_id, 'cacsp_groups_of_user' );
 
 	if ( false === $group_ids ) {
