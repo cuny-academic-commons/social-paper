@@ -806,7 +806,7 @@ Comment: %6$s', 'social-paper' ),
 
 	return $message;
 }
-add_filter( 'comment_moderation_text', 'cacsp_filter_comment_moderation_text', 10, 2 );
+add_filter( 'comment_moderation_text', 'cacsp_filter_comment_moderation_text', 20, 2 );
 
 /**
  * Generate the Paper Status notices for display on single papers.
