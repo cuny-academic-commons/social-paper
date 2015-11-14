@@ -47,6 +47,9 @@
 			fixMinHeight: false,
 			animate: false
 		} );
+
+		// Trigger autogrow to do its initial logic :(
+		$description.trigger( 'keyup' );
 	} );
 
 	update_description_char_count = function() {
