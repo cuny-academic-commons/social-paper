@@ -98,4 +98,18 @@ class CACSP_Tests_CacspGetProtectedPapersForUser extends CACSP_UnitTestCase {
 
 		$this->assertNotContains( $p, cacsp_get_protected_papers_for_user( $u ) );
 	}
+
+	/**
+	 * @group bbg
+	 */
+	public function test_should_include_private_papers_for_loggedout_user() {
+		$u = $this->factory->user->create();
+		$p = $this->factory->paper->create( array(
+			'post_author' => $u,
+		) );
+		$paper = new CACSP_Paper( $p );
+		$paper->set_status( 'protected' );
+
+		$this->assertContains( $p, cacsp_get_protected_papers_for_user( 0 ) );
+	}
 }
