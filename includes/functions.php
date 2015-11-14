@@ -154,20 +154,23 @@ function cacsp_get_protected_papers_for_user( $user_id ) {
 		 * 2. Papers where I'm a member of the associated group
 		 * 3. Papers that are protected and authored by someone else but post__not_in the previous two
 		 */
-		$reader_args = array_merge( array(
-			'tax_query' => array(
-				array(
-					'taxonomy' => 'cacsp_paper_reader',
-					'terms' => array( 'reader_' . $user_id ),
-					'field' => 'name',
-				)
-			),
-		), $base_args );
-		$reader_query = new WP_Query( $reader_args );
-		$reader_papers = $reader_query->posts;
+		$reader_papers = array();
+		if ( $user_id ) {
+			$reader_args = array_merge( array(
+				'tax_query' => array(
+					array(
+						'taxonomy' => 'cacsp_paper_reader',
+						'terms' => array( 'reader_' . $user_id ),
+						'field' => 'name',
+					)
+				),
+			), $base_args );
+			$reader_query = new WP_Query( $reader_args );
+			$reader_papers = $reader_query->posts;
+		}
 
 		$group_papers = array();
-		if ( bp_is_active( 'groups' ) ) {
+		if ( $user_id && bp_is_active( 'groups' ) ) {
 			$group_terms = array();
 			$group_ids = cacsp_get_groups_of_user( $user_id );
 			foreach ( $group_ids as $group_id ) {
@@ -201,8 +204,12 @@ function cacsp_get_protected_papers_for_user( $user_id ) {
 				),
 			),
 			'post__not_in' => array_merge( $reader_papers, $group_papers ),
-			'author__not_in' => array( $user_id ),
 		), $base_args );
+
+		if ( $user_id ) {
+			$protected_args['author__not_in'] = array( $user_id );
+		}
+
 		$protected_query = new WP_Query( $protected_args );
 		$protected_paper_ids = $protected_query->posts;
 
