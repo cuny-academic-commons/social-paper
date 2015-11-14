@@ -43,7 +43,7 @@
 
 	<div class="sidebar-section-subsection">
 		<?php
-		$excerpt = get_the_excerpt();
+		$excerpt = get_post()->post_excerpt;
 
 		// Er. (~30 chars per row x ~22px per row)
 		$start_height = ( strlen( $excerpt ) / 30 ) * 22;
