@@ -293,6 +293,7 @@ class CACSP_Paper {
 		if ( false === $set || is_wp_error( $set ) ) {
 			return false;
 		} else {
+			wp_cache_delete( 'last_changed', 'posts' );
 			return true;
 		}
 	}
