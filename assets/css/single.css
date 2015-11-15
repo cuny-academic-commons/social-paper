@@ -506,6 +506,11 @@ p.description {
 	z-index: 10002;
 }
 
+/* Temporary disabling of autosave notice */
+#local-storage-notice {
+	display: none !important;
+}
+
 .entry-sidebar.toggle-on {
 	left: -10px;
 }
