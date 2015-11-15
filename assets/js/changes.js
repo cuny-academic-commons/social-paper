@@ -1367,6 +1367,15 @@ jQuery(document).ready( function($) {
 
 	});
 
+	/**
+	 * Hook into clicks on email moderation links.
+	 *
+	 * We want to make sure that FEE's isDirty() check is accurate.
+	 */
+	$( '.comment-actions a' ).on( 'click', function() {
+		SocialPaperChange.editor.strip_atts();
+	} );
+
 	// add keydown tracker code
 	$(document).on( 'keydown', function( event ) {
 
