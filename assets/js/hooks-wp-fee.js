@@ -326,9 +326,9 @@ jQuery(document).ready( function($) {
 		$status_toggle.on( 'change', function( e ) {
 			var protected = 'protected' === this.value;
 			if ( 'protected' === this.value ) {
-				$paper_status.html( SocialPaperI18n.protected_paper ).addClass( 'protected' );
+				$paper_status.html( Social_Paper_FEE.i18n.paper_notice_private ).addClass( 'protected' );
 			} else {
-				$paper_status.html( SocialPaperI18n.public_paper ).removeClass( 'protected' );
+				$paper_status.html( Social_Paper_FEE.i18n.paper_notice_public ).removeClass( 'protected' );
 			}
 		} );
 
