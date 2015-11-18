@@ -15,6 +15,9 @@
 				placeholder: SocialPaperI18n.reader_placeholder,
 				data: CACSP_Potential_Readers
 			} );
+
+			// Select2 can't set Readers width correctly because it's hidden.
+			$( 'input.select2-search__field' ).css( 'width', '249px' );
 		}
 
 		if ( 'undefined' !== typeof bp && 'undefined' !== typeof bp.mentions.users ) {
