@@ -303,6 +303,11 @@ jQuery(document).ready( function($) {
 			toggle_sidebar();
 		} );
 
+		// When settings are changed, set the isDirty flag.
+		$sidebar.find( 'input,textarea' ).on( 'change input', function() {
+			SocialPaper.isDirty = true;
+		} );
+
 		// If the current post has unapproved comments, show a count.
 		if ( SocialPaperI18n.unapproved_comment_count > 0 ) {
 			var unapproved_span = '<span class="unapproved-comment-count" title="' + SocialPaperI18n.unapproved_comment_alt + '">' + SocialPaperI18n.unapproved_comment_count * 1 + '</span>';
@@ -342,6 +347,12 @@ jQuery(document).ready( function($) {
 
 		if ( st_message ) {
 			addNotice( st_message, 'updated', true );
+		}
+
+		// Define our own `isDirty()` method.
+		SocialPaper.isDirty = false;
+		wp.fee.isDirty = function() {
+			return SocialPaper.isDirty;
 		}
 	} );
 
@@ -390,6 +401,12 @@ jQuery(document).ready( function($) {
 		var $entry_content = $( '.fee-content' );
 		var slug_editor, current_title, current_slug;
 		$.each( window.tinymce.editors, function( i, ed ) {
+
+			// Set the isDirty flag whenever content changes.
+			ed.onChange.add( function() {
+				SocialPaper.isDirty = true;
+			} );
+
 			if ( ed.id == $entry_content.attr( 'id' ).replace( /\-content\-/, '-mce-' ) ) {
 				ed.on( 'keydown', function( ed, l ) {
 					maybe_scroll_window( this );
@@ -560,6 +577,9 @@ jQuery(document).ready( function($) {
 	 * Hook into WP FEE after save
 	 */
 	$(document).on( 'fee-after-save', function( event ) {
+		// Editor is now clean.
+		SocialPaper.isDirty = false;
+
 		// Dynamically do some stuff after a paper is first published
 		if ( -1 !== event.currentTarget.URL.indexOf( '#edit=true' ) && 'publish' === wp.fee.postOnServer.post_status ) {
 			// Change the current URL to the full paper URL using HTML5 history
