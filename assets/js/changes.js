@@ -1085,6 +1085,32 @@ jQuery(document).ready( function($) {
 		};
 
 		/**
+		 * Given an element's number, find all subsequent paragraphs.
+		 *
+		 * This needs to be done "manually" as it were, since $.nextAll only
+		 * picks up consecutive siblings and oEmbeds break the sequence since
+		 * they are wrapped in <div>s in the editor but <p>s in the content.
+		 *
+		 * @param int number The selected element's 'data-incom' number
+		 * @param array elements The subsequent elements
+		 */
+		this.get_subsequent = function( number ) {
+
+			var elements = [], paras, current;
+
+			// get all relevant elements in the editor
+			paras = me.filter_elements( $('.fee-content-body').find( '[data-incom]' ) );
+			$.each( paras, function( i, el ) {
+				current = parseInt( el.attr( 'data-incom' ).replace( 'P', '' ) );
+				if ( current > number ) {
+					elements.push( el );
+				}
+			});
+
+			return elements;
+		}
+
+		/**
 		 * Given an array of paragraph tags, filter out those which are used
 		 * for UI-related purposes, e.g. inside a .wpview-wrap container which
 		 * is used to wrap a "Page Break"
