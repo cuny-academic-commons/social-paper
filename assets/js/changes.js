@@ -468,7 +468,7 @@ jQuery(document).ready( function($) {
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_PASTE_COMPLETE', event );
 
-			var tag, identifier, number, subsequent, wp_view,
+			var tag, identifier, number, subsequent = [], wp_view,
 				current_items = [], paras = [], filtered = [],
 				previous_element = false, stop_now = false;
 
@@ -478,7 +478,7 @@ jQuery(document).ready( function($) {
 			});
 
 			// get current paras
-			paras = me.filter_elements( $('.fee-content-body p') );
+			paras = $('.fee-content-body p');
 
 			// try to find the para prior to the first unidentified para
 			$.each( paras, function( i, element ) {
@@ -510,7 +510,6 @@ jQuery(document).ready( function($) {
 
 				// set some defaults - but note that this will only work with
 				// pargraphs set as the Inline Comments selector
-				tag = 'P';
 				identifier = 'P0';
 
 				// because it is incremented *before* applying new identifier and
@@ -522,12 +521,19 @@ jQuery(document).ready( function($) {
 
 			} else {
 
-				tag = previous_element.prop( 'tagName' ).substr( 0, 5 );
 				identifier = previous_element.attr( 'data-incom' );
-				number = parseInt( identifier.replace( tag, '' ) );
+				number = parseInt( identifier.replace( 'P', '' ) );
 
 				// get subsequent paras
-				subsequent = me.get_subsequent( number );
+				var start_now = false;
+				$.each( paras, function( i, el ) {
+					if ( start_now === true ) {
+						subsequent.push( $(el) );
+					}
+					if ( previous_element.attr( 'data-incom' ) === $(el).attr( 'data-incom' ) ) {
+						start_now = true;
+					}
+				});
 
 			}
 
@@ -557,16 +563,15 @@ jQuery(document).ready( function($) {
 			if ( subsequent.length > 0 ) {
 
 				// reparse all p tags greater than this
-				$.each( subsequent, function( i, el ) {
+				$.each( subsequent, function( i, element ) {
 
-					var element, current_identifier, becomes, tracker_data;
+					var current_identifier, becomes, tracker_data;
 
-					element = $( el );
 					current_identifier = element.attr( 'data-incom' );
 
 					// construct and apply new identifier
 					number++;
-					becomes = tag + number;
+					becomes = 'P' + number;
 					element.attr( 'data-incom', becomes );
 
 					// if we have one
@@ -1277,7 +1282,7 @@ jQuery(document).ready( function($) {
 			var filtered = [];
 
 			// try to find the para prior to the first unidentified para
-			elements.each( function( i, element ) {
+			$.each( elements, function( i, element ) {
 
 				var el = $(element), wp_view;
 
