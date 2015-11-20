@@ -1058,13 +1058,20 @@ jQuery(document).ready( function($) {
 		/**
 		 * Add Inline Comments 'data-incom' attributes to TinyMCE content.
 		 *
-		 * This is done by copying the original content to TinyMCE and overwriting
-		 * the content of the editor. Simple, but effective!
+		 * Due to the way oEmbeds work, there is a discrepancy between the original
+		 * content and the editor content, so this needs to be handled to account
+		 * for those discrepancies.
 		 */
-		this.copy_original = function() {
+		this.add_atts = function() {
 
 			// replace content of editor with original
-			me.instance.setContent( $('.fee-content-original').html(), {format : 'html'} );
+			//me.instance.setContent( $('.fee-content-original').html(), {format : 'html'} );
+
+			// add Inline Comments data attributes
+			var elements = me.filter_elements( $('.fee-content-body p') );
+			$.each( elements, function( i, element ) {
+				element.attr( 'data-incom', 'P' + i )
+			});
 
 			// clear the undo queue so we can't undo beyond here
 			me.instance.undoManager.clear();
@@ -1355,7 +1362,7 @@ jQuery(document).ready( function($) {
 			SocialPaperChange.editor.cache_set();
 
 			// set up attributes in TinyMCE content
-			SocialPaperChange.editor.copy_original();
+			SocialPaperChange.editor.add_atts();
 
 		}
 
@@ -1404,8 +1411,8 @@ jQuery(document).ready( function($) {
 			// cache TinyMCE content
 			SocialPaperChange.editor.cache_set();
 
-			// rebuild TinyMCE content (since this what's visible)
-			window.incom.rebuild();
+			// set up attributes in TinyMCE content
+			SocialPaperChange.editor.add_atts();
 
 			// force not dirty state
 			SocialPaperChange.editor.isNotDirty = 1;
@@ -1469,8 +1476,8 @@ jQuery(document).ready( function($) {
 	 */
 	$('.fee-leave').find( '.fee-cancel' ).on( 'click.fee', function() {
 
-		// the editor is visible, so rebuild
-		window.incom.rebuild();
+		// rebuild attributes in TinyMCE content
+		SocialPaperChange.editor.add_atts();
 
 	} );
 
