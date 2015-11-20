@@ -1115,6 +1115,12 @@ jQuery(document).ready( function($) {
 		 * for UI-related purposes, e.g. inside a .wpview-wrap container which
 		 * is used to wrap a "Page Break"
 		 *
+		 * The exception to the rule is for YouTube embeds, where we allow one
+		 * of the internal paras (p.wpview-selection-before) through. This is
+		 * because when the oEmbed is rendered in the original content, it is
+		 * wrapped in a <p> tag, causing a mis-matched number of paragrapahs in
+		 * "read" and "edit" modes.
+		 *
 		 * @param array elements An array of elements present in the editor
 		 * @param array filtered Filtered array of elements
 		 */
@@ -1132,6 +1138,15 @@ jQuery(document).ready( function($) {
 				wp_view = el.closest( '.wpview-wrap' );
 				if ( 'undefined' === typeof wp_view || wp_view.length === 0 ) {
 					filtered.push( el );
+				} else {
+					// check the view type attribute
+					if ( 'embedURL' === wp_view.attr( 'data-wpview-type' ) ) {
+						// check if this is a p.wpview-selection-before
+						if ( el.hasClass( 'wpview-selection-before' ) ) {
+							//console.log( 'this', el );
+							filtered.push( el );
+						}
+					}
 				}
 
 			});
