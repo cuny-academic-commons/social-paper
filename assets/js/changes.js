@@ -198,6 +198,9 @@ jQuery(document).ready( function($) {
 		// TinyMCE content editor instance
 		me.instance = {};
 
+		// store initial editor content
+		me.cache = '';
+
 		// items present when there's a uncollapsed selection on keydown
 		me.keydown_items = [];
 
@@ -1025,6 +1028,31 @@ jQuery(document).ready( function($) {
 			// update comments
 			SocialPaperChange.comments.update();
 
+			// reset keydown items
+			me.keydown_items = [];
+
+		};
+
+		/**
+		 * Cache the content of the editor.
+		 *
+		 * By default, WP FEE does not maintain parity between the "Read" mode
+		 * content and the "Edit" mode content. If "Leave" or "Cancel" is clicked
+		 * in the isDirty dialog, the editor content is not reset to its unedited
+		 * state. This method stores the unedited content for retrieval.
+		 */
+		this.cache_set = function() {
+
+			// store content of editor
+			me.cache = me.instance.getContent();
+
+		};
+
+		/**
+		 * Get the cached content of the editor.
+		 */
+		this.cache_get = function() {
+			return me.cache;
 		};
 
 		/**
@@ -1282,6 +1310,9 @@ jQuery(document).ready( function($) {
 			// build original comments array
 			SocialPaperChange.comments.original_save();
 
+			// cache TinyMCE content
+			SocialPaperChange.editor.cache_set();
+
 			// set up attributes in TinyMCE content
 			SocialPaperChange.editor.copy_original();
 
@@ -1328,6 +1359,9 @@ jQuery(document).ready( function($) {
 
 		// if Inline Comments present
 		if ( window.incom ) {
+
+			// cache TinyMCE content
+			SocialPaperChange.editor.cache_set();
 
 			// rebuild TinyMCE content (since this what's visible)
 			window.incom.rebuild();
@@ -1406,6 +1440,14 @@ jQuery(document).ready( function($) {
 	 * which have been modified during the unsaved edit.
 	 */
 	$('.fee-leave').find( '.fee-exit' ).on( 'click.fee', function() {
+
+		var cached;
+
+		// get cached TinyMCE content
+		cached = SocialPaperChange.editor.cache_get();
+
+		// apply to editor
+		SocialPaperChange.editor.instance.setContent( cached );
 
 		// reset comments to original state
 		SocialPaperChange.comments.original_reset();
