@@ -207,6 +207,9 @@ jQuery(document).ready( function($) {
 		// paste flag
 		me.paste_flag = false;
 
+		// "para after wp-view has focus" flag
+		me.wp_view_after = false;
+
 		// non printing keycodes
 		me.non_printing = {
 			//'8': 'backspace', '9': 'tab', '13': 'enter',
@@ -333,6 +336,36 @@ jQuery(document).ready( function($) {
 				//console.log('undo redo event type', event.type);
 			});
 
+			me.instance.on( 'NodeChange', function( event ) {
+				me.handle_NODE_CHANGE( event );
+			});
+
+		};
+
+		/**
+		 * Handle 'NodeChange' event
+		 *
+		 * @param object event The TinyMCE event object
+		 */
+		this.handle_NODE_CHANGE = function( event ) {
+
+			//console.log( '------------------------------------------------------------' );
+			//console.log( 'handle_NODE_CHANGE', event );
+
+			var element = event.element,
+				className = element.className;
+
+			// bail if not change of focussed element
+			if ( 'undefined' === typeof event.selectionChange ) {
+				return;
+			}
+
+			if ( className === 'wpview-selection-after' ) {
+				me.wp_view_after = true;
+			} else {
+				me.wp_view_after = false;
+			}
+
 		};
 
 		/**
@@ -428,10 +461,10 @@ jQuery(document).ready( function($) {
 			});
 
 			// get current paras
-			paras = $('.fee-content-body p');
+			paras = me.filter_elements( $('.fee-content-body p') );
 
 			// try to find the para prior to the first unidentified para
-			paras.each( function( i, element ) {
+			$.each( paras, function( i, element ) {
 
 				// get identifier
 				var id = $(element).attr( 'data-incom' );
@@ -467,7 +500,7 @@ jQuery(document).ready( function($) {
 				// we want the sequence to start with 'P0'
 				number = -1;
 
-				// set subsequent to filtered paras
+				// filter paras to get subsequent paras
 				subsequent = me.filter_elements( paras );
 
 			} else {
@@ -476,8 +509,8 @@ jQuery(document).ready( function($) {
 				identifier = previous_element.attr( 'data-incom' );
 				number = parseInt( identifier.replace( tag, '' ) );
 
-				// get subsequent
-				subsequent = me.filter_elements( previous_element.nextAll( 'p' ) );
+				// get subsequent paras
+				subsequent = me.get_subsequent( number );
 
 			}
 
@@ -679,9 +712,10 @@ jQuery(document).ready( function($) {
 
 			var node, item, tag, identifier, number, subsequent,
 				current_items = [], missing = [],
-				original_num;
+				prev_id, original_num,
+				new_item, new_number = '';
 
-			// get keyup identifiers
+			// get current identifiers
 			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
 				current_items.push( $(element).attr( 'data-incom' ) );
 			});
@@ -689,7 +723,18 @@ jQuery(document).ready( function($) {
 			// get current node and tease out data
 			node = me.instance.selection.getNode();
 			item = $( node );
-			tag = item.prop( 'tagName' ).substr( 0, 5 );
+
+			// is this a wp_view_after return?
+			if ( me.wp_view_after === true ) {
+
+				// get previous wp-view object's identifier
+				prev_id = item.prev().find( '[data-incom]' ).attr( 'data-incom' );
+
+				// apply to current item
+				item.attr( 'data-incom', prev_id );
+
+			}
+
 			identifier = item.attr( 'data-incom' );
 
 			// bail if we don't have one
@@ -698,7 +743,24 @@ jQuery(document).ready( function($) {
 			}
 
 			// strip tag from identifier to get number
-			number = parseInt( identifier.replace( tag, '' ) );
+			number = parseInt( identifier.replace( 'P', '' ) );
+
+			// if we've hit return on the "cursor" before the video
+			if ( item.hasClass( 'wpview-selection-before' ) ) {
+
+				// store new item
+				new_item = item.parent().prev( 'p' );
+				new_number = number;
+
+				// replace with previous item
+				item = $('.fee-content-body').find( '[data-incom="P' + ( number - 1 ) + '"]' );
+				identifier = item.attr( 'data-incom' );
+				number = parseInt( identifier.replace( 'P', '' ) );
+
+			}
+
+			// get subsequent
+			subsequent = me.get_subsequent( number );
 
 			// find any missing items
 			missing = SocialPaperChange.tracker.get_missing( current_items );
@@ -736,23 +798,19 @@ jQuery(document).ready( function($) {
 
 			}
 
-			// get subsequent
-			subsequent = item.nextAll( 'p' );
-
 			// are there any?
 			if ( subsequent.length > 0 ) {
 
 				// reparse all p tags greater than this
-				subsequent.each( function( i, el ) {
+				$.each( subsequent, function( i, element ) {
 
-					var element, current_identifier, becomes, tracker_data;
+					var current_identifier, becomes, tracker_data;
 
-					element = $( el );
 					current_identifier = element.attr( 'data-incom' );
 
 					// construct and apply new identifier
 					number++;
-					becomes = tag + number;
+					becomes = 'P' + number;
 					element.attr( 'data-incom', becomes );
 
 					// get data and update
@@ -770,18 +828,28 @@ jQuery(document).ready( function($) {
 			// if collapsed all along
 			if ( missing.length === 0 ) {
 
-				// recalculate
-				original_num = parseInt( identifier.replace( tag, '' ) );
+				// if we've hit return on the "cursor" before the video, then
+				// new_number will be an integer
+				if ( new_number !== '' ) {
 
-				// bump this item
-				item.attr( 'data-incom', tag + ( original_num + 1 ) );
+					// substitute data for new item
+					original_num = new_number - 1;
+					new_item.attr( 'data-incom', 'P' + new_number );
+
+				} else {
+
+					// recalculate and bump this item
+					original_num = parseInt( identifier.replace( 'P', '' ) );
+					item.attr( 'data-incom', 'P' + ( original_num + 1 ) );
+
+				}
 
 				// add to array
 				SocialPaperChange.tracker.add( {
 					is_new: true,
 					is_modified: false,
-					original: tag + original_num,
-					modified: tag + ( original_num + 1 ),
+					original: 'P' + original_num,
+					modified: 'P' + ( original_num + 1 ),
 				} );
 
 			}
@@ -813,8 +881,10 @@ jQuery(document).ready( function($) {
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_DELETE' );
 
-			var node, item, tag, identifier, number, subsequent,
-				current_items = [], missing = [];
+			var node, item, identifier, number, subsequent,
+				current_items = [], missing = [],
+				first, first_num,
+				is_after = false;
 
 			// get current identifiers
 			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
@@ -824,16 +894,57 @@ jQuery(document).ready( function($) {
 			// get current node and tease out data
 			node = me.instance.selection.getNode();
 			item = $( node );
-			tag = item.prop( 'tagName' ).substr( 0, 5 );
-			identifier = item.attr( 'data-incom' );
 
-			// bail if we don't have one
-			if ( 'undefined' === typeof identifier ) {
-				return;
+			// if the node is the TinyMCE wrapper div
+			if ( item.hasClass( 'fee-content-body' ) ) {
+
+				// find any missing items
+				missing = SocialPaperChange.tracker.get_missing( current_items );
+
+				// if there are some missing
+				if ( missing.length > 0 ) {
+
+					// get the first item in the missing array
+					first = missing[0];
+					first_num = first.replace( 'P', '' );
+
+					// replace container with item prior to first missing one
+					item = $('.fee-content-body').find( '[data-incom="P' + ( first_num - 1 ) + '"]' );
+					identifier = item.attr( 'data-incom' );
+					number = parseInt( identifier.replace( 'P', '' ) );
+
+				} else {
+
+					// no change - bail
+					return;
+
+				}
+
+
+			} else {
+
+				// if we've hit deleted a para directly after an oEmbed
+				if ( item.hasClass( 'wpview-selection-after' ) ) {
+
+					// substitute item with wp-view object's data-incom item
+					item = item.prevAll( '.wpview-selection-before' );
+
+					// set flag
+					is_after = true;
+
+				}
+
+				identifier = item.attr( 'data-incom' );
+
+				// bail if we don't have one
+				if ( 'undefined' === typeof identifier ) {
+					return;
+				}
+
+				// strip tag from identifier to get number
+				number = parseInt( identifier.replace( 'P', '' ) );
+
 			}
-
-			// strip tag from identifier to get number
-			number = parseInt( identifier.replace( tag, '' ) );
 
 			// find any missing items
 			missing = SocialPaperChange.tracker.get_missing( current_items );
@@ -858,23 +969,37 @@ jQuery(document).ready( function($) {
 
 			});
 
+			// if we've hit delete with the "cursor" before the video
+			if ( item.hasClass( 'wpview-selection-before' ) && is_after === false ) {
+
+				// if there's a missing para, the oEmbed has bumped up at least one para.
+				if ( missing.length > 0 ) {
+
+					// replace with previous item
+					item = $('.fee-content-body').find( '[data-incom="P' + ( number - 2 ) + '"]' );
+					identifier = item.attr( 'data-incom' );
+					number = parseInt( identifier.replace( 'P', '' ) );
+
+				}
+
+			}
+
 			// get subsequent nodes
-			subsequent = item.nextAll( 'p' );
+			subsequent = me.get_subsequent( number );
 
 			// are there any?
 			if ( subsequent.length > 0 ) {
 
 				// reparse all p tags greater than this
-				subsequent.each( function( i, el ) {
+				$.each( subsequent, function( i, element ) {
 
-					var element, current_identifier, becomes, tracker_data;
+					var current_identifier, becomes, tracker_data;
 
-					element = $( el );
 					current_identifier = element.attr( 'data-incom' );
 
 					// construct new identifier
 					number++;
-					becomes = tag + ( number );
+					becomes = 'P' + ( number );
 
 					// if this is the same, there's no need to apply
 					if ( current_identifier == becomes ) {
@@ -912,7 +1037,7 @@ jQuery(document).ready( function($) {
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_PRINTING_CHAR' );
 
-			var node, item, tag, identifier, number, subsequent,
+			var node, item, identifier, number, subsequent,
 				current_items = [], missing = [];
 
 			// get current identifiers on keydown
@@ -944,7 +1069,6 @@ jQuery(document).ready( function($) {
 			// get current node and tease out data
 			node = me.instance.selection.getNode();
 			item = $( node );
-			tag = item.prop( 'tagName' ).substr( 0, 5 );
 			identifier = item.attr( 'data-incom' );
 
 			// bail if we don't have one
@@ -954,7 +1078,7 @@ jQuery(document).ready( function($) {
 			}
 
 			// strip tag from identifier to get number
-			number = parseInt( identifier.replace( tag, '' ) );
+			number = parseInt( identifier.replace( 'P', '' ) );
 
 			// get subsequent
 			subsequent = me.get_subsequent( number );
@@ -988,7 +1112,7 @@ jQuery(document).ready( function($) {
 
 					// construct and apply new identifier
 					number++;
-					becomes = tag + ( number );
+					becomes = 'P' + ( number );
 					element.attr( 'data-incom', becomes );
 
 					// get data and update
@@ -1008,7 +1132,7 @@ jQuery(document).ready( function($) {
 
 					var n, tracker_data;
 
-					n = parseInt( value.replace( tag, '' ) );
+					n = parseInt( value.replace( 'P', '' ) );
 					if ( n > number ) {
 
 						// remove from tracker
@@ -1069,7 +1193,7 @@ jQuery(document).ready( function($) {
 			// add Inline Comments data attributes
 			var elements = me.filter_elements( $('.fee-content-body p') );
 			$.each( elements, function( i, element ) {
-				element.attr( 'data-incom', 'P' + i )
+				element.attr( 'data-incom', 'P' + i );
 			});
 
 			// clear the undo queue so we can't undo beyond here
@@ -1114,7 +1238,7 @@ jQuery(document).ready( function($) {
 			});
 
 			return elements;
-		}
+		};
 
 		/**
 		 * Given an array of paragraph tags, filter out those which are used
