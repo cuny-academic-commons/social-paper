@@ -336,8 +336,23 @@ jQuery(document).ready( function($) {
 				//console.log('undo redo event type', event.type);
 			});
 
+			// handle node change (supports oEmbed)
 			me.instance.on( 'NodeChange', function( event ) {
 				me.handle_NODE_CHANGE( event );
+			});
+
+			// filter content retrieval
+			me.instance.on( 'GetContent', function( event ) {
+
+				// strip Inline Comments data attribute
+				items = $('<div>').html( event.content );
+				items.find( '[data-incom]' ).each( function( i, element ) {
+					element.removeAttribute( 'data-incom' );
+				});
+
+				// overwrite
+				event.content = items.html();
+
 			});
 
 		};
