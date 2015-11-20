@@ -345,7 +345,7 @@ jQuery(document).ready( function($) {
 			me.instance.on( 'GetContent', function( event ) {
 
 				// strip Inline Comments data attribute
-				items = $('<div>').html( event.content );
+				var items = $('<div>').html( event.content );
 				items.find( '[data-incom]' ).each( function( i, element ) {
 					element.removeAttribute( 'data-incom' );
 				});
@@ -427,6 +427,8 @@ jQuery(document).ready( function($) {
 			// and 'data-incom' attributes remaining in the paste content. This
 			// messes up the logic for finding the last identifiable item below.
 
+			var items, content;
+
 			// remove class and data-incom attributes from any content
 			items = $('<div>').html( event.node.innerHTML );
 			items.find( '[data-incom]' ).each( function( i, element ) {
@@ -435,7 +437,7 @@ jQuery(document).ready( function($) {
 			});
 
 			// get content stripped of new lines and unnecessary whitespace
-			var content = items.html().replace( /(\r\n|\n|\r)/gm, ' ' ).replace( /\s+/g, ' ' );
+			content = items.html().replace( /(\r\n|\n|\r)/gm, ' ' ).replace( /\s+/g, ' ' );
 
 			// strip ending <p>&nbsp;</p>
 			if ( content.length > 13 ) {
