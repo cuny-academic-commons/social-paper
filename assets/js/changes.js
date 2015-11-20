@@ -920,8 +920,8 @@ jQuery(document).ready( function($) {
 				me.keydown_items = [];
 				item = $( me.instance.selection.getNode() );
 				if ( item.hasClass( 'fee-content-body' ) ) {
-					item.children( 'p' ).each(function ( i, el ) {
-						me.keydown_items.push( $(el).attr( 'data-incom' ) );
+					$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
+						me.keydown_items.push( $(element).attr( 'data-incom' ) );
 					});
 				}
 				return;
@@ -930,7 +930,6 @@ jQuery(document).ready( function($) {
 			// bail if there was never a selection
 			if (
 				me.instance.selection.isCollapsed() &&
-				keystate == 'keyup' &&
 				me.keydown_items.length === 0
 			) {
 				me.keydown_items = [];
@@ -950,6 +949,7 @@ jQuery(document).ready( function($) {
 
 			// bail if we don't have one
 			if ( 'undefined' === typeof identifier ) {
+				me.keydown_items = [];
 				return;
 			}
 
@@ -957,7 +957,7 @@ jQuery(document).ready( function($) {
 			number = parseInt( identifier.replace( tag, '' ) );
 
 			// get subsequent
-			subsequent = item.nextAll( 'p' );
+			subsequent = me.get_subsequent( number );
 
 			// are there any?
 			if ( subsequent.length > 0 ) {
@@ -980,11 +980,10 @@ jQuery(document).ready( function($) {
 				});
 
 				// reparse all p tags greater than this
-				subsequent.each( function( i, el ) {
+				$.each( subsequent, function( i, element ) {
 
-					var element, current_identifier, becomes, tracker_data;
+					var current_identifier, becomes, tracker_data;
 
-					element = $( el );
 					current_identifier = element.attr( 'data-incom' );
 
 					// construct and apply new identifier
