@@ -523,17 +523,23 @@ function cacsp_follow_add_paper_directory_tab() {
 		return;
 	}
 
-	$count = bp_follow_get_the_following_count( array(
-		'user_id'     => bp_loggedin_user_id(),
-		'follow_type' => 'cacsp_paper',
+	// Get our paper IDs
+	$activity_ids = bp_follow_get_following( array(
+		'user_id' => bp_loggedin_user_id(),
+		'follow_type' => 'cacsp_paper'
 	) );
 
-	if ( empty( $count ) ) {
+	$paper_ids = array();
+	if ( ! empty( $activity_ids ) ) {
+		$paper_ids = cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids, array( 'omit_loggedin_user' => true ) );
+	}
+
+	if ( empty( $paper_ids ) ) {
 		return;
 	}
 ?>
 
-	<li id="papers-follow"><a href="<?php echo bp_loggedin_user_domain() . 'papers/follow/'; ?>"><?php printf( __( 'Papers I Follow <span>%s</span>', 'social-paper' ), $count ); ?></a></li>
+	<li id="papers-follow"><a href="<?php echo bp_loggedin_user_domain() . 'papers/follow/'; ?>"><?php printf( __( 'Papers I Follow <span>%s</span>', 'social-paper' ), count( $paper_ids ) ); ?></a></li>
 
 <?php
 }
@@ -559,9 +565,12 @@ function cacsp_follow_paper_directory_ajax_query_args( $retval, $scope ) {
 		'follow_type' => 'cacsp_paper'
 	) );
 
+	$paper_ids = array();
 	if ( ! empty( $activity_ids ) ) {
-		$paper_ids = cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids );
-	} else {
+		$paper_ids = cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids, array( 'omit_loggedin_user' => true ) );
+	}
+
+	if ( empty( $paper_ids ) ) {
 		$paper_ids = array( 0 );
 	}
 
@@ -939,9 +948,10 @@ function cacsp_follow_clear_cache_on_activity_delete( $activities ) {
  * Grabs the post IDs from 'new_cacsp_paper' activity items.
  *
  * @param  array $activity_ids Activity IDs to grab
+ * @param  array $args         Misc query args.
  * @return array
  */
-function cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids = array() ) {
+function cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids = array(), $args = array() ) {
 	$post_ids = array();
 
 	$activity_ids = (array) $activity_ids;
@@ -953,6 +963,11 @@ function cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids = array() )
 	// Fetch cached activity items to grab the saved post ID.
 	foreach ( $cached_ids as $cid ) {
 		$a = wp_cache_get( $cid, 'bp_activity' );
+
+		// Omit logged-in user
+		if ( ! empty( $args['omit_loggedin_user'] ) && $a->user_id == bp_loggedin_user_id() ) {
+			continue;
+		}
 
 		if ( 'new_cacsp_paper' === $a->type ) {
 			$post_ids[] = $a->secondary_item_id;
@@ -970,6 +985,11 @@ function cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids = array() )
 		$queried_adata = $wpdb->get_results( "SELECT * FROM {$bp->activity->table_name} WHERE id IN ({$uncached_ids_sql})");
 
 		foreach ( (array) $queried_adata as $adata ) {
+			// Omit logged-in user
+			if ( ! empty( $args['omit_loggedin_user'] ) && $adata->user_id == bp_loggedin_user_id() ) {
+				continue;
+			}
+
 			// Grab the post ID
 			if ( 'new_cacsp_paper' === $adata->type ) {
 				$post_ids[] = $adata->secondary_item_id;
