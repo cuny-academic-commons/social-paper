@@ -331,9 +331,15 @@ function cacsp_total_papers_for_user( $user_id = 0, $include_drafts = false ) {
 			'update_post_term_cache' => false
 		);
 
-		// Tag filter has already run; just return the queried count! :)
-		if ( ! empty( $_GET['cacsp_paper_tag'] ) && did_action( 'get_header' ) && cacsp_is_archive() ) {
-			return $GLOBALS['wp_query']->found_posts;
+		// Tag filter
+		if ( ! empty( $_GET['cacsp_paper_tag'] ) ) {
+			$args['tax_query'] = array(
+				array(
+					'taxonomy' => 'cacsp_paper_tag',
+					'field'    => 'slug',
+					'terms'    => sanitize_title( $_GET['cacsp_paper_tag'] ),
+				),
+			);
 		}
 
 		if ( (int) $user_id === bp_loggedin_user_id() ) {
