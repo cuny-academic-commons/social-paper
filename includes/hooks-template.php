@@ -305,9 +305,6 @@ function _cacsp_set_markers( $q ) {
 	if ( $q->is_archive && 'cacsp_paper' === $post_type ) {
 		Social_Paper::$is_archive = true;
 
-		// always reset scope to all
-		@setcookie( 'bp-papers-scope', 'all', 0, '/' );
-
 		// Sort by last modified
 		$q->set( 'orderby', 'modified' );
 

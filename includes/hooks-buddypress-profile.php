@@ -331,6 +331,11 @@ function cacsp_total_papers_for_user( $user_id = 0, $include_drafts = false ) {
 			'update_post_term_cache' => false
 		);
 
+		// Tag filter has already run; just return the queried count! :)
+		if ( ! empty( $_GET['cacsp_paper_tag'] ) && did_action( 'get_header' ) && cacsp_is_archive() ) {
+			return $GLOBALS['wp_query']->found_posts;
+		}
+
 		if ( (int) $user_id === bp_loggedin_user_id() ) {
 			$args['post_status'] = array( 'publish', 'private' );
 		}
@@ -375,6 +380,26 @@ function cacsp_get_total_paper_count_for_user( $user_id = 0, $include_drafts = f
 }
 
 /**
+ * Set BuddyPress-related cookies on the Papers Directory page.
+ */
+function cacsp_bp_set_directory_cookies() {
+	if ( false === cacsp_is_archive() ) {
+		return;
+	}
+
+	// always reset scope to all
+	@setcookie( 'bp-papers-scope', 'all', 0, '/' );
+
+	// set tag in cookie for AJAX purposes
+	if ( ! empty( $_GET['cacsp_paper_tag'] ) ) {
+		@setcookie( 'bp-papers-tag', sanitize_title( $_GET['cacsp_paper_tag'] ), 0, '/' );
+	} else {
+		@setcookie( 'bp-papers-tag', '', time() - 3600, '/' );
+	}
+}
+add_action( 'bp_actions', 'cacsp_bp_set_directory_cookies' );
+
+/**
  * AJAX callback on the paper directory page to dynamically load papers.
  */
 function cacsp_ajax_directory_template_callback() {
@@ -398,6 +423,19 @@ function cacsp_ajax_directory_template_callback() {
 
 	if ( ! empty( $_POST['search_terms'] ) ) {
 		$args['s'] = $_POST['search_terms'];
+	}
+
+	// Handle tags; for AJAX, we store the tag slug in the 'bp-papers-tag' cookie
+	$cookie = urldecode( $_POST['cookie'] );
+	wp_parse_str( $cookie, $cookie );
+	if ( ! empty( $cookie['bp-papers-tag'] ) ) {
+		$args['tax_query'] = array(
+			array(
+				'taxonomy' => 'cacsp_paper_tag',
+				'field'    => 'slug',
+				'terms'    => sanitize_title( $cookie['bp-papers-tag'] ),
+			),
+		);
 	}
 
 	switch ( $scope ) {

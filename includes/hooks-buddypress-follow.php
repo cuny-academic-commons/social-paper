@@ -1000,6 +1000,20 @@ function cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids = array(), 
 		}
 	}
 
+	// Tag filter; requires another query unfortunately...
+	if ( ! empty( $_GET['cacsp_paper_tag'] ) ) {
+		$post_ids = new WP_Query( array(
+			'fields' => 'ids',
+			'tax_query' => array(
+				array(
+					'taxonomy' => 'cacsp_paper_tag',
+					'field'    => 'slug',
+					'terms'    => sanitize_title( $_GET['cacsp_paper_tag'] ),
+				),
+			)
+		) );
+	}
+
 	// Sanity check!
 	return array_unique( $post_ids );
 }
