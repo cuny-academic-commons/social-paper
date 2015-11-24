@@ -197,6 +197,8 @@ add_filter( 'preprocess_comment', 'cacsp_ic_change_comment_type', 999 );
  * Since we've altered IC to change the comment type, we now need to tell IC
  * to fetch comments with this new comment type.
  *
+ * Also tell Inline Comments to fetch all comments for a paper, regardless of pagination settings.
+ *
  * @param  array $retval Current comment list args.
  * @return array
  */
@@ -206,6 +208,8 @@ function cacsp_ic_alter_comments_list_args( $retval ) {
 	}
 
 	$retval['type'] = 'incom';
+	$retval['page'] = 1;
+	$retval['per_page'] = -1;
 	return $retval;
 }
 add_filter( 'incom_comments_list_args', 'cacsp_ic_alter_comments_list_args' );
