@@ -451,7 +451,7 @@ function cacsp_ajax_directory_template_callback() {
 			break;
 
 		default :
-			$args = apply_filters( 'bp_papers_ajax_query_args', $args, $scope );
+			$args = apply_filters( 'bp_papers_ajax_query_args', $args, $scope, $cookie );
 			break;
 	}
 

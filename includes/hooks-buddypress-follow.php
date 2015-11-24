@@ -356,7 +356,7 @@ add_filter( 'bp_activity_set_papers_scope_args', 'cacsp_follow_filter_activity_s
 add_filter( 'bp_activity_user_can_delete', 'cacsp_activity_user_cannot_delete_new_paper_activity_items', 10, 2 );
 
 add_action( 'bp_papers_directory_tabs',  'cacsp_follow_add_paper_directory_tab' );
-add_filter( 'bp_papers_ajax_query_args', 'cacsp_follow_paper_directory_ajax_query_args', 10, 2 );
+add_filter( 'bp_papers_ajax_query_args', 'cacsp_follow_paper_directory_ajax_query_args', 10, 3 );
 add_filter( 'cacsp_directory_action_metadata', 'cacsp_follow_add_follower_count_to_action_metadata', 20 );
 
 /**
@@ -549,9 +549,10 @@ function cacsp_follow_add_paper_directory_tab() {
  *
  * @param  array  $retval Current WP_Query args.
  * @param  string $scope  Current scope.
+ * @param  array  $cookie Cookie parameters.
  * @return array
  */
-function cacsp_follow_paper_directory_ajax_query_args( $retval, $scope ) {
+function cacsp_follow_paper_directory_ajax_query_args( $retval, $scope, $cookie ) {
 	if ( 'follow' !== $scope ) {
 		return $retval;
 	}
@@ -567,7 +568,14 @@ function cacsp_follow_paper_directory_ajax_query_args( $retval, $scope ) {
 
 	$paper_ids = array();
 	if ( ! empty( $activity_ids ) ) {
-		$paper_ids = cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids, array( 'omit_loggedin_user' => true ) );
+		$args = array(
+			'omit_loggedin_user' => true
+		);
+
+		if ( ! empty( $cookie['bp-papers-tag'] ) ) {
+			$args['tag'] = sanitize_title( $cookie['bp-papers-tag'] );
+		}
+		$paper_ids = cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids, $args );
 	}
 
 	if ( empty( $paper_ids ) ) {
@@ -1001,17 +1009,25 @@ function cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids = array(), 
 	}
 
 	// Tag filter; requires another query unfortunately...
-	if ( ! empty( $_GET['cacsp_paper_tag'] ) ) {
+	if ( ! empty( $args['tag'] ) ) {
+		$tag = $args['tag'];
+	} elseif ( ! empty( $_GET['cacsp_paper_tag'] ) ) {
+		$tag = sanitize_title( $_GET['cacsp_paper_tag'] );
+	}
+
+	if ( ! empty( $tag ) ) {
 		$post_ids = new WP_Query( array(
 			'fields' => 'ids',
 			'tax_query' => array(
 				array(
 					'taxonomy' => 'cacsp_paper_tag',
 					'field'    => 'slug',
-					'terms'    => sanitize_title( $_GET['cacsp_paper_tag'] ),
+					'terms'    => $tag,
 				),
 			)
 		) );
+
+		$post_ids = $post_ids->posts;
 	}
 
 	// Sanity check!
