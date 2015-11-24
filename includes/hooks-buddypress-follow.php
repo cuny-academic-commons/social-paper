@@ -1018,6 +1018,7 @@ function cacsp_follow_get_paper_ids_from_activity_ids( $activity_ids = array(), 
 	if ( ! empty( $tag ) ) {
 		$post_ids = new WP_Query( array(
 			'fields' => 'ids',
+			'post__in' => $post_ids,
 			'tax_query' => array(
 				array(
 					'taxonomy' => 'cacsp_paper_tag',
