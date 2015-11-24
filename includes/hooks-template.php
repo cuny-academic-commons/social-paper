@@ -34,8 +34,47 @@ function cacsp_after_setup_theme() {
 		true // crop
 	);
 
+	// Check for 'title-tag' support.
+	$title = get_theme_support( 'title-tag' );
+
+	// If 'title-tag' support doesn't exist, only add it on single paper pages.
+	if ( false === $title ) {
+		// Since 'after_setup_theme' runs early, do checks on the current URL to
+		// determine if we're on a single paper page.
+		$curr_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . untrailingslashit( $_SERVER['REQUEST_URI'] );
+		$base = substr( $curr_url, 0, strrpos( $curr_url, '/' ) );
+
+		if ( $base === home_url( '/papers' ) || ( ! empty( $_GET['post_type'] ) && 'cacsp_paper' === $_GET['post_type'] ) ) {
+			add_theme_support( 'title-tag' );
+		}
+	}
 }
 add_action( 'after_setup_theme', 'cacsp_after_setup_theme', 11 );
+
+/**
+ * Add title for paper drafts.
+ *
+ * @param  array $retval Current title parts.
+ * @return array
+ */
+function cacsp_filter_document_title_parts( $retval ) {
+	if ( empty( $_GET['post_type'] ) || 'cacsp_paper' !== $_GET['post_type'] ) {
+		return $retval;
+	}
+
+	// WP title
+	if ( current_filter === 'wp_title_parts' ) {
+		$retval[0] = __( 'Social Paper Draft', 'social-paper' ) . ' | ';
+
+	// Document title
+	} else {
+		$retval['title'] = __( 'Social Paper Draft', 'social-paper' );
+	}
+
+	return $retval;
+}
+add_filter( 'wp_title_parts',       'cacsp_filter_document_title_parts' );
+add_filter( 'document_title_parts', 'cacsp_filter_document_title_parts' );
 
 /**
  * Utility to test for feature image, because has_post_thumbnail() fails sometimes

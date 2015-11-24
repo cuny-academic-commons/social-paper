@@ -12,7 +12,7 @@
 	<meta name="viewport" content="width=device-width">
 	<link rel="profile" href="http://gmpg.org/xfn/11">
 	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
-	<?php if ( ! current_theme_supports( 'title-tag' ) ) : ?><title><?php wp_title( '|', true, 'right' ); ?></title><?php endif; ?>
+	<?php if ( ! function_exists( '_wp_render_title_tag' ) ) : ?><title><?php wp_title( '|', true, 'right' ); ?></title><?php endif; ?>
 	<?php wp_head(); ?>
 </head>
 
