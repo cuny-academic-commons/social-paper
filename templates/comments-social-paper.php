@@ -20,12 +20,11 @@ if ( post_password_required() ) {
 ?>
 
 <div id="comments" class="comments-area">
+	<h2 class="comments-title">
+		<?php _e( 'Responses', 'social-paper' ); ?>
+	</h2>
 
 	<?php if ( have_comments() ) : ?>
-		<h2 class="comments-title">
-			<?php _e( 'Responses', 'social-paper' ); ?>
-		</h2>
-
 		<ul class="comment-list">
 			<?php
 				wp_list_comments( array(
