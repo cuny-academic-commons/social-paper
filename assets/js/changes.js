@@ -198,11 +198,17 @@ jQuery(document).ready( function($) {
 		// TinyMCE content editor instance
 		me.instance = {};
 
+		// store initial editor content
+		me.cache = '';
+
 		// items present when there's a uncollapsed selection on keydown
 		me.keydown_items = [];
 
 		// paste flag
 		me.paste_flag = false;
+
+		// "para after wp-view has focus" flag
+		me.wp_view_after = false;
 
 		// non printing keycodes
 		me.non_printing = {
@@ -330,6 +336,51 @@ jQuery(document).ready( function($) {
 				//console.log('undo redo event type', event.type);
 			});
 
+			// handle node change (supports oEmbed)
+			me.instance.on( 'NodeChange', function( event ) {
+				me.handle_NODE_CHANGE( event );
+			});
+
+			// filter content retrieval
+			me.instance.on( 'GetContent', function( event ) {
+
+				// strip Inline Comments data attribute
+				var items = $('<div>').html( event.content );
+				items.find( '[data-incom]' ).each( function( i, element ) {
+					element.removeAttribute( 'data-incom' );
+				});
+
+				// overwrite
+				event.content = items.html();
+
+			});
+
+		};
+
+		/**
+		 * Handle 'NodeChange' event
+		 *
+		 * @param object event The TinyMCE event object
+		 */
+		this.handle_NODE_CHANGE = function( event ) {
+
+			//console.log( '------------------------------------------------------------' );
+			//console.log( 'handle_NODE_CHANGE', event );
+
+			var element = event.element,
+				className = element.className;
+
+			// bail if not change of focussed element
+			if ( 'undefined' === typeof event.selectionChange ) {
+				return;
+			}
+
+			if ( className === 'wpview-selection-after' ) {
+				me.wp_view_after = true;
+			} else {
+				me.wp_view_after = false;
+			}
+
 		};
 
 		/**
@@ -376,6 +427,8 @@ jQuery(document).ready( function($) {
 			// and 'data-incom' attributes remaining in the paste content. This
 			// messes up the logic for finding the last identifiable item below.
 
+			var items, content;
+
 			// remove class and data-incom attributes from any content
 			items = $('<div>').html( event.node.innerHTML );
 			items.find( '[data-incom]' ).each( function( i, element ) {
@@ -384,7 +437,7 @@ jQuery(document).ready( function($) {
 			});
 
 			// get content stripped of new lines and unnecessary whitespace
-			var content = items.html().replace( /(\r\n|\n|\r)/gm, ' ' ).replace( /\s+/g, ' ' );
+			content = items.html().replace( /(\r\n|\n|\r)/gm, ' ' ).replace( /\s+/g, ' ' );
 
 			// strip ending <p>&nbsp;</p>
 			if ( content.length > 13 ) {
@@ -415,7 +468,7 @@ jQuery(document).ready( function($) {
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_PASTE_COMPLETE', event );
 
-			var tag, identifier, number, subsequent, wp_view,
+			var tag, identifier, number, subsequent = [], wp_view,
 				current_items = [], paras = [], filtered = [],
 				previous_element = false, stop_now = false;
 
@@ -428,7 +481,7 @@ jQuery(document).ready( function($) {
 			paras = $('.fee-content-body p');
 
 			// try to find the para prior to the first unidentified para
-			paras.each( function( i, element ) {
+			$.each( paras, function( i, element ) {
 
 				// get identifier
 				var id = $(element).attr( 'data-incom' );
@@ -457,24 +510,30 @@ jQuery(document).ready( function($) {
 
 				// set some defaults - but note that this will only work with
 				// pargraphs set as the Inline Comments selector
-				tag = 'P';
 				identifier = 'P0';
 
 				// because it is incremented *before* applying new identifier and
 				// we want the sequence to start with 'P0'
 				number = -1;
 
-				// set subsequent to filtered paras
+				// filter paras to get subsequent paras
 				subsequent = me.filter_elements( paras );
 
 			} else {
 
-				tag = previous_element.prop( 'tagName' ).substr( 0, 5 );
 				identifier = previous_element.attr( 'data-incom' );
-				number = parseInt( identifier.replace( tag, '' ) );
+				number = parseInt( identifier.replace( 'P', '' ) );
 
-				// get subsequent
-				subsequent = me.filter_elements( previous_element.nextAll( 'p' ) );
+				// get subsequent paras
+				var start_now = false;
+				$.each( paras, function( i, el ) {
+					if ( start_now === true ) {
+						subsequent.push( $(el) );
+					}
+					if ( previous_element.attr( 'data-incom' ) === $(el).attr( 'data-incom' ) ) {
+						start_now = true;
+					}
+				});
 
 			}
 
@@ -504,16 +563,15 @@ jQuery(document).ready( function($) {
 			if ( subsequent.length > 0 ) {
 
 				// reparse all p tags greater than this
-				$.each( subsequent, function( i, el ) {
+				$.each( subsequent, function( i, element ) {
 
-					var element, current_identifier, becomes, tracker_data;
+					var current_identifier, becomes, tracker_data;
 
-					element = $( el );
 					current_identifier = element.attr( 'data-incom' );
 
 					// construct and apply new identifier
 					number++;
-					becomes = tag + number;
+					becomes = 'P' + number;
 					element.attr( 'data-incom', becomes );
 
 					// if we have one
@@ -676,9 +734,10 @@ jQuery(document).ready( function($) {
 
 			var node, item, tag, identifier, number, subsequent,
 				current_items = [], missing = [],
-				original_num;
+				prev_id, original_num,
+				new_item, new_number = '';
 
-			// get keyup identifiers
+			// get current identifiers
 			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
 				current_items.push( $(element).attr( 'data-incom' ) );
 			});
@@ -686,7 +745,18 @@ jQuery(document).ready( function($) {
 			// get current node and tease out data
 			node = me.instance.selection.getNode();
 			item = $( node );
-			tag = item.prop( 'tagName' ).substr( 0, 5 );
+
+			// is this a wp_view_after return?
+			if ( me.wp_view_after === true ) {
+
+				// get previous wp-view object's identifier
+				prev_id = item.prev().find( '[data-incom]' ).attr( 'data-incom' );
+
+				// apply to current item
+				item.attr( 'data-incom', prev_id );
+
+			}
+
 			identifier = item.attr( 'data-incom' );
 
 			// bail if we don't have one
@@ -695,7 +765,24 @@ jQuery(document).ready( function($) {
 			}
 
 			// strip tag from identifier to get number
-			number = parseInt( identifier.replace( tag, '' ) );
+			number = parseInt( identifier.replace( 'P', '' ) );
+
+			// if we've hit return on the "cursor" before the video
+			if ( item.hasClass( 'wpview-selection-before' ) ) {
+
+				// store new item
+				new_item = item.parent().prev( 'p' );
+				new_number = number;
+
+				// replace with previous item
+				item = $('.fee-content-body').find( '[data-incom="P' + ( number - 1 ) + '"]' );
+				identifier = item.attr( 'data-incom' );
+				number = parseInt( identifier.replace( 'P', '' ) );
+
+			}
+
+			// get subsequent
+			subsequent = me.get_subsequent( number );
 
 			// find any missing items
 			missing = SocialPaperChange.tracker.get_missing( current_items );
@@ -733,23 +820,19 @@ jQuery(document).ready( function($) {
 
 			}
 
-			// get subsequent
-			subsequent = item.nextAll( 'p' );
-
 			// are there any?
 			if ( subsequent.length > 0 ) {
 
 				// reparse all p tags greater than this
-				subsequent.each( function( i, el ) {
+				$.each( subsequent, function( i, element ) {
 
-					var element, current_identifier, becomes, tracker_data;
+					var current_identifier, becomes, tracker_data;
 
-					element = $( el );
 					current_identifier = element.attr( 'data-incom' );
 
 					// construct and apply new identifier
 					number++;
-					becomes = tag + number;
+					becomes = 'P' + number;
 					element.attr( 'data-incom', becomes );
 
 					// get data and update
@@ -767,18 +850,28 @@ jQuery(document).ready( function($) {
 			// if collapsed all along
 			if ( missing.length === 0 ) {
 
-				// recalculate
-				original_num = parseInt( identifier.replace( tag, '' ) );
+				// if we've hit return on the "cursor" before the video, then
+				// new_number will be an integer
+				if ( new_number !== '' ) {
 
-				// bump this item
-				item.attr( 'data-incom', tag + ( original_num + 1 ) );
+					// substitute data for new item
+					original_num = new_number - 1;
+					new_item.attr( 'data-incom', 'P' + new_number );
+
+				} else {
+
+					// recalculate and bump this item
+					original_num = parseInt( identifier.replace( 'P', '' ) );
+					item.attr( 'data-incom', 'P' + ( original_num + 1 ) );
+
+				}
 
 				// add to array
 				SocialPaperChange.tracker.add( {
 					is_new: true,
 					is_modified: false,
-					original: tag + original_num,
-					modified: tag + ( original_num + 1 ),
+					original: 'P' + original_num,
+					modified: 'P' + ( original_num + 1 ),
 				} );
 
 			}
@@ -810,8 +903,10 @@ jQuery(document).ready( function($) {
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_DELETE' );
 
-			var node, item, tag, identifier, number, subsequent,
-				current_items = [], missing = [];
+			var node, item, identifier, number, subsequent,
+				current_items = [], missing = [],
+				first, first_num,
+				is_after = false;
 
 			// get current identifiers
 			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
@@ -821,16 +916,57 @@ jQuery(document).ready( function($) {
 			// get current node and tease out data
 			node = me.instance.selection.getNode();
 			item = $( node );
-			tag = item.prop( 'tagName' ).substr( 0, 5 );
-			identifier = item.attr( 'data-incom' );
 
-			// bail if we don't have one
-			if ( 'undefined' === typeof identifier ) {
-				return;
+			// if the node is the TinyMCE wrapper div
+			if ( item.hasClass( 'fee-content-body' ) ) {
+
+				// find any missing items
+				missing = SocialPaperChange.tracker.get_missing( current_items );
+
+				// if there are some missing
+				if ( missing.length > 0 ) {
+
+					// get the first item in the missing array
+					first = missing[0];
+					first_num = first.replace( 'P', '' );
+
+					// replace container with item prior to first missing one
+					item = $('.fee-content-body').find( '[data-incom="P' + ( first_num - 1 ) + '"]' );
+					identifier = item.attr( 'data-incom' );
+					number = parseInt( identifier.replace( 'P', '' ) );
+
+				} else {
+
+					// no change - bail
+					return;
+
+				}
+
+
+			} else {
+
+				// if we've hit deleted a para directly after an oEmbed
+				if ( item.hasClass( 'wpview-selection-after' ) ) {
+
+					// substitute item with wp-view object's data-incom item
+					item = item.prevAll( '.wpview-selection-before' );
+
+					// set flag
+					is_after = true;
+
+				}
+
+				identifier = item.attr( 'data-incom' );
+
+				// bail if we don't have one
+				if ( 'undefined' === typeof identifier ) {
+					return;
+				}
+
+				// strip tag from identifier to get number
+				number = parseInt( identifier.replace( 'P', '' ) );
+
 			}
-
-			// strip tag from identifier to get number
-			number = parseInt( identifier.replace( tag, '' ) );
 
 			// find any missing items
 			missing = SocialPaperChange.tracker.get_missing( current_items );
@@ -855,23 +991,37 @@ jQuery(document).ready( function($) {
 
 			});
 
+			// if we've hit delete with the "cursor" before the video
+			if ( item.hasClass( 'wpview-selection-before' ) && is_after === false ) {
+
+				// if there's a missing para, the oEmbed has bumped up at least one para.
+				if ( missing.length > 0 ) {
+
+					// replace with previous item
+					item = $('.fee-content-body').find( '[data-incom="P' + ( number - 2 ) + '"]' );
+					identifier = item.attr( 'data-incom' );
+					number = parseInt( identifier.replace( 'P', '' ) );
+
+				}
+
+			}
+
 			// get subsequent nodes
-			subsequent = item.nextAll( 'p' );
+			subsequent = me.get_subsequent( number );
 
 			// are there any?
 			if ( subsequent.length > 0 ) {
 
 				// reparse all p tags greater than this
-				subsequent.each( function( i, el ) {
+				$.each( subsequent, function( i, element ) {
 
-					var element, current_identifier, becomes, tracker_data;
+					var current_identifier, becomes, tracker_data;
 
-					element = $( el );
 					current_identifier = element.attr( 'data-incom' );
 
 					// construct new identifier
 					number++;
-					becomes = tag + ( number );
+					becomes = 'P' + ( number );
 
 					// if this is the same, there's no need to apply
 					if ( current_identifier == becomes ) {
@@ -909,7 +1059,7 @@ jQuery(document).ready( function($) {
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_PRINTING_CHAR' );
 
-			var node, item, tag, identifier, number, subsequent,
+			var node, item, identifier, number, subsequent,
 				current_items = [], missing = [];
 
 			// get current identifiers on keydown
@@ -917,8 +1067,8 @@ jQuery(document).ready( function($) {
 				me.keydown_items = [];
 				item = $( me.instance.selection.getNode() );
 				if ( item.hasClass( 'fee-content-body' ) ) {
-					item.children( 'p' ).each(function ( i, el ) {
-						me.keydown_items.push( $(el).attr( 'data-incom' ) );
+					$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
+						me.keydown_items.push( $(element).attr( 'data-incom' ) );
 					});
 				}
 				return;
@@ -927,7 +1077,6 @@ jQuery(document).ready( function($) {
 			// bail if there was never a selection
 			if (
 				me.instance.selection.isCollapsed() &&
-				keystate == 'keyup' &&
 				me.keydown_items.length === 0
 			) {
 				me.keydown_items = [];
@@ -942,19 +1091,19 @@ jQuery(document).ready( function($) {
 			// get current node and tease out data
 			node = me.instance.selection.getNode();
 			item = $( node );
-			tag = item.prop( 'tagName' ).substr( 0, 5 );
 			identifier = item.attr( 'data-incom' );
 
 			// bail if we don't have one
 			if ( 'undefined' === typeof identifier ) {
+				me.keydown_items = [];
 				return;
 			}
 
 			// strip tag from identifier to get number
-			number = parseInt( identifier.replace( tag, '' ) );
+			number = parseInt( identifier.replace( 'P', '' ) );
 
 			// get subsequent
-			subsequent = item.nextAll( 'p' );
+			subsequent = me.get_subsequent( number );
 
 			// are there any?
 			if ( subsequent.length > 0 ) {
@@ -977,16 +1126,15 @@ jQuery(document).ready( function($) {
 				});
 
 				// reparse all p tags greater than this
-				subsequent.each( function( i, el ) {
+				$.each( subsequent, function( i, element ) {
 
-					var element, current_identifier, becomes, tracker_data;
+					var current_identifier, becomes, tracker_data;
 
-					element = $( el );
 					current_identifier = element.attr( 'data-incom' );
 
 					// construct and apply new identifier
 					number++;
-					becomes = tag + ( number );
+					becomes = 'P' + ( number );
 					element.attr( 'data-incom', becomes );
 
 					// get data and update
@@ -1006,7 +1154,7 @@ jQuery(document).ready( function($) {
 
 					var n, tracker_data;
 
-					n = parseInt( value.replace( tag, '' ) );
+					n = parseInt( value.replace( 'P', '' ) );
 					if ( n > number ) {
 
 						// remove from tracker
@@ -1025,18 +1173,50 @@ jQuery(document).ready( function($) {
 			// update comments
 			SocialPaperChange.comments.update();
 
+			// reset keydown items
+			me.keydown_items = [];
+
+		};
+
+		/**
+		 * Cache the content of the editor.
+		 *
+		 * By default, WP FEE does not maintain parity between the "Read" mode
+		 * content and the "Edit" mode content. If "Leave" or "Cancel" is clicked
+		 * in the isDirty dialog, the editor content is not reset to its unedited
+		 * state. This method stores the unedited content for retrieval.
+		 */
+		this.cache_set = function() {
+
+			// store content of editor
+			me.cache = me.instance.getContent();
+
+		};
+
+		/**
+		 * Get the cached content of the editor.
+		 */
+		this.cache_get = function() {
+			return me.cache;
 		};
 
 		/**
 		 * Add Inline Comments 'data-incom' attributes to TinyMCE content.
 		 *
-		 * This is done by copying the original content to TinyMCE and overwriting
-		 * the content of the editor. Simple, but effective!
+		 * Due to the way oEmbeds work, there is a discrepancy between the original
+		 * content and the editor content, so this needs to be handled to account
+		 * for those discrepancies.
 		 */
-		this.copy_original = function() {
+		this.add_atts = function() {
 
 			// replace content of editor with original
-			me.instance.setContent( $('.fee-content-original').html(), {format : 'html'} );
+			//me.instance.setContent( $('.fee-content-original').html(), {format : 'html'} );
+
+			// add Inline Comments data attributes
+			var elements = me.filter_elements( $('.fee-content-body p') );
+			$.each( elements, function( i, element ) {
+				element.attr( 'data-incom', 'P' + i );
+			});
 
 			// clear the undo queue so we can't undo beyond here
 			me.instance.undoManager.clear();
@@ -1057,9 +1237,41 @@ jQuery(document).ready( function($) {
 		};
 
 		/**
+		 * Given an element's number, find all subsequent paragraphs.
+		 *
+		 * This needs to be done "manually" as it were, since $.nextAll only
+		 * picks up consecutive siblings and oEmbeds break the sequence since
+		 * they are wrapped in <div>s in the editor but <p>s in the content.
+		 *
+		 * @param int number The selected element's 'data-incom' number
+		 * @param array elements The subsequent elements
+		 */
+		this.get_subsequent = function( number ) {
+
+			var elements = [], paras, current;
+
+			// get all relevant elements in the editor
+			paras = me.filter_elements( $('.fee-content-body').find( '[data-incom]' ) );
+			$.each( paras, function( i, el ) {
+				current = parseInt( el.attr( 'data-incom' ).replace( 'P', '' ) );
+				if ( current > number ) {
+					elements.push( el );
+				}
+			});
+
+			return elements;
+		};
+
+		/**
 		 * Given an array of paragraph tags, filter out those which are used
 		 * for UI-related purposes, e.g. inside a .wpview-wrap container which
 		 * is used to wrap a "Page Break"
+		 *
+		 * The exception to the rule is for YouTube embeds, where we allow one
+		 * of the internal paras (p.wpview-selection-before) through. This is
+		 * because when the oEmbed is rendered in the original content, it is
+		 * wrapped in a <p> tag, causing a mis-matched number of paragrapahs in
+		 * "read" and "edit" modes.
 		 *
 		 * @param array elements An array of elements present in the editor
 		 * @param array filtered Filtered array of elements
@@ -1070,7 +1282,7 @@ jQuery(document).ready( function($) {
 			var filtered = [];
 
 			// try to find the para prior to the first unidentified para
-			elements.each( function( i, element ) {
+			$.each( elements, function( i, element ) {
 
 				var el = $(element), wp_view;
 
@@ -1078,6 +1290,15 @@ jQuery(document).ready( function($) {
 				wp_view = el.closest( '.wpview-wrap' );
 				if ( 'undefined' === typeof wp_view || wp_view.length === 0 ) {
 					filtered.push( el );
+				} else {
+					// check the view type attribute
+					if ( 'embedURL' === wp_view.attr( 'data-wpview-type' ) ) {
+						// check if this is a p.wpview-selection-before
+						if ( el.hasClass( 'wpview-selection-before' ) ) {
+							//console.log( 'this', el );
+							filtered.push( el );
+						}
+					}
 				}
 
 			});
@@ -1282,8 +1503,11 @@ jQuery(document).ready( function($) {
 			// build original comments array
 			SocialPaperChange.comments.original_save();
 
+			// cache TinyMCE content
+			SocialPaperChange.editor.cache_set();
+
 			// set up attributes in TinyMCE content
-			SocialPaperChange.editor.copy_original();
+			SocialPaperChange.editor.add_atts();
 
 		}
 
@@ -1329,8 +1553,11 @@ jQuery(document).ready( function($) {
 		// if Inline Comments present
 		if ( window.incom ) {
 
-			// rebuild TinyMCE content (since this what's visible)
-			window.incom.rebuild();
+			// cache TinyMCE content
+			SocialPaperChange.editor.cache_set();
+
+			// set up attributes in TinyMCE content
+			SocialPaperChange.editor.add_atts();
 
 			// force not dirty state
 			SocialPaperChange.editor.isNotDirty = 1;
@@ -1394,8 +1621,8 @@ jQuery(document).ready( function($) {
 	 */
 	$('.fee-leave').find( '.fee-cancel' ).on( 'click.fee', function() {
 
-		// the editor is visible, so rebuild
-		window.incom.rebuild();
+		// rebuild attributes in TinyMCE content
+		SocialPaperChange.editor.add_atts();
 
 	} );
 
@@ -1406,6 +1633,14 @@ jQuery(document).ready( function($) {
 	 * which have been modified during the unsaved edit.
 	 */
 	$('.fee-leave').find( '.fee-exit' ).on( 'click.fee', function() {
+
+		var cached;
+
+		// get cached TinyMCE content
+		cached = SocialPaperChange.editor.cache_get();
+
+		// apply to editor
+		SocialPaperChange.editor.instance.setContent( cached );
 
 		// reset comments to original state
 		SocialPaperChange.comments.original_reset();
