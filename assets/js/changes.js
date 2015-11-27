@@ -53,6 +53,31 @@ jQuery(document).ready( function($) {
 		me.data = [];
 
 		/**
+		 * Get a copy of the tracker array
+		 *
+		 * @return array data The current array of tracker data
+		 */
+		this.get_data = function() {
+			var copied = [];
+			$.each( me.data, function( i, el ) {
+				copied.push( $.extend(true, {}, el) );
+			});
+			return copied;
+		};
+
+		/**
+		 * Overwrite tracker array with copy of passed array
+		 *
+		 * @param array new_data The array of tracker data to overwrite with
+		 */
+		this.set_data = function( new_data ) {
+			me.data = [];
+			$.each( new_data, function( i, el ) {
+				me.data.push( $.extend(true, {}, el) );
+			});
+		};
+
+		/**
 		 * Init tracker array
 		 */
 		this.init = function() {
@@ -183,6 +208,188 @@ jQuery(document).ready( function($) {
 			});
 
 			return missing;
+
+		};
+
+	};
+
+	/**
+	 * Create Undo-Redo object.
+	 */
+	SocialPaperChange.undoredo = new function() {
+
+		var me = this;
+
+		// syncs the state of me.data with undoManager levels
+		me.data_levels = [];
+
+		// syncs the state of comment data with undoManager levels
+		me.comment_levels = [];
+
+		// follows the undoManager undo/redo process
+		// starts at -1 because we only ever get undos after adding one
+		me.level_active = -1;
+
+		// init skip undo level flag
+		me.skip_undo_level = false;
+
+		/**
+		 * Initialise the levels arrays.
+		 */
+		this.init = function() {
+
+			var data, comments;
+
+			// add copy of current tracker data to array
+			data = SocialPaperChange.tracker.get_data();
+			me.data_levels.push( data );
+
+			// add comments data to array
+			comments = SocialPaperChange.comments.current_get();
+			me.comment_levels.push( comments );
+
+			// bump pointer
+			me.level_active = me.level_active + 1;
+
+		};
+
+		/**
+		 * Resets the levels array and level pointer.
+		 */
+		this.clear = function() {
+
+			// reset levels data
+			me.data_levels = [];
+			me.comment_levels = [];
+			me.level_active = -1;
+
+			// re-initialise our levels
+			me.init();
+
+		};
+
+		/**
+		 * Add an item to the levels array.
+		 *
+		 * @param object event The TinyMCE event object
+		 */
+		this.level_add = function( event ) {
+
+			// reset our levels if this is the first level
+			if ( 'undefined' === typeof event.lastLevel ) {
+				me.clear();
+			}
+
+			/*
+			// truncate arrays if there are no redo levels
+			if ( ! SocialPaperChange.editor.instance.undoManager.hasRedo() ) {
+				me.data_levels.length = me.level_active;
+				me.comment_levels.length = me.level_active;
+			}
+			*/
+
+			var data, comments;
+
+			// add copy of current tracker data to array
+			data = SocialPaperChange.tracker.get_data();
+			me.data_levels.push( data );
+
+			// add comments data to array
+			comments = SocialPaperChange.comments.current_get();
+			me.comment_levels.push( comments );
+
+			// bump pointer
+			me.level_active = me.level_active + 1;
+
+		};
+
+		/**
+		 * Overwrite the current item with current tracker data.
+		 */
+		this.level_overwrite = function() {
+
+			var data, comments;
+
+			// add copy of current tracker data to array
+			data = SocialPaperChange.tracker.get_data();
+			me.data_levels[me.level_active] = data;
+
+			// add comments data to array
+			comments = SocialPaperChange.comments.current_get();
+			me.comment_levels[me.level_active] = comments;
+
+		};
+
+		/**
+		 * Get the current item from the data levels array.
+		 */
+		this.level_get_data = function() {
+			if ( me.data_levels[me.level_active] ) {
+				return me.data_levels[me.level_active];
+			}
+			return false;
+		};
+
+		/**
+		 * Get the current item from the comment levels array.
+		 */
+		this.level_get_comments = function() {
+			if ( me.comment_levels[me.level_active] ) {
+				return me.comment_levels[me.level_active];
+			}
+			return false;
+		};
+
+		/**
+		 * Set levels state after undo/redo.
+		 *
+		 * @param string type The event type
+		 */
+		this.level_set = function( type ) {
+
+			// set pointer
+			me.levels_active_set( type );
+
+			// overwrite current tracker data
+			SocialPaperChange.tracker.set_data( me.level_get_data() );
+
+			// update comments
+			SocialPaperChange.comments.current_set( me.level_get_comments() );
+
+		};
+
+		/**
+		 * Get active level pointer.
+		 */
+		this.levels_active_get = function() {
+			return me.level_active;
+		};
+
+		/**
+		 * Move active level pointer.
+		 *
+		 * @param string type The event type
+		 */
+		this.levels_active_set = function( type ) {
+			if ( 'undo' === type ) {
+				me.level_active = me.level_active - 1;
+			} else {
+				me.level_active = me.level_active + 1;
+			}
+		};
+
+		/**
+		 * Prevent an undo level from being added.
+		 *
+		 * @param object event The TinyMCE event object
+		 */
+		this.level_prevent = function( event ) {
+
+			// prevent default
+			event.preventDefault();
+
+			// overwrite level data
+			me.level_overwrite();
 
 		};
 
@@ -330,12 +537,6 @@ jQuery(document).ready( function($) {
 				me.handle_PASTE_COMPLETE( event );
 			});
 
-			// handle undo & redo
-			me.instance.on( 'undo redo', function( event ) {
-				//console.log('undo redo event', event);
-				//console.log('undo redo event type', event.type);
-			});
-
 			// handle node change (supports oEmbed)
 			me.instance.on( 'NodeChange', function( event ) {
 				me.handle_NODE_CHANGE( event );
@@ -352,6 +553,31 @@ jQuery(document).ready( function($) {
 
 				// overwrite
 				event.content = items.html();
+
+			});
+
+			// handle undo
+			me.instance.on( 'undo', function( event ) {
+				//console.log('undo event', event);
+				SocialPaperChange.undoredo.level_set( event.type );
+			});
+
+			// handle redo
+			me.instance.on( 'redo', function( event ) {
+				//console.log('redo event', event);
+				SocialPaperChange.undoredo.level_set( event.type );
+			});
+
+			// handle add undo level
+			me.instance.on( 'AddUndo', function( event ) {
+				//console.log('undoManager AddUndo event', event);
+				SocialPaperChange.undoredo.level_add( event );
+			});
+
+			// handle clear undo levels
+			me.instance.on( 'ClearUndos', function( event ) {
+				//console.log('undoManager ClearUndos event', event);
+				SocialPaperChange.undoredo.clear();
 
 			});
 
@@ -561,6 +787,9 @@ jQuery(document).ready( function($) {
 
 			// are there any subsequent?
 			if ( subsequent.length > 0 ) {
+
+				// add hook to prevent an undo level being added
+				me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
 
 				// reparse all p tags greater than this
 				$.each( subsequent, function( i, element ) {
@@ -844,6 +1073,9 @@ jQuery(document).ready( function($) {
 			// are there any?
 			if ( subsequent.length > 0 ) {
 
+				// add hook to prevent an undo level being added
+				me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
+
 				// reparse all p tags greater than this
 				$.each( subsequent, function( i, element ) {
 
@@ -1042,6 +1274,9 @@ jQuery(document).ready( function($) {
 			// are there any?
 			if ( subsequent.length > 0 ) {
 
+				// add hook to prevent an undo level being added
+				me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
+
 				// reparse all p tags greater than this
 				$.each( subsequent, function( i, element ) {
 
@@ -1154,6 +1389,9 @@ jQuery(document).ready( function($) {
 					SocialPaperChange.comments.reassign( value, identifier );
 
 				});
+
+				// add hook to prevent an undo level being added
+				me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
 
 				// reparse all p tags greater than this
 				$.each( subsequent, function( i, element ) {
@@ -1488,6 +1726,50 @@ jQuery(document).ready( function($) {
 			}
 
 			return formatted;
+
+		};
+
+		/**
+		 * Export data for all comments.
+		 *
+		 * @return array data The array of comment data
+		 */
+		this.current_get = function() {
+
+			var data = [];
+
+			// foreach comment
+			$( 'li[data-incom-comment]' ).each( function( i, el ) {
+
+				var target, comment_id;
+
+				// get custom attribute
+				target = $(el).attr( 'data-incom-comment' );
+
+				// get comment ID
+				comment_id = $(el).prop( 'id' );
+
+				// add to array
+				data[comment_id] = target;
+
+			});
+
+			return data;
+
+		};
+
+		/**
+		 * Import data for all comments.
+		 *
+		 * @param array data The array of comment data
+		 */
+		this.current_set = function( data ) {
+
+			// set each comment's attribute
+			for( key in data ) {
+				$('li#' + key).attr( 'data-incom-comment', data[key] );
+				//console.log( 'setting comment: ', key, data[key] );
+			}
 
 		};
 
