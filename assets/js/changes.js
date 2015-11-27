@@ -735,7 +735,8 @@ jQuery(document).ready( function($) {
 			var node, item, tag, identifier, number, subsequent,
 				current_items = [], missing = [],
 				prev_id, original_num,
-				new_item, new_number = '';
+				new_item, new_number = '',
+				creation_method;
 
 			// get current identifiers
 			$('.fee-content-body').find( '[data-incom]' ).each( function( i, element ) {
@@ -778,6 +779,26 @@ jQuery(document).ready( function($) {
 				item = $('.fee-content-body').find( '[data-incom="P' + ( number - 1 ) + '"]' );
 				identifier = item.attr( 'data-incom' );
 				number = parseInt( identifier.replace( 'P', '' ) );
+
+			}
+
+			// determine how the new para has been created
+			if ( '<br data-mce-bogus="1">' === item.html() ) {
+				creation_method = 'cursor-at-end';
+			} else {
+
+				if ( item.prev().length && '<br data-mce-bogus="1">' === item.prev().html() ) {
+
+					// An edge case is where the cursor is at the beginning of the line
+					// and ENTER is pressed. The new paragraph is created, but the node
+					// which is passed in is NOT the new one but the one after the new
+					// paragraph. The comments are not ressigned and become attached to
+					// the new paragraph rather than moving with this one.
+					creation_method = 'cursor-at-beginning';
+
+				} else {
+					creation_method = 'cursor-in-middle';
+				}
 
 			}
 
@@ -866,13 +887,22 @@ jQuery(document).ready( function($) {
 
 				}
 
-				// add to array
-				SocialPaperChange.tracker.add( {
+				// construct data
+				data = {
 					is_new: true,
 					is_modified: false,
 					original: 'P' + original_num,
 					modified: 'P' + ( original_num + 1 ),
-				} );
+				};
+
+				// treat edge case
+				if ( creation_method === 'cursor-at-beginning' ) {
+					data.is_modified = true;
+					data.is_new = false;
+				}
+
+				// add to array
+				SocialPaperChange.tracker.add( data );
 
 			}
 
