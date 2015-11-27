@@ -280,13 +280,12 @@ jQuery(document).ready( function($) {
 				me.clear();
 			}
 
-			/*
 			// truncate arrays if there are no redo levels
 			if ( ! SocialPaperChange.editor.instance.undoManager.hasRedo() ) {
+				//console.log( 'truncate arrays', me.level_active, me.data_levels, me.comment_levels );
 				me.data_levels.length = me.level_active;
 				me.comment_levels.length = me.level_active;
 			}
-			*/
 
 			var data, comments;
 
