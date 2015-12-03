@@ -29,6 +29,11 @@ jQuery(document).ready( function($) {
 	 */
 	SocialPaperChange.reporter = new function() {
 
+		var me = this;
+
+		// debugging flags
+		me.skip_editor_listeners = false;
+
 		/**
 		 * Report the current state of the comments.
 		 */
@@ -454,6 +459,11 @@ jQuery(document).ready( function($) {
 
 			// store editor in our "global"
 			me.instance = tinyMCE.get( window.wpActiveEditor );
+			
+			// bail if we want to see a "clean" TinyMCE
+			if ( SocialPaperChange.reporter.skip_editor_listeners ) {
+				return;
+			}
 
 			// add keydown tracker code
 			me.instance.on( 'keydown', function( event ) {
