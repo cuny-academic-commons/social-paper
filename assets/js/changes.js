@@ -478,8 +478,8 @@ jQuery(document).ready( function($) {
 
 				// delete?
 				if ( event.which == tinymce.util.VK.DELETE || event.which == tinymce.util.VK.BACKSPACE ) {
-					// Gecko behaves differently, so use keyup instead
-					if ( ! tinymce.Env.gecko ) {
+					// Gecko and IE behaves differently, so use keyup instead
+					if ( ! tinymce.Env.gecko && ! tinymce.Env.ie ) {
 						me.handle_DELETE();
 					}
 					return;
@@ -510,7 +510,7 @@ jQuery(document).ready( function($) {
 
 				// delete?
 				if ( event.which == tinymce.util.VK.DELETE || event.which == tinymce.util.VK.BACKSPACE ) {
-					if ( tinymce.Env.gecko ) {
+					if ( tinymce.Env.gecko || tinymce.Env.ie ) {
 						me.handle_DELETE();
 					}
 					return;
