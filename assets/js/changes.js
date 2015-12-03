@@ -673,12 +673,26 @@ jQuery(document).ready( function($) {
 
 			// get content stripped of new lines and unnecessary whitespace
 			content = items.html().replace( /(\r\n|\n|\r)/gm, ' ' ).replace( /\s+/g, ' ' );
-
-			// strip ending <p>&nbsp;</p>
-			if ( content.length > 13 ) {
-				if ( content.slice( -13 ) == '<p>&nbsp;</p>' ) {
-					content = content.slice( 0, -13 );
+			
+			// handle Gecko
+			if ( tinymce.Env.gecko ) {
+			
+				// strip ending <p></p>
+				if ( content.length > 7 ) {
+					if ( content.slice( -7 ) == '<p></p>' ) {
+						content = content.slice( 0, -7 );
+					}
 				}
+			
+			} else {
+
+				// strip ending <p>&nbsp;</p>
+				if ( content.length > 13 ) {
+					if ( content.slice( -13 ) == '<p>&nbsp;</p>' ) {
+						content = content.slice( 0, -13 );
+					}
+				}
+			
 			}
 
 			event.node.innerHTML = content;
