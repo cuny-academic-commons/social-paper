@@ -199,6 +199,9 @@ function cacsp_asset_single_enqueue_handler() {
 		return;
 	}
 
+	// Fix embed widths
+	$GLOBALS['content_width'] = 754;
+
 	$styles = wp_styles();
 
 	$theme_handle = '';

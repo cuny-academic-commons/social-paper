@@ -28,7 +28,9 @@ jQuery(document).ready( function($) {
 		$settings_toggle,
 		$sidebar,
 		$status_toggle,
-		$window;
+		$window,
+		$allVideos,
+		$fluidEl;
 
 	$window = $( window );
 
@@ -270,6 +272,7 @@ jQuery(document).ready( function($) {
 	 * Hook into window load
 	 */
 	$(window).on( "load", function() {
+		responsive_iframes();
 
 		// drag 'n' drop time! (if allowed)
 		if ( Social_Paper_FEE.drag_allowed === '1' ) {
@@ -362,6 +365,8 @@ jQuery(document).ready( function($) {
 	$(document).on( 'fee-on', function( event ) {
 
 		//console.log( 'fee-on' );
+
+		responsive_iframes();
 
 		// if Inline Comments present
 		if ( window.incom ) {
@@ -461,6 +466,8 @@ jQuery(document).ready( function($) {
 	$(document).on( 'fee-off', function( event ) {
 
 		//console.log( 'fee-off' );
+
+		responsive_iframes();
 
 		// if Inline Comments present
 		if ( window.incom ) {
@@ -580,6 +587,8 @@ jQuery(document).ready( function($) {
 		// Editor is now clean.
 		SocialPaper.isDirty = false;
 
+		responsive_iframes();
+
 		// Dynamically do some stuff after a paper is first published
 		if ( -1 !== event.currentTarget.URL.indexOf( '#edit=true' ) && 'publish' === wp.fee.postOnServer.post_status ) {
 			// Change the current URL to the full paper URL using HTML5 history
@@ -683,6 +692,35 @@ jQuery(document).ready( function($) {
 		if ( ( $node.offset().top + $node.height() ) > wlimit ) {
 			$window.scrollTo( wtop + 60 );
 		}
+	}
+
+	// @link https://css-tricks.com/NetMag/FluidWidthVideo/Article-FluidWidthVideo.php
+	responsive_iframes = function() {
+		$allVideos = $(".entry-content iframe"),
+		$fluidEl = $(".entry-content");
+
+		$allVideos.each(function() {
+			$(this)
+			// jQuery .data does not work on object/embed elements
+			.attr('data-aspectRatio', $(this).height() / $(this).width() )
+			.removeAttr('height')
+			.removeAttr('width');
+
+		});
+
+		$(window).resize(function() {
+
+			var newWidth = $fluidEl.width();
+			$allVideos.each(function() {
+
+				var $el = $(this);
+				$el
+				.width(newWidth)
+				.height(newWidth * $el.attr('data-aspectRatio'));
+
+			});
+
+		}).resize();
 	}
 });
 
