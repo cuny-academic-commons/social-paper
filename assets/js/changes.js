@@ -1639,6 +1639,22 @@ jQuery(document).ready( function($) {
 		 * because when the oEmbed is rendered in the original content, it is
 		 * wrapped in a <p> tag, causing a mis-matched number of paragrapahs in
 		 * "read" and "edit" modes.
+
+		 * There is now extra code to try and exclude Twitter embeds from being
+		 * commentable, given that they share the same 'data-wpview-type' as
+		 * YouTube embeds. Twitter embeds mess up Inline Comments because
+		 * although the final rendered tweet is in its own <iframe>, the <iframe>
+		 * is not wrapped in a <p> tag. There is, however, a subsequent <p> which
+		 * wraps the Twitter async Javascript. This gets picked up by Inline
+		 * Comments, but is not visible on the page.
+		 *
+		 * To complicate matters further, an embedded tweet will not fully render
+		 * when "Enable Editing" is first pressed. It does render when "Update"
+		 * is pressed, however. It will also render with a considerable delay on
+		 * page load and when exiting "Edit Mode", causing Inline Comments to
+		 * mistakenly add 'data-incom' attributes to the internal tweet markup.
+		 * This is partially solved by rebuilding Inline Comments after a 1500ms
+		 * delay, though this is not always enough. Sigh.
 		 *
 		 * @param array elements An array of elements present in the editor
 		 * @param array filtered Filtered array of elements
@@ -1659,21 +1675,23 @@ jQuery(document).ready( function($) {
 				if ( 'undefined' === typeof wp_view || wp_view.length === 0 ) {
 					filtered.push( el );
 				} else {
-					// check the view type attribute
+
+					// only allow YouTube oEmbeds to be commentable because of
+					// the way they ultimately render
 					if ( 'embedURL' === wp_view.attr( 'data-wpview-type' ) ) {
-						// only allow youtube oEmbeds to be commentable because
-						// of the way they ultimately render
 						is_youtube_short = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fyoutu' );
 						is_youtube_long = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fwww.youtube' );
 						is_youtube_naked = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fyoutube' );
 						if ( is_youtube_short || is_youtube_long || is_youtube_naked ) {
+
 							// check if this is a p.wpview-selection-before
 							if ( el.hasClass( 'wpview-selection-before' ) ) {
-								//console.log( 'this', el );
 								filtered.push( el );
 							}
+
 						}
 					}
+
 				}
 
 			});
