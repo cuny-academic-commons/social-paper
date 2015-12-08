@@ -418,6 +418,9 @@ jQuery(document).ready( function($) {
 		// paste flag
 		me.paste_flag = false;
 
+		// cut flag
+		me.cut_flag = false;
+
 		// "para after wp-view has focus" flag
 		me.wp_view_after = false;
 
@@ -459,7 +462,7 @@ jQuery(document).ready( function($) {
 
 			// store editor in our "global"
 			me.instance = tinyMCE.get( window.wpActiveEditor );
-			
+
 			// bail if we want to see a "clean" TinyMCE
 			if ( SocialPaperChange.reporter.skip_editor_listeners ) {
 				return;
@@ -673,17 +676,17 @@ jQuery(document).ready( function($) {
 
 			// get content stripped of new lines and unnecessary whitespace
 			content = items.html().replace( /(\r\n|\n|\r)/gm, ' ' ).replace( /\s+/g, ' ' );
-			
+
 			// handle Gecko
 			if ( tinymce.Env.gecko ) {
-			
+
 				// strip ending <p></p>
 				if ( content.length > 7 ) {
 					if ( content.slice( -7 ) == '<p></p>' ) {
 						content = content.slice( 0, -7 );
 					}
 				}
-			
+
 			} else {
 
 				// strip ending <p>&nbsp;</p>
@@ -692,7 +695,7 @@ jQuery(document).ready( function($) {
 						content = content.slice( 0, -13 );
 					}
 				}
-			
+
 			}
 
 			event.node.innerHTML = content;
@@ -858,6 +861,13 @@ jQuery(document).ready( function($) {
 
 			//console.log( '------------------------------------------------------------' );
 			//console.log( 'handle_CUT', event );
+			me.cut_flag = true;
+
+			// the cut event no longer has post-DOM-update data, so we need to
+			// wait for the next NodeChange event to access it
+			me.instance.once( 'NodeChange', function( event ) {
+				me.handle_CUT_COMPLETE( event );
+			});
 
 			/*
 			--------------------------------------------------------------------
@@ -962,7 +972,37 @@ jQuery(document).ready( function($) {
 
 			*/
 
-			this.handle_DELETE();
+			//this.handle_DELETE();
+		};
+
+		/**
+		 * Handle 'cut' event after the DOM has been built.
+		 *
+		 * @param object event The TinyMCE event object
+		 */
+		this.handle_CUT_COMPLETE = function( event ) {
+
+			// only allow this to run directly after CUT
+			if ( me.cut_flag !== true ) { return; }
+			me.cut_flag = false;
+
+			console.log( '------------------------------------------------------------' );
+			console.log( 'handle_CUT_COMPLETE', event );
+
+			// trap Gecko
+			if ( tinymce.Env.gecko ) {
+
+				// seems to be the  same as paste complete
+				me.paste_flag = true;
+				this.handle_PASTE_COMPLETE( event );
+
+			} else {
+
+				// other browsers seem to act like delete
+				this.handle_DELETE();
+
+			}
+
 		};
 
 		/**
