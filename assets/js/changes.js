@@ -45,6 +45,24 @@ jQuery(document).ready( function($) {
 			});
 		};
 
+		/**
+		 * Report the current state of the comments directly.
+		 */
+		this.comments_raw = function() {
+			$( 'li[data-incom-comment]' ).each( function( i, el ) {
+					console.log( 'comment: ', $(el).prop( 'id' ), $(el).attr( 'data-incom-comment' ) );
+			});
+		};
+
+		/**
+		 * Report the current state of the undo-redo queue.
+		 */
+		this.undoredo = function() {
+			console.log( '-- data_levels: ', SocialPaperChange.undoredo.data_levels );
+			console.log( '-- comment_levels: ', SocialPaperChange.undoredo.comment_levels );
+			console.log( '-- level_active: ', SocialPaperChange.undoredo.level_active );
+		};
+
 	};
 
 	/**
@@ -586,13 +604,13 @@ jQuery(document).ready( function($) {
 
 			// handle undo
 			me.instance.on( 'undo', function( event ) {
-				//console.log('undo event', event);
+				//console.log('undoManager undo event', event);
 				SocialPaperChange.undoredo.level_set( event.type );
 			});
 
 			// handle redo
 			me.instance.on( 'redo', function( event ) {
-				//console.log('redo event', event);
+				//console.log('undoManager redo event', event);
 				SocialPaperChange.undoredo.level_set( event.type );
 			});
 
@@ -606,7 +624,6 @@ jQuery(document).ready( function($) {
 			me.instance.on( 'ClearUndos', function( event ) {
 				//console.log('undoManager ClearUndos event', event);
 				SocialPaperChange.undoredo.clear();
-
 			});
 
 		};
