@@ -467,21 +467,23 @@ jQuery(document).ready( function($) {
 
 			if ( window.incom.rebuild ) {
 
-				// rebuild Inline Comments UI
-				window.incom.rebuild();
+				setTimeout( function() {
 
-				// rebuild drag-n-drop
-				if ( Social_Paper_FEE.drag_allowed === '1' ) {
-					SocialPaper.dragdrop.init();
-				}
+					// rebuild Inline Comments UI
+					window.incom.rebuild();
+
+					// rebuild drag-n-drop
+					if ( Social_Paper_FEE.drag_allowed === '1' ) {
+						SocialPaper.dragdrop.init();
+					}
+
+					// fade in bubbles
+					$('#incom_wrapper').show();
+
+				}, 1000);
 
 			}
 
-		}
-
-		// fade in bubbles if Inline Comments present
-		if ( window.incom ) {
-			$('#incom_wrapper').show();
 		}
 
 		// always fade in comments and comment form
