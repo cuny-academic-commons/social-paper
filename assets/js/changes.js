@@ -1646,12 +1646,12 @@ jQuery(document).ready( function($) {
 		this.filter_elements = function( elements ) {
 
 			// init return
-			var filtered = [], is_youtube;
+			var filtered = [];
 
 			// try to find the para prior to the first unidentified para
 			$.each( elements, function( i, element ) {
 
-				var el = $(element), wp_view;
+				var el = $(element), wp_view, is_youtube_short, is_youtube_long;
 
 				// add to filter if not inside .wpview-wrap
 				wp_view = el.closest( '.wpview-wrap' );
@@ -1662,8 +1662,9 @@ jQuery(document).ready( function($) {
 					if ( 'embedURL' === wp_view.attr( 'data-wpview-type' ) ) {
 						// only allow youtube oEmbeds to be commentable because
 						// of the way they ultimately render
-						is_youtube = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fyoutu' )
-						if ( is_youtube ) {
+						is_youtube_short = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fyoutu' );
+						is_youtube_long = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fwww.youtube' );
+						if ( is_youtube_short || is_youtube_long ) {
 							// check if this is a p.wpview-selection-before
 							if ( el.hasClass( 'wpview-selection-before' ) ) {
 								//console.log( 'this', el );
