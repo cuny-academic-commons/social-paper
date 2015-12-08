@@ -254,7 +254,7 @@ jQuery(document).ready( function($) {
 			me.comment_levels.push( comments );
 
 			// bump pointer
-			me.level_active = me.level_active + 1;
+			me.levels_active_set( 'redo' );
 
 		};
 
@@ -287,10 +287,26 @@ jQuery(document).ready( function($) {
 
 			// truncate arrays if there are no redo levels
 			if ( ! SocialPaperChange.editor.instance.undoManager.hasRedo() ) {
-				//console.log( 'truncate arrays', me.level_active, me.data_levels, me.comment_levels );
-				me.data_levels.length = me.level_active;
-				me.comment_levels.length = me.level_active;
+
+				// special case when index is zero
+				if ( me.level_active === 0 ) {
+
+					// init
+					me.data_levels.length = 1;
+					me.comment_levels.length = 1;
+
+				} else {
+
+					// truncate the arrays
+					me.data_levels.length = me.level_active + 1;
+					me.comment_levels.length = me.level_active + 1;
+
+				}
+
 			}
+
+			// add hook to prevent an undo level being added
+			SocialPaperChange.editor.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
 
 			var data, comments;
 
@@ -303,7 +319,7 @@ jQuery(document).ready( function($) {
 			me.comment_levels.push( comments );
 
 			// bump pointer
-			me.level_active = me.level_active + 1;
+			me.levels_active_set( 'redo' );
 
 		};
 
@@ -390,10 +406,10 @@ jQuery(document).ready( function($) {
 		this.level_prevent = function( event ) {
 
 			// prevent default
-			event.preventDefault();
+			//event.preventDefault();
 
 			// overwrite level data
-			me.level_overwrite();
+			//me.level_overwrite();
 
 		};
 
@@ -815,7 +831,7 @@ jQuery(document).ready( function($) {
 			if ( subsequent.length > 0 ) {
 
 				// add hook to prevent an undo level being added
-				me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
+				//me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
 
 				// reparse all p tags greater than this
 				$.each( subsequent, function( i, element ) {
@@ -1137,7 +1153,7 @@ jQuery(document).ready( function($) {
 			if ( subsequent.length > 0 ) {
 
 				// add hook to prevent an undo level being added
-				me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
+				//me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
 
 				// reparse all p tags greater than this
 				$.each( subsequent, function( i, element ) {
@@ -1338,7 +1354,7 @@ jQuery(document).ready( function($) {
 			if ( subsequent.length > 0 ) {
 
 				// add hook to prevent an undo level being added
-				me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
+				//me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
 
 				// reparse all p tags greater than this
 				$.each( subsequent, function( i, element ) {
@@ -1454,7 +1470,7 @@ jQuery(document).ready( function($) {
 				});
 
 				// add hook to prevent an undo level being added
-				me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
+				//me.instance.once( 'BeforeAddUndo', SocialPaperChange.undoredo.level_prevent );
 
 				// reparse all p tags greater than this
 				$.each( subsequent, function( i, element ) {
