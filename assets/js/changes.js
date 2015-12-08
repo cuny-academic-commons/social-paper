@@ -1651,7 +1651,8 @@ jQuery(document).ready( function($) {
 			// try to find the para prior to the first unidentified para
 			$.each( elements, function( i, element ) {
 
-				var el = $(element), wp_view, is_youtube_short, is_youtube_long;
+				var el = $(element), wp_view,
+					is_youtube_short, is_youtube_long, is_youtube_naked;
 
 				// add to filter if not inside .wpview-wrap
 				wp_view = el.closest( '.wpview-wrap' );
@@ -1664,7 +1665,8 @@ jQuery(document).ready( function($) {
 						// of the way they ultimately render
 						is_youtube_short = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fyoutu' );
 						is_youtube_long = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fwww.youtube' );
-						if ( is_youtube_short || is_youtube_long ) {
+						is_youtube_naked = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fyoutube' );
+						if ( is_youtube_short || is_youtube_long || is_youtube_naked ) {
 							// check if this is a p.wpview-selection-before
 							if ( el.hasClass( 'wpview-selection-before' ) ) {
 								//console.log( 'this', el );
