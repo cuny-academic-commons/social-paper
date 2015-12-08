@@ -1520,7 +1520,10 @@ jQuery(document).ready( function($) {
 		this.cache_set = function() {
 
 			// store content of editor
-			me.cache = me.instance.getContent();
+			me.cache = me.instance.getContent( {format: 'raw'} );
+
+			// by definition, the editor cannot be dirty now
+			SocialPaper.isDirty = false;
 
 		};
 
@@ -2015,7 +2018,10 @@ jQuery(document).ready( function($) {
 		cached = SocialPaperChange.editor.cache_get();
 
 		// apply to editor
-		SocialPaperChange.editor.instance.setContent( cached );
+		$('.fee-content-body').html( cached );
+
+		// editor is not dirty
+		SocialPaper.isDirty = false;
 
 		// reset comments to original state
 		SocialPaperChange.comments.original_reset();
