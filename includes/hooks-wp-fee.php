@@ -424,6 +424,61 @@ function cacsp_get_tag_data_cb() {
 add_action( 'wp_ajax_cacsp_get_tag_data', 'cacsp_get_tag_data_cb' );
 
 /**
+ * Handle resizing of autoembed previews during FEE editing.
+ *
+ * @param string $retval  Current oEmbed contents.
+ * @param string $url     URL before oEmbed transformation.
+ * @param array  $attr    Embed attributes.
+ * @param int    $post_ID Current post ID.
+ */
+function cacsp_resize_autoembed_previews_to_content_width( $retval, $url, $attr, $post_ID ) {
+	if ( ! defined( 'DOING_AJAX' ) || false === constant( 'DOING_AJAX' ) ) {
+		return $retval;
+	}
+
+	// Bail if not on our post type!
+	if ( 'cacsp_paper' !== get_post( $post_ID )->post_type ) {
+		return $retval;
+	}
+
+	// Get current width and height; $attr doesn't work the way I want it to,
+	// which is why I'm doing this song-n-dance!
+	$width = strpos( $retval, 'width="' );
+	if ( false !== $width ) {
+		$delim = '"';
+
+		$height = strpos( $retval, 'height="' );
+
+	} else {
+		$width = strpos( $retval, "width='" );
+
+		if ( false === $width ) {
+			return $retval;
+		}
+
+		$delim = "'";
+
+		$height = strpos( $retval, "height='" );
+	}
+
+	$width_end_pos  = strpos( $retval, $delim, $width + 8 );
+	$height_end_pos = strpos( $retval, $delim, $height + 9 );
+
+	$width  = substr( $retval, $width + 7, $width_end_pos - ( $width + 7 ) );
+	$height = substr( $retval, $height + 8, $height_end_pos - ( $height + 8 ) );
+
+	// Replace width and height now
+	$content_width = 754; // @todo make this filterable?
+	$new_height = round( $content_width * $height  / $width );
+
+	$retval = str_replace( "width={$delim}{$width}{$delim}", "width={$delim}{$content_width}{$delim}", $retval );
+	$retval = str_replace( "height={$delim}{$height}{$delim}", "height={$delim}{$new_height}{$delim}", $retval );
+
+	return $retval;
+}
+add_filter( 'embed_oembed_html', 'cacsp_resize_autoembed_previews_to_content_width', 10, 4 );
+
+/**
  * Filter social paper content.
  *
  * Twitter embeds need to be modified

@@ -102,13 +102,30 @@ class Social_Paper {
 	public function __construct() {
 		// Bail if the "Inline Comments" plugin is not enabled
 		if ( ! function_exists( 'incom_frontend_init' ) ) {
-			// Show admin notice
-			$notice = sprintf(
-				__( 'Social Paper requires the %s plugin to be enabled.  Please download it %shere%s.', 'social-paper' ),
-				'<strong>' . __( 'Inline Comments', 'social-paper' ). '</strong>',
-				'<a target="_blank" href="https://wordpress.org/plugins/inline-comments/">',
-				'</a>'
-			);
+			// Check if plugin is installed, but not activated
+			if ( ! function_exists( 'get_plugins' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+
+			$is_installed = (bool) get_plugins( '/inline-comments' );
+
+			if ( $is_installed ) {
+				$notice = sprintf(
+					__( 'Social Paper requires the %s plugin to be activated.  Please activate it %shere%s.', 'social-paper' ),
+					'<strong>' . __( 'Inline Comments', 'social-paper' ). '</strong>',
+					'<a href="' . wp_nonce_url( 'plugins.php?action=activate&amp;plugin=inline-comments%2finline-comments.php&amp;plugin_status=all&amp;paged=1', 'activate-plugin_inline-comments/inline-comments.php' ) . '">',
+					'</a>'
+				);
+
+			} else {
+				$notice = sprintf(
+					__( 'Social Paper requires the %s plugin to be downloaded.  Please download it %shere%s.', 'social-paper' ),
+					'<strong>' . __( 'Inline Comments', 'social-paper' ). '</strong>',
+					'<a target="_blank" href="https://wordpress.org/plugins/inline-comments/">',
+					'</a>'
+				);
+
+			}
 
 			add_action( 'admin_notices', create_function( '', "
 				if ( current_user_can( 'install_plugins' ) ) {
@@ -120,13 +137,41 @@ class Social_Paper {
 
 		// Bail if the "Front-end Editor" plugin is not enabled
 		if ( ! class_exists( 'FEE' ) ) {
-			// Show admin notice
-			$notice = sprintf(
-				__( 'Social Paper requires the %s plugin to be enabled.  Please download it %shere%s.', 'social-paper' ),
-				'<strong>' . __( 'Front-end Editor', 'social-paper' ). '</strong>',
-				'<a target="_blank" href="https://wordpress.org/plugins/wp-front-end-editor/">',
-				'</a>'
-			);
+			// Check if plugin is installed, but not activated
+			if ( ! function_exists( 'get_plugins' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+
+			$is_installed = (bool) get_plugins( '/wp-front-end-editor' );
+			$is_fork = false;
+
+			if ( $is_installed ) {
+				// Check if our fork is installed
+				$json = json_decode( @file_get_contents( WP_PLUGIN_DIR . '/wp-front-end-editor/package.json' ) );
+				if ( '1.1.0' === $json->devDependencies->{'grunt-sass'} ) {
+					$is_fork = true;
+				}
+
+				if ( $is_fork ) {
+					$notice = sprintf(
+						__( 'Social Paper requires the %s plugin to be activated.  Please activate it %shere%s.', 'social-paper' ),
+						'<strong>' . __( 'Front-end Editor', 'social-paper' ). '</strong>',
+						'<a href="' . wp_nonce_url( 'plugins.php?action=activate&amp;plugin=wp-front-end-editor%2fplugin.php&amp;plugin_status=all&amp;paged=1', 'activate-plugin_wp-front-end-editor/plugin.php' ) . '">',
+						'</a>'
+					);
+				}
+
+			}
+
+			if ( false === $is_fork ) {
+				$notice = sprintf(
+					__( 'Social Paper requires our special fork of %s plugin to be downloaded.  Please download it %shere%s.', 'social-paper' ),
+					'<strong>' . __( 'Front-end Editor', 'social-paper' ). '</strong>',
+					'<a target="_blank" href="https://github.com/cuny-academic-commons/wp-front-end-editor/releases">',
+					'</a>'
+				);
+
+			}
 
 			add_action( 'admin_notices', create_function( '', "
 				if ( current_user_can( 'install_plugins' ) ) {

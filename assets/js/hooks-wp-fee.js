@@ -28,7 +28,9 @@ jQuery(document).ready( function($) {
 		$settings_toggle,
 		$sidebar,
 		$status_toggle,
-		$window;
+		$window,
+		$allVideos,
+		$fluidEl;
 
 	$window = $( window );
 
@@ -270,6 +272,7 @@ jQuery(document).ready( function($) {
 	 * Hook into window load
 	 */
 	$(window).on( "load", function() {
+		responsive_iframes();
 
 		// drag 'n' drop time! (if allowed)
 		if ( Social_Paper_FEE.drag_allowed === '1' ) {
@@ -362,6 +365,8 @@ jQuery(document).ready( function($) {
 	$(document).on( 'fee-on', function( event ) {
 
 		//console.log( 'fee-on' );
+
+		responsive_iframes();
 
 		// if Inline Comments present
 		if ( window.incom ) {
@@ -461,6 +466,8 @@ jQuery(document).ready( function($) {
 	$(document).on( 'fee-off', function( event ) {
 
 		//console.log( 'fee-off' );
+
+		responsive_iframes();
 
 		// if Inline Comments present
 		if ( window.incom ) {
@@ -581,6 +588,8 @@ jQuery(document).ready( function($) {
 	$(document).on( 'fee-after-save', function( event ) {
 		// Editor is now clean.
 		SocialPaper.isDirty = false;
+
+		responsive_iframes();
 
 		// Dynamically do some stuff after a paper is first published
 		if ( -1 !== event.currentTarget.URL.indexOf( '#edit=true' ) && 'publish' === wp.fee.postOnServer.post_status ) {

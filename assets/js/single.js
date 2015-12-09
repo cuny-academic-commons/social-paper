@@ -1,10 +1,14 @@
 ( function( $ ){
 	var $description,
 		$description_char_ratio,
-		$description_char_count;
+		$description_char_count,
+		$allVideos,
+		$fluidEl;
 
 	$( document ).ready( function(){
 		$( 'body' ).removeClass( 'no-js' ).addClass( 'js' );
+
+		responsive_iframes();
 
 		if ( 'undefined' !== typeof CACSP_Potential_Readers && $.isFunction( $.fn.select2 ) ) {
 			$( '#cacsp-group-selector' ).select2( {
@@ -73,6 +77,35 @@
 
 		$description_char_ratio.removeClass( 'red orange' );
 		$description_char_ratio.addClass( class_to_add );
+	}
+
+	// @link https://css-tricks.com/NetMag/FluidWidthVideo/Article-FluidWidthVideo.php
+	responsive_iframes = function() {
+		$allVideos = $(".entry-content iframe"),
+		$fluidEl = $(".entry-content");
+
+		$allVideos.each(function() {
+			$(this)
+			// jQuery .data does not work on object/embed elements
+			.attr('data-aspectRatio', $(this).height() / $(this).width() )
+			.removeAttr('height')
+			.removeAttr('width');
+
+		});
+
+		$(window).resize(function() {
+
+			var newWidth = $fluidEl.width();
+			$allVideos.each(function() {
+
+				var $el = $(this);
+				$el
+				.width(newWidth)
+				.height(newWidth * $el.attr('data-aspectRatio'));
+
+			});
+
+		}).resize();
 	}
 
 }( jQuery ) );
