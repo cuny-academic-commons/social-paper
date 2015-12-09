@@ -1639,7 +1639,7 @@ jQuery(document).ready( function($) {
 		 * because when the oEmbed is rendered in the original content, it is
 		 * wrapped in a <p> tag, causing a mis-matched number of paragrapahs in
 		 * "read" and "edit" modes.
-
+		 *
 		 * There is now extra code to try and exclude Twitter embeds from being
 		 * commentable, given that they share the same 'data-wpview-type' as
 		 * YouTube embeds. Twitter embeds mess up Inline Comments because
@@ -1668,7 +1668,7 @@ jQuery(document).ready( function($) {
 			$.each( elements, function( i, element ) {
 
 				var el = $(element), wp_view,
-					is_youtube_short, is_youtube_long, is_youtube_naked;
+					is_twitter;
 
 				// add to filter if not inside .wpview-wrap
 				wp_view = el.closest( '.wpview-wrap' );
@@ -1676,13 +1676,15 @@ jQuery(document).ready( function($) {
 					filtered.push( el );
 				} else {
 
-					// only allow YouTube oEmbeds to be commentable because of
+					// prevent various oEmbeds from being commentable because of
 					// the way they ultimately render
 					if ( 'embedURL' === wp_view.attr( 'data-wpview-type' ) ) {
-						is_youtube_short = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fyoutu' );
-						is_youtube_long = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fwww.youtube' );
-						is_youtube_naked = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Fyoutube' );
-						if ( is_youtube_short || is_youtube_long || is_youtube_naked ) {
+						is_twitter = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Ftwitter.com' );
+						if ( is_twitter ) {
+
+							// decide what to do
+
+						} else {
 
 							// check if this is a p.wpview-selection-before
 							if ( el.hasClass( 'wpview-selection-before' ) ) {
