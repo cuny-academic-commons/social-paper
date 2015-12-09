@@ -63,8 +63,12 @@ function cacsp_filter_document_title_parts( $retval ) {
 	}
 
 	// WP title
-	if ( current_filter === 'wp_title_parts' ) {
+	if ( current_filter() === 'wp_title_parts' ) {
 		$retval[0] = __( 'Social Paper Draft', 'social-paper' ) . ' | ';
+
+		// Twenty Twelve has a custom title filter, which duplicates the site name.
+		// Let's just remove all filters on 'the_title' here.
+		remove_all_filters( 'wp_title' );
 
 	// Document title
 	} else {
