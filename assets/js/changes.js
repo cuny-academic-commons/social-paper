@@ -763,7 +763,7 @@ jQuery(document).ready( function($) {
 			});
 
 			// get current paras
-			paras = $('.fee-content-body p');
+			paras = me.filter_elements( $('.fee-content-body p') );
 
 			// try to find the para prior to the first unidentified para
 			$.each( paras, function( i, element ) {
