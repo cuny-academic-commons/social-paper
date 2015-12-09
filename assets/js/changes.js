@@ -1668,7 +1668,7 @@ jQuery(document).ready( function($) {
 			$.each( elements, function( i, element ) {
 
 				var el = $(element), wp_view,
-					is_twitter;
+					is_twitter, is_mixcloud;
 
 				// add to filter if not inside .wpview-wrap
 				wp_view = el.closest( '.wpview-wrap' );
@@ -1676,22 +1676,35 @@ jQuery(document).ready( function($) {
 					filtered.push( el );
 				} else {
 
-					// prevent various oEmbeds from being commentable because of
-					// the way they ultimately render
+					// tweak various oEmbeds because of the way they render
 					if ( 'embedURL' === wp_view.attr( 'data-wpview-type' ) ) {
-						is_twitter = wp_view.attr( 'data-wpview-text' ).match( 'https%3A%2F%2Ftwitter.com' );
+
+						is_twitter = wp_view.attr( 'data-wpview-text' ).match( 'twitter.com' );
 						if ( is_twitter ) {
 
-							// decide what to do
+							// disallow all
 
 						} else {
 
-							// check if this is a p.wpview-selection-before
-							if ( el.hasClass( 'wpview-selection-before' ) ) {
-								filtered.push( el );
+							is_mixcloud = wp_view.attr( 'data-wpview-text' ).match( 'mixcloud.com' );
+							if ( is_mixcloud ) {
+
+								// use two <p> placeholders
+								if ( el.hasClass( 'wpview-selection-before' ) || el.hasClass( 'wpview-selection-after' ) ) {
+									filtered.push( el );
+								}
+
+							} else {
+
+								// check if this is a p.wpview-selection-before
+								if ( el.hasClass( 'wpview-selection-before' ) ) {
+									filtered.push( el );
+								}
+
 							}
 
 						}
+
 					}
 
 				}
