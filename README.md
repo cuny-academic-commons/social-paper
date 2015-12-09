@@ -31,7 +31,7 @@ Social Paper is a WordPress plugin, designed to work best when installed alongsi
 
 Social Paper requires a few additional components to work correctly:
 
-* [WordPress Front End Editor](https://wordpress.org/plugins/wp-front-end-editor/) - Note that the mainline version of WP-FEE does not fully support more recent versions of WordPress. See [https://github.com/iseulde/wp-front-end-editor/issues/257](https://github.com/iseulde/wp-front-end-editor/issues/257) for more details.
+* [WordPress Front End Editor](https://github.com/cuny-academic-commons/wp-front-end-editor/releases) - Note that [the mainline version of WP-FEE](https://wordpress.org/plugins/wp-front-end-editor) does not fully support more recent versions of WordPress.  Currently, we maintain a fork of WP-FEE that addresses most of these issues [here](https://github.com/cuny-academic-commons/wp-front-end-editor/releases).  Social Paper requires using our version of FEE at the moment.
 * [Inline Comments](https://wordpress.org/plugins/inline-comments/). 
 
 ### Optional integrations
