@@ -139,7 +139,7 @@ function _cacsp_enable_fee() {
 
 	<?php
 	// show edit link if not on a draft page
-	} elseif ( get_queried_object() && current_user_can( 'edit_paper', get_queried_object()->ID ) && 'auto-draft' !== get_queried_object()->post_status && ! is_404()  ) {
+	} elseif ( get_queried_object() && current_user_can( 'edit_paper', get_queried_object()->ID ) /*&& 'auto-draft' !== get_queried_object()->post_status*/ && ! is_404()  ) {
 		echo '<div id="cacsp-edit-paper"><a id="wp-admin-bar-edit" href="#fee-edit-link"><span>Enable Editing</span></a></div>';
 	}
 }
