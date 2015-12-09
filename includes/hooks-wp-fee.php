@@ -422,3 +422,44 @@ function cacsp_get_tag_data_cb() {
 	wp_send_json_success( $data );
 }
 add_action( 'wp_ajax_cacsp_get_tag_data', 'cacsp_get_tag_data_cb' );
+
+/**
+ * Filter social paper content.
+ *
+ * Twitter embeds need to be modified
+ *
+ * @since 1.0.0
+ *
+ * @param str $content The existing content
+ * @return str $content The modified content
+ */
+function cacsp_wp_fee_the_content( $content ) {
+	global $post;
+
+	// only parse papers
+	if ( $post->post_type != 'cacsp_paper' ) return $content;
+
+	// look for Embedded Tweet <blockquote>
+	if ( preg_match( '#<(blockquote class="twitter-tweet)[^>]*?' . '>(.*?)</(blockquote)>#si', $content, $matches ) ) {
+
+		/*
+		// add a twitter content container?
+		$content = str_replace(
+			$matches[0],
+			'<div class="twitter-tweet-container">' . $matches[0] . '</div>',
+			$content
+		);
+		*/
+
+		// replace twitter script container
+		$content = str_replace(
+			'<p><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></p>',
+			'<div><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>',
+			$content
+		);
+
+	}
+
+	return $content;
+}
+add_filter( 'the_content', 'cacsp_wp_fee_the_content', 200 );
