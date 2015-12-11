@@ -5,33 +5,65 @@
  */
 
 /**
+ * Get potential reader IDs for a given paper.
+ *
+ * Gets a list of:
+ * - Current readers
+ * - Members of groups that logged-in user is a member of
+ * - Friends of the logged-in user
+ *
+ * Heavily cached, because :(
+ */
+function cacsp_get_potential_reader_ids( $paper_id ) {
+	global $wpdb;
+
+	$cache_group = 'cacsp_potential_readers';
+	$last_changed = wp_cache_get( 'last_changed', $cache_group );
+	if ( ! $last_changed ) {
+		$last_changed = microtime();
+		wp_cache_set( 'last_changed', $last_changed, $cache_group );
+	}
+
+	$cache_key = bp_loggedin_user_id() . ':' . $last_changed;
+	$cached = wp_cache_get( $cache_key, $cache_group );
+	if ( false === $cached ) {
+		$paper = new CACSP_Paper( $paper_id );
+		$paper_reader_ids = $paper->get_reader_ids();
+
+		$groups_of_user = cacsp_get_groups_of_user( bp_loggedin_user_id() );
+		if ( empty( $groups_of_user ) ) {
+			$groups_of_user = array( 0 );
+		}
+
+		// So dirty.
+		$bp = buddypress();
+		$group_member_ids = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$bp->groups->table_name_members} WHERE group_id IN (" . implode( ',', $groups_of_user ) . ") AND user_id != %d AND is_banned = 0 AND is_confirmed = 1", bp_loggedin_user_id() ) );
+		$group_member_ids = array_map( 'intval', $group_member_ids );
+
+		$friend_member_ids = array();
+		if ( bp_is_active( 'friends' ) ) {
+			$friend_member_ids = friends_get_friend_user_ids( bp_loggedin_user_id() );
+		}
+
+		$readers = array_merge( $paper_reader_ids, $group_member_ids, $friend_member_ids );
+		wp_cache_set( $cache_key, $readers, $cache_group );
+	} else {
+		$readers = $cached;
+	}
+
+	return array_map( 'intval', $readers );
+}
+
+/**
  * Generate the reader selector interface.
  */
 function cacsp_paper_reader_selector( $paper_id ) {
-	global $wpdb;
-
 	// Get a list of readers, friends, and co-group-members to prime selectbox.
 	// @todo Add AJAX support.
-	$paper = new CACSP_Paper( $paper_id );
-	$paper_reader_ids = $paper->get_reader_ids();
-
-	$groups_of_user = cacsp_get_groups_of_user( bp_loggedin_user_id() );
-	if ( empty( $groups_of_user ) ) {
-		$groups_of_user = array( 0 );
-	}
-
-	// So dirty.
-	$bp = buddypress();
-	$group_member_ids = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$bp->groups->table_name_members} WHERE group_id IN (" . implode( ',', $groups_of_user ) . ") AND user_id != %d AND is_banned = 0 AND is_confirmed = 1", bp_loggedin_user_id() ) );
-	$group_member_ids = array_map( 'intval', $group_member_ids );
-
-	$friend_member_ids = array();
-	if ( bp_is_active( 'friends' ) ) {
-		$friend_member_ids = friends_get_friend_user_ids( bp_loggedin_user_id() );
-	}
+	$potential_reader_ids = cacsp_get_potential_reader_ids( $paper_id );
 
 	$users = bp_core_get_users( array(
-		'include' => array_merge( $paper_reader_ids, $group_member_ids, $friend_member_ids ),
+		'include' => $potential_reader_ids,
 		'type' => 'alphabetical',
 		'per_page' => 0,
 	) );
@@ -39,6 +71,9 @@ function cacsp_paper_reader_selector( $paper_id ) {
 	$user_data = array();
 	$selected = array();
 	if ( ! empty( $users['users'] ) ) {
+		$paper = new CACSP_Paper( $paper_id );
+		$paper_reader_ids = $paper->get_reader_ids();
+
 		foreach ( $users['users'] as $user ) {
 			$user_id = (int) $user->ID;
 
@@ -158,3 +193,22 @@ function cacsp_save_paper_status( $post_id ) {
 	$paper->set_status( $status );
 }
 add_action( 'save_post', 'cacsp_save_paper_status' );
+
+/** Cache ********************************************************************/
+
+/**
+ * Invalidate cache incrementors on reader add/remove.
+ *
+ * We use a single incrementor for all papers because programming is hard.
+ *
+ * @since 1.0.0
+ */
+function cacsp_invalidate_potential_reader_cache_incrementor() {
+	wp_cache_delete( 'last_changed', 'cacsp_potential_readers' );
+}
+add_action( 'cacsp_added_reader_to_paper', 'cacsp_invalidate_potential_reader_cache_incrementor' );
+add_action( 'cacsp_removed_reader_from_paper', 'cacsp_invalidate_potential_reader_cache_incrementor' );
+add_action( 'groups_member_after_remove', 'cacsp_invalidate_potential_reader_cache_incrementor' );
+add_action( 'groups_member_after_save', 'cacsp_invalidate_potential_reader_cache_incrementor' );
+add_action( 'friends_friendship_deleted', 'cacsp_invalidate_potential_reader_cache_incrementor' );
+add_action( 'friends_friendship_accepted', 'cacsp_invalidate_potential_reader_cache_incrementor' );

@@ -68,4 +68,72 @@ class CACSP_Tests_ClassCacspPaperReader extends CACSP_UnitTestCase {
 
 		$this->assertEqualSets( array( $papers[0], $papers[2] ), $q->posts );
 	}
+
+	public function test_cacsp_get_potential_reader_ids_should_cache_results() {
+		$u = $this->factory->user->create();
+		$p = $this->factory->paper->create( array(
+			'post_author' => $u,
+		) );
+
+		$users = $this->factory->user->create_many( 4 );
+
+		$paper = new CACSP_Paper( $p );
+		$paper->add_reader( $users[0] );
+
+		$group = $this->factory->group->create( array(
+			'creator_id' => $u,
+		) );
+		$this->add_user_to_group( $users[1], $group );
+
+		friends_add_friend( $u, $users[2], true );
+
+		if ( method_exists( $this, 'set_current_user' ) ) {
+			$this->set_current_user( $u );
+		} else {
+			wp_set_current_user( $u );
+		}
+
+		$found = cacsp_get_potential_reader_ids( $p );
+		$this->assertEqualSets( array( $users[0], $users[1], $users[2] ), $found );
+
+		global $wpdb;
+		$num_queries = $wpdb->num_queries;
+
+		$found = cacsp_get_potential_reader_ids( $p );
+		$this->assertEqualSets( array( $users[0], $users[1], $users[2] ), $found );
+		$this->assertSame( $num_queries, $wpdb->num_queries );
+
+		// Invalidation. Ever hear of "unit" tests? Me neither.
+
+		// Remove reader.
+		$paper->remove_reader( $users[0] );
+		$found = cacsp_get_potential_reader_ids( $p );
+		$this->assertEqualSets( array( $users[1], $users[2] ), $found );
+
+		// Add reader.
+		$paper->add_reader( $users[0] );
+		$found = cacsp_get_potential_reader_ids( $p );
+		$this->assertEqualSets( array( $users[0], $users[1], $users[2] ), $found );
+
+		// Remove group member.
+		$member = new BP_Groups_Member( $users[1], $group );
+		$member->remove();
+		$found = cacsp_get_potential_reader_ids( $p );
+		$this->assertEqualSets( array( $users[0], $users[2] ), $found );
+
+		// Add group member.
+		$this->add_user_to_group( $users[1], $group );
+		$found = cacsp_get_potential_reader_ids( $p );
+		$this->assertEqualSets( array( $users[0], $users[1], $users[2] ), $found );
+
+		// Remove friend.
+		friends_remove_friend( $u, $users[2] );
+		$found = cacsp_get_potential_reader_ids( $p );
+		$this->assertEqualSets( array( $users[0], $users[1] ), $found );
+
+		// Add friend.
+		friends_add_friend( $u, $users[2], true );
+		$found = cacsp_get_potential_reader_ids( $p );
+		$this->assertEqualSets( array( $users[0], $users[1], $users[2] ), $found );
+	}
 }
