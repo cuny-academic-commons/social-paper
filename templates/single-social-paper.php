@@ -108,7 +108,7 @@ while ( have_posts() ) : the_post();
 			?>
 		</div><!-- .entry-content -->
 
-		<?php if ( current_user_can( 'edit_post', get_queried_object()->ID ) ) : ?>
+		<?php if ( get_queried_object()->ID && current_user_can( 'edit_post', get_queried_object()->ID ) ) : ?>
 		<div class="entry-sidebar">
 			<?php cacsp_locate_template( 'sidebar-single-social-paper.php', true ); ?>
 		</div>
