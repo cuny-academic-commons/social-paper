@@ -578,6 +578,31 @@ function cacsp_show_group_info_in_paper_meta() {
 }
 add_action( 'cacsp_after_paper_meta', 'cacsp_show_group_info_in_paper_meta' );
 
+/**
+ * Cache-friendly way to get papers belonging to a group.
+ *
+ * @since 1.0.0
+ *
+ * @param int $group_id ID of the group.
+ * @return array Array of WP_Post objects.
+ */
+function cacsp_get_papers_of_group( $group_id ) {
+	$last_changed = wp_cache_get( 'last_changed', 'posts' );
+	$cache_key = $group_id . ':' . $last_changed;
+	$papers_of_group = wp_cache_get( $cache_key, 'cacsp_papers_of_group' );
+	if ( false === $papers_of_group ) {
+		$papers_of_group = get_posts( array(
+			'post_type'      => 'cacsp_paper',
+			'post_status'    => 'publish',
+			'bp_group'       => $group_id,
+			'posts_per_page' => -1,
+		) );
+		wp_cache_set( $cache_key, $papers_of_group, 'cacsp_papers_of_group' );
+	}
+
+	return $papers_of_group;
+}
+
 /** Cache (ugh) **************************************************************/
 
 /**
@@ -626,3 +651,19 @@ function cacsp_get_groups_of_user( $user_id ) {
 
 	return array_map( 'intval', $group_ids );
 }
+
+/**
+ * Invalidate group paper cache on connect/disconnect.
+ *
+ * @since 1.0.0
+ *
+ * @param CACSP_Paper $paper    Paper object.
+ * @param int         $group_id ID of the group.
+ */
+function cacsp_invalidate_group_paper_cache( CACSP_Paper $paper, $group_id ) {
+	$last_changed = wp_cache_get( 'last_changed', 'posts' );
+	$cache_key = $group_id . ':' . $last_changed;
+	wp_cache_delete( $cache_key, 'cacsp_papers_of_group' );
+}
+add_action( 'cacsp_connected_paper_to_group', 'cacsp_invalidate_group_paper_cache', 10, 2 );
+add_action( 'cacsp_disconnected_paper_from_group', 'cacsp_invalidate_group_paper_cache', 10, 2 );
