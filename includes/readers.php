@@ -66,6 +66,8 @@ function cacsp_paper_reader_selector( $paper_id ) {
 		'include' => $potential_reader_ids,
 		'type' => 'alphabetical',
 		'per_page' => 0,
+		'populate_extras' => false,
+		'count_total' => false,
 	) );
 
 	$user_data = array();
