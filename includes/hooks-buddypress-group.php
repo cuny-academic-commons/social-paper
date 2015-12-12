@@ -561,6 +561,25 @@ function cacsp_get_group_links_for_paper( $paper_id ) {
 }
 
 /**
+ * Remove the Groups nav menu item if there are no papers in the group.
+ *
+ * Would like to do this in the BP_Group_Extension constructor, but the taxonomy is not registered in time.
+ *
+ * @since 1.0.0
+ */
+function cacsp_maybe_remove_papers_from_group_nav() {
+	if ( ! bp_is_group () ) {
+		return;
+	}
+
+	$papers_of_group = cacsp_get_papers_of_group( bp_get_current_group_id() );
+	if ( ! $papers_of_group ) {
+		bp_core_remove_subnav_item( bp_get_current_group_slug(), 'papers' );
+	}
+}
+add_action( 'bp_actions', 'cacsp_maybe_remove_papers_from_group_nav' );
+
+/**
  * Add group information to the paper meta area.
  *
  * @since 1.0.0
