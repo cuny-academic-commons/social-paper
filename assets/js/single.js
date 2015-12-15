@@ -6,22 +6,40 @@
 		$fluidEl;
 
 	$( document ).ready( function(){
+		var $reader_selector = $( '#cacsp-reader-selector' );
+
 		$( 'body' ).removeClass( 'no-js' ).addClass( 'js' );
 
 		responsive_iframes();
 
-		if ( 'undefined' !== typeof CACSP_Potential_Readers && $.isFunction( $.fn.select2 ) ) {
+		if ( $reader_selector.length && $.isFunction( $.fn.select2 ) ) {
+			// Load the Potential Readers list asynchronously.
+			$.post( ajaxurl, {
+				action: 'cacsp_potential_readers',
+				paper_id: SocialPaperI18n.paper_id
+			},
+			function( response ) {
+				if ( response.success ) {
+					$reader_selector.select2( {
+						placeholder: SocialPaperI18n.reader_placeholder,
+						data: response.data.potential
+					} );
+
+					// Mark existing readers as 'selected'.
+					var selected = [];
+					$.each( response.data.existing, function( k, ex ) {
+						selected.push( ex.id );
+					} );
+
+					$reader_selector.val( selected ).trigger( 'change' );
+
+					force_select2_width();
+				}
+			} );
+
 			$( '#cacsp-group-selector' ).select2( {
 				placeholder: SocialPaperI18n.group_placeholder
 			} );
-
-			$( '#cacsp-reader-selector' ).select2( {
-				placeholder: SocialPaperI18n.reader_placeholder,
-				data: CACSP_Potential_Readers
-			} );
-
-			// Select2 can't set Readers width correctly because it's hidden.
-			$( 'input.select2-search__field' ).css( 'width', '249px' );
 		}
 
 		if ( 'undefined' !== typeof bp && 'undefined' !== typeof bp.mentions.users ) {
@@ -106,6 +124,16 @@
 			});
 
 		}).resize();
+	}
+
+	/**
+	 * Force Select2 to the proper width.
+	 *
+	 * This is a garbage hack forced on us by the fact that Select2 only sizes properly for non-selected width
+	 * when it's present in the DOM and visible.
+	 */
+	force_select2_width = function() {
+		$( 'input.select2-search__field' ).css( 'width', '249px' );
 	}
 
 }( jQuery ) );

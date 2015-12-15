@@ -56,26 +56,23 @@ function cacsp_get_potential_reader_ids( $paper_id ) {
 
 /**
  * Generate the reader selector interface.
+ *
+ * @since 1.0.0
  */
 function cacsp_paper_reader_selector( $paper_id ) {
-	// Get a list of readers, friends, and co-group-members to prime selectbox.
-	// @todo Add AJAX support.
-	$potential_reader_ids = cacsp_get_potential_reader_ids( $paper_id );
+	$paper = new CACSP_Paper( $paper_id );
+	$paper_reader_ids = $paper->get_reader_ids();
 
-	$users = bp_core_get_users( array(
-		'include' => $potential_reader_ids,
+	$existing = bp_core_get_users( array(
+		'include' => $paper_reader_ids,
 		'type' => 'alphabetical',
 		'per_page' => 0,
 		'populate_extras' => false,
 		'count_total' => false,
 	) );
 
-	$user_data = array();
 	$selected = array();
 	if ( ! empty( $users['users'] ) ) {
-		$paper = new CACSP_Paper( $paper_id );
-		$paper_reader_ids = $paper->get_reader_ids();
-
 		foreach ( $users['users'] as $user ) {
 			$user_id = (int) $user->ID;
 
@@ -83,19 +80,8 @@ function cacsp_paper_reader_selector( $paper_id ) {
 				'id'   => $user_id,
 				'text' => html_entity_decode( $user->display_name, ENT_QUOTES, 'UTF-8' ),
 			);
-
-			// Collect data about the existing readers.
-			if ( in_array( $user_id, $paper_reader_ids, true ) ) {
-				$selected[] = array(
-					'id' => $user_id,
-					'text' => stripslashes( $user->display_name ),
-				);
-			}
 		}
 	}
-
-	$script = 'var CACSP_Potential_Readers = ' . wp_json_encode( $user_data ) . ';';
-	echo "\n" . '<script type="text/javascript">' . $script . '</script>' . "\n";
 
 	// Select2 only needs an <option> printed for the selected options.
 	?>
@@ -195,6 +181,57 @@ function cacsp_save_paper_status( $post_id ) {
 	$paper->set_status( $status );
 }
 add_action( 'save_post', 'cacsp_save_paper_status' );
+
+/**
+ * Fetch a JSON list of potential readers, to populate the Select2 interface.
+ *
+ * @since 1.1.0
+ */
+function cacsp_potential_readers_cb() {
+	// Get a list of readers, friends, and co-group-members to prime selectbox.
+	$paper_id = isset( $_POST['paper_id'] ) ? intval( $_POST['paper_id'] ) : 0;
+	$potential_reader_ids = cacsp_get_potential_reader_ids( $paper_id );
+
+	$users = bp_core_get_users( array(
+		'include' => $potential_reader_ids,
+		'type' => 'alphabetical',
+		'per_page' => 0,
+		'populate_extras' => false,
+		'count_total' => false,
+	) );
+
+	$user_data = array();
+	$selected = array();
+	if ( ! empty( $users['users'] ) ) {
+		$paper = new CACSP_Paper( $paper_id );
+		$paper_reader_ids = $paper->get_reader_ids();
+
+		foreach ( $users['users'] as $user ) {
+			$user_id = (int) $user->ID;
+
+			$user_data[] = array(
+				'id'   => $user_id,
+				'text' => html_entity_decode( $user->display_name, ENT_QUOTES, 'UTF-8' ),
+			);
+
+			// Collect data about the existing readers.
+			if ( in_array( $user_id, $paper_reader_ids, true ) ) {
+				$selected[] = array(
+					'id' => $user_id,
+					'text' => stripslashes( $user->display_name ),
+				);
+			}
+		}
+	}
+
+	$retval = array(
+		'existing'  => $selected,
+		'potential' => $user_data,
+	);
+
+	wp_send_json_success( $retval );
+}
+add_action( 'wp_ajax_cacsp_potential_readers', 'cacsp_potential_readers_cb' );
 
 /** Cache ********************************************************************/
 
