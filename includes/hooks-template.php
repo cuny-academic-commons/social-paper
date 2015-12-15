@@ -294,6 +294,7 @@ function cacsp_asset_single_enqueue_handler() {
 		'unapproved_comment_alt' => $unapproved_comment_alt,
 		'spammed' => __( 'You have successfuly marked the comment as spam.', 'social-paper' ),
 		'trashed' => __( 'You have successfuly trashed the comment.', 'social-paper' ),
+		'paper_id' => get_queried_object_id(),
 	) );
 }
 add_action( 'wp_enqueue_scripts', 'cacsp_asset_single_enqueue_handler', 999 );
