@@ -243,6 +243,12 @@ function cacsp_create_added_to_group_activity( CACSP_Paper $paper, $group_id ) {
 		return;
 	}
 
+	// Only published paper should have activity created.
+	$post_status = $paper->post_status;
+	if ( 'publish' !== $post_status ) {
+		return;
+	}
+
 	// The author of the edit is the one who wrote the last revision.
 	if ( $revisions = wp_get_post_revisions( $paper->ID ) ) {
 		// Grab the last revision, but not an autosave.
