@@ -938,6 +938,10 @@ body.admin-bar #cacsp-edit-paper {
 	position: relative;
 }
 
+.fee-alert-body {
+	width: 355px;
+}
+
 .unapproved-comment-count {
 	position: absolute;
 	background: #f00;

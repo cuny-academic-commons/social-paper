@@ -280,11 +280,12 @@ class CACSP_FEE extends FEE {
 					<p><?php _e( 'The changes you made will be lost if you navigate away from this page.' ); ?></p>
 					<button class="button fee-cancel">Cancel</button>
 					<?php if ( in_array( $post->post_status, array( 'auto-draft', 'draft', 'pending' ) ) ) { ?>
-						<button class="button fee-save-and-exit"><?php _e( 'Save and leave' ); ?></button>
+						<button class="button fee-exit"><?php _e( 'Leave without save' ); ?></button>
+						<button class="button button-primary fee-save-and-exit"><?php _e( 'Save and leave' ); ?></button>
 					<?php } else { ?>
-						<button class="button fee-save-and-exit"><?php _e( 'Update and leave' ); ?></button>
+						<button class="button fee-exit"><?php _e( 'Leave without update' ); ?></button>
+						<button class="button button-primary fee-save-and-exit"><?php _e( 'Update and leave' ); ?></button>
 					<?php } ?>
-					<button class="button button-primary fee-exit">Leave</button>
 				</div>
 			</div>
 			<?php
