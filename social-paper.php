@@ -97,13 +97,6 @@ class Social_Paper {
 	protected $required_plugin = '';
 
 	/**
-	 * Admin notice; shown if SP requirements are not met.
-	 *
-	 * @var string
-	 */
-	protected $admin_notice = '';
-
-	/**
 	 * Static initializer.
 	 */
 	public static function init() {
