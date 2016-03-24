@@ -272,7 +272,7 @@ function cacsp_approve_loggedin_comments( $approved, $commentdata ) {
 
 	return 1;
 }
-add_filter( 'pre_comment_approved', 'cacsp_approve_loggedin_comments', 10, 2 );
+add_filter( 'pre_comment_approved', 'cacsp_approve_loggedin_comments', 20, 2 );
 
 /**
  * Get unapproved comments for a paper.
