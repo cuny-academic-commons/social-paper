@@ -614,7 +614,8 @@ function cacsp_directory_action_metadata() {
 	}
 
 	// Comment count.
-	$comment_count = (int) get_post()->comment_count;
+	$comment_counts = wp_count_comments( get_the_ID() );
+	$comment_count  = isset( $comment_counts->approved ) ? (int) $comment_counts->approved : 0;
 	if ( 1 === $comment_count ) {
 		$chunks['comment_count'] = __( '1 comment', 'social-paper' );
 	} elseif ( 1 < $comment_count ) {
