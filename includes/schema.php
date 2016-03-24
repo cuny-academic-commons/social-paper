@@ -218,7 +218,8 @@ function cacsp_map_extra_meta_caps( $caps, $cap, $user_id, $args ) {
 				}
 			}
 
-			return array( 'do_not_allow' );
+			// Default to Editor-level caps - Editors can read everything.
+			return array( 'read_private_posts' );
 
 		// allow files to be uploaded via AJAX
 		case 'upload_files' :
