@@ -128,6 +128,12 @@ function cacsp_paper_is_protected( $paper_id ) {
  * @return array Array of post IDs that are off-limits to the user.
  */
 function cacsp_get_protected_papers_for_user( $user_id ) {
+	// Admins can see everything. Note that this is currently hardcoded to super admins;
+	// should maybe be 'read_private_posts' or a custom cap mapped to 'read_private_posts'.
+	if ( is_multisite() && is_super_admin( $user_id ) ) {
+		return array();
+	}
+
 	$last_changed = wp_cache_get( 'last_changed', 'posts' );
 	if ( ! $last_changed ) {
 		$last_changed = microtime();
@@ -266,7 +272,7 @@ function cacsp_approve_loggedin_comments( $approved, $commentdata ) {
 
 	return 1;
 }
-add_filter( 'pre_comment_approved', 'cacsp_approve_loggedin_comments', 10, 2 );
+add_filter( 'pre_comment_approved', 'cacsp_approve_loggedin_comments', 20, 2 );
 
 /**
  * Get unapproved comments for a paper.
