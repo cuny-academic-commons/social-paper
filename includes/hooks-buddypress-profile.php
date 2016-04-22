@@ -61,6 +61,9 @@ class CACSP_Profile {
 
 		// add adminbar nav
 		add_action( 'bp_setup_admin_bar', array( $this, 'adminbar' ), $this->position );
+
+		// Filter author links on single papers.
+		add_filter( 'the_author_url', array( $this, 'filter_author_url' ), 10, 2 );
 	}
 
 	/**
@@ -173,6 +176,21 @@ class CACSP_Profile {
 		foreach( $wp_admin_nav as $admin_menu ) {
 			$GLOBALS['wp_admin_bar']->add_menu( $admin_menu );
 		}
+	}
+
+	/**
+	 * Filter 'the_author_url' when on single papers.
+	 *
+	 * @param string $url
+	 * @param int    $user_id
+	 * @return string
+	 */
+	public function filter_author_url( $url, $user_id ) {
+		if ( cacsp_is_page() ) {
+			$url = bp_core_get_user_domain( $user_id );
+		}
+
+		return $url;
 	}
 
 } // end class

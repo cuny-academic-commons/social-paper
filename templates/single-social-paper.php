@@ -38,7 +38,7 @@ while ( have_posts() ) : the_post();
 			<?php if ( 'new' !== get_query_var( 'name' ) && 'auto-draft' !== get_queried_object()->post_status ) : ?>
 			<div class="entry-author">
 				<div class="entry-author-avatar">
-					<a href="<?php the_author_meta( 'url' ); ?>"><?php echo get_avatar( $post->post_author, 50, 'mm', '', array(
+					<a href="<?php the_author_meta( 'url', $post->post_author ); ?>"><?php echo get_avatar( $post->post_author, 50, 'mm', '', array(
 						'class' => 'avatar'
 					) ); ?>
 					</a>
