@@ -312,7 +312,7 @@ function cacsp_profile_screen_draft_content() {
  * @param $user_id ID of the user.
  * @return string
  */
-function cacsp_get_user_paper_url( $user_id = 0 ) {
+function cacsp_get_user_papers_url( $user_id = 0 ) {
 	return trailingslashit( bp_core_get_user_domain( $user_id ) . 'papers' );
 }
 
