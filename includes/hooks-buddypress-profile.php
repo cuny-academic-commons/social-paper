@@ -305,6 +305,18 @@ function cacsp_profile_screen_draft_content() {
 }
 
 /**
+ * Get a link to the 'papers' tab of a user profile.
+ *
+ * @since 1.1.0
+ *
+ * @param $user_id ID of the user.
+ * @return string
+ */
+function cacsp_get_user_paper_url( $user_id = 0 ) {
+	return trailingslashit( bp_core_get_user_domain( $user_id ) . 'papers' );
+}
+
+/**
  * Get the total number of papers for a user.
  *
  * @param  int  $user_id The user ID
