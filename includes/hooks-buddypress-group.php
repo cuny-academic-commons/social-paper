@@ -72,8 +72,12 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 
 		<?php else : ?>
 
-			<p><?php _e( 'No group papers found.', 'social-paper' ); ?></p>
+			<div class="cacsp-template-notice info">
+				<p><?php esc_html_e( 'There are no papers in this group.', 'social-paper' ); ?></p>
+				<a href="<?php cacsp_the_new_paper_link(); ?>" class="create-new-paper"><?php esc_html_e( 'Create new paper', 'social-paper' ); ?></a>
+			</div>
 
+			<?php do_action( 'cacsp_no_papers_in_group' ); ?>
 		<?php endif; ?>
 
 		</div>
