@@ -44,6 +44,10 @@ body.papers #buddypress ul.item-list li div.item-desc {
 	text-decoration: none;
 }
 
+.cacsp-template-notice.warning a {
+	text-decoration: underline;
+}
+
 .create-new-paper {
 	display: block;
 	padding: 3px 8px;
