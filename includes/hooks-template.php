@@ -295,6 +295,7 @@ function cacsp_asset_single_enqueue_handler() {
 		'spammed' => __( 'You have successfuly marked the comment as spam.', 'social-paper' ),
 		'trashed' => __( 'You have successfuly trashed the comment.', 'social-paper' ),
 		'paper_id' => get_queried_object_id(),
+		'rest_url' => trailingslashit( rest_url( 'social-paper/' . Social_Paper::$rest_api_version ) ),
 	) );
 }
 add_action( 'wp_enqueue_scripts', 'cacsp_asset_single_enqueue_handler', 999 );

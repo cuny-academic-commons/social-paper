@@ -72,11 +72,11 @@ function cacsp_paper_reader_selector( $paper_id ) {
 	) );
 
 	$selected = array();
-	if ( ! empty( $users['users'] ) ) {
-		foreach ( $users['users'] as $user ) {
+	if ( ! empty( $existing['users'] ) ) {
+		foreach ( $existing['users'] as $user ) {
 			$user_id = (int) $user->ID;
 
-			$user_data[] = array(
+			$selected[] = array(
 				'id'   => $user_id,
 				'text' => html_entity_decode( $user->display_name, ENT_QUOTES, 'UTF-8' ),
 			);
@@ -95,6 +95,50 @@ function cacsp_paper_reader_selector( $paper_id ) {
 	<?php
 
 	wp_nonce_field( 'cacsp-reader-selector', 'cacsp-reader-selector-nonce' );
+}
+
+/**
+ * Register REST route for Readers autocomplete.
+ */
+function cacsp_register_rest_route_readers_autocomplete() {
+	$version = Social_Paper::$rest_api_version;
+	register_rest_route( 'social-paper/' . $version, '/readers/', array(
+		'methods' => 'GET',
+		'callback' => 'cacsp_readers_route_cb',
+		'permission_callback' => function() {
+			return current_user_can( 'read' );
+		},
+	) );
+}
+add_action( 'rest_api_init', 'cacsp_register_rest_route_readers_autocomplete' );
+
+/**
+ * Callback for /readers/ REST route.
+ *
+ * At the moment, supports only 'search' queries.
+ */
+function cacsp_readers_route_cb( WP_REST_REQUEST $request ) {
+	global $wpdb;
+
+	$q = $request->get_param( 'search' );
+
+	if ( ! $q ) {
+		return array();
+	}
+
+	// WP provides pretty much no way to do this.
+	$escaped = esc_sql( $wpdb->esc_like( $q ) );
+	$found = $wpdb->get_results( "SELECT ID, display_name, user_login FROM $wpdb->users WHERE display_name LIKE '%{$escaped}%' OR user_login LIKE '%{$escaped}%' OR user_nicename LIKE '%{$escaped}%' AND spam = 0 AND deleted = 0 LIMIT 100" );
+
+	$items = array();
+	foreach ( $found as $_found ) {
+		$items[] = array(
+			'id' => $_found->ID,
+			'text' => $_found->display_name,
+		);
+	}
+
+	return $items;
 }
 
 /**
@@ -184,6 +228,8 @@ add_action( 'save_post', 'cacsp_save_paper_status' );
 
 /**
  * Fetch a JSON list of potential readers, to populate the Select2 interface.
+ *
+ * No longer used.
  *
  * @since 1.1.0
  */

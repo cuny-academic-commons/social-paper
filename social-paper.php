@@ -90,6 +90,15 @@ class Social_Paper {
 	public static $is_buffer = false;
 
 	/**
+	 * REST API version.
+	 *
+	 * Used for namespacing endpoints.
+	 *
+	 * @var string
+	 */
+	public static $rest_api_version = 'v1.0';
+
+	/**
 	 * Static initializer.
 	 */
 	public static function init() {

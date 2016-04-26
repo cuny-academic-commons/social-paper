@@ -13,29 +13,28 @@
 		responsive_iframes();
 
 		if ( $reader_selector.length && $.isFunction( $.fn.select2 ) ) {
-			// Load the Potential Readers list asynchronously.
-			$.post( ajaxurl, {
-				action: 'cacsp_potential_readers',
-				paper_id: SocialPaperI18n.paper_id
-			},
-			function( response ) {
-				if ( response.success ) {
-					$reader_selector.select2( {
-						placeholder: SocialPaperI18n.reader_placeholder,
-						data: response.data.potential
-					} );
-
-					// Mark existing readers as 'selected'.
-					var selected = [];
-					$.each( response.data.existing, function( k, ex ) {
-						selected.push( ex.id );
-					} );
-
-					$reader_selector.val( selected ).trigger( 'change' );
-
-					force_select2_width();
-				}
+			$reader_selector.select2( {
+				ajax: {
+					url: SocialPaperI18n.rest_url + 'readers/',
+					dataType: 'json',
+					delay: 500,
+					data: function( params ) {
+						return {
+							search: params.term
+						};
+					},
+					processResults: function( results ) {
+						var formatted_results = {};
+						formatted_results.results = results;
+						return formatted_results;
+					}
+				},
+				placeholder: SocialPaperI18n.reader_placeholder
 			} );
+
+			$reader_selector.trigger( 'change' );
+
+			force_select2_width();
 
 			$( '#cacsp-group-selector' ).select2( {
 				placeholder: SocialPaperI18n.group_placeholder
