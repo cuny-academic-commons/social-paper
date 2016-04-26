@@ -63,16 +63,19 @@ function cacsp_paper_reader_selector( $paper_id ) {
 	$paper = new CACSP_Paper( $paper_id );
 	$paper_reader_ids = $paper->get_reader_ids();
 
-	$existing = bp_core_get_users( array(
-		'include' => $paper_reader_ids,
-		'type' => 'alphabetical',
-		'per_page' => 0,
-		'populate_extras' => false,
-		'count_total' => false,
-	) );
+	$existing = false;
+	if ( $paper_reader_ids ) {
+		$existing = bp_core_get_users( array(
+			'include' => $paper_reader_ids,
+			'type' => 'alphabetical',
+			'per_page' => 0,
+			'populate_extras' => false,
+			'count_total' => false,
+		) );
+	}
 
 	$selected = array();
-	if ( ! empty( $existing['users'] ) ) {
+	if ( $existing && ! empty( $existing['users'] ) ) {
 		foreach ( $existing['users'] as $user ) {
 			$user_id = (int) $user->ID;
 
