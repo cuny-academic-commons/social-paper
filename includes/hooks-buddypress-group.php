@@ -60,7 +60,19 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 		?>
 		<div class="entry-content">
 
-		<?php if ( $group_query->have_posts() ) : ?>
+		<?php if ( $group_query->have_posts() ) :
+			$num_papers = count( $group_query->posts );
+			$num_comments = 0;
+			foreach( $group_query->posts as $paper ) {
+				$num_comments += $paper->comment_count;
+			}
+			$papers_text = sprintf( _n( '%s paper', '%s papers', $num_papers, 'social-paper' ), $num_papers );
+			$comments_text = sprintf( _n( '%s comment', '%s comments', $num_comments, 'social-paper' ), $num_comments );
+		?>
+			<div class="bp-group-social-paper-description">
+				<p class="description-text"><?php echo sprintf( esc_html__( 'This group has %1$s and %2$s.', 'social-paper' ), $papers_text, $comments_text ); ?></p>
+				<a href="<?php cacsp_the_new_paper_link(); ?>" class="bp-group-new-social-paper">Create new paper</a>
+			</div>
 
 			<ul class="item-list">
 
