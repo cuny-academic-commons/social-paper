@@ -39,7 +39,7 @@
 			var cacsp_group_selector = $( '#cacsp-group-selector' ).select2( {
 				placeholder: SocialPaperI18n.group_placeholder
 			} );
-			if ( SocialPaperI18n !== '' ) {
+			if ( SocialPaperI18n.group_id !== '' ) {
 				cacsp_group_selector.select2( 'val', SocialPaperI18n.group_id );
 			}
 		}
