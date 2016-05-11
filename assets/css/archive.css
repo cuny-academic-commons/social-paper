@@ -53,11 +53,11 @@ body.papers #buddypress ul.item-list li div.item-desc {
 
 .cacsp-template-notice {
 	border: #cee1ef 1px solid;
-	padding: 0 0.6em;
+	padding: 0.6em;
 	margin: 5px 0 15px;
 	color: #000;
 	background-color: #f0f8ff;
-	position: relative;
+	overflow: hidden;
 }
 
 .cacsp-template-notice.warning {
@@ -70,6 +70,7 @@ body.papers #buddypress ul.item-list li div.item-desc {
 	padding: 2px;
 	font-size: 12px;
 	line-height: 140%;
+	float: left;
 }
 
 .cacsp-template-notice a {
@@ -84,11 +85,9 @@ body.papers #buddypress ul.item-list li div.item-desc {
 .create-new-paper {
 	display: block;
 	padding: 3px 8px;
-	position: absolute;
 	background: #fff;
 	border: 1px solid #aaa;
 	border-radius: 2px;
-	right: 0;
-	top: 2px;
 	font-weight: bold;
+	float: right;
 }
