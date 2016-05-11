@@ -286,6 +286,10 @@ function cacsp_asset_single_enqueue_handler() {
 	} else {
 		$unapproved_comment_alt = sprintf( _n( '%s unapproved comment', '%s unapproved comments', $unapproved_comment_count, 'social-paper' ), number_format_i18n( $unapproved_comment_count ) );
 	}
+	$group_id = $_GET['group_id'];
+	if ( ! $group_id || ! bp_group_is_member( $group_id ) ) {
+		$group_id = '';
+	}
 	wp_localize_script( 'social-paper-single', 'SocialPaperI18n', array(
 		'group_placeholder' => __( 'Enter a group name', 'social-paper' ),
 		'reader_placeholder' => __( 'Enter a user name', 'social-paper' ),
@@ -296,6 +300,7 @@ function cacsp_asset_single_enqueue_handler() {
 		'trashed' => __( 'You have successfuly trashed the comment.', 'social-paper' ),
 		'paper_id' => get_queried_object_id(),
 		'rest_url' => trailingslashit( rest_url( 'social-paper/' . Social_Paper::$rest_api_version ) ),
+		'group_id' => $group_id,
 	) );
 }
 add_action( 'wp_enqueue_scripts', 'cacsp_asset_single_enqueue_handler', 999 );

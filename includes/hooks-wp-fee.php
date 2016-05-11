@@ -115,7 +115,22 @@ function _cacsp_enable_fee() {
 				} ).done( function( url ) {
 					// we change window.location.href to window.location.replace()
 					// this is done to avoid the 'new' page being in the browser's history
-					url && ( window.location.replace( url ) );
+					if ( url ) {
+					    var regex = new RegExp("[?&]" + 'group_id' + "(=([^&#]*)|&|#|$)");
+						var results = regex.exec(window.location.href);
+						if (! results || ! results[2]) {
+							window.location.replace(url);
+						} else {
+							var group_id = decodeURIComponent(results[2]);
+							var hash_location = url.indexOf('#')
+							if (!hash_location) {
+								window.location.replace(url + '&group_id=' + group_id);
+							} else {
+								var new_url = url.substr(0, hash_location) + '&group_id=' + group_id + url.substr(hash_location);
+								window.location.replace(new_url);
+							}
+						}
+					}
 				} );
 			}
 

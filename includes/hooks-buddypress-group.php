@@ -68,10 +68,12 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 			}
 			$papers_text = sprintf( _n( '%s paper', '%s papers', $num_papers, 'social-paper' ), $num_papers );
 			$comments_text = sprintf( _n( '%s comment', '%s comments', $num_comments, 'social-paper' ), $num_comments );
+
+			$new_group_paper_url = add_query_arg( 'group_id', $group_id, cacsp_get_the_new_paper_link() );
 		?>
 			<div class="bp-group-social-paper-description">
 				<p class="description-text"><?php echo sprintf( esc_html__( 'This group has %1$s and %2$s.', 'social-paper' ), $papers_text, $comments_text ); ?></p>
-				<a href="<?php cacsp_the_new_paper_link(); ?>" class="bp-group-new-social-paper">Create new paper</a>
+				<a href="<?php echo esc_url( $new_group_paper_url ); ?>" class="bp-group-new-social-paper"><?php esc_html_e( 'Create new paper', 'social-paper' ); ?></a>
 			</div>
 
 			<ul class="item-list">
