@@ -1,19 +1,19 @@
-.bp-group-social-paper-description {
+.cacsp-group-description {
 	position: relative;
 	font-size: 12px;
 	line-height: 140%;
     background-color: #f0f8ff;
     border: #cee1ef 1px solid;
-    padding: 10px 0px 10px 0.8em;
+    padding: 8px 0px 8px 0.8em;
     margin-bottom: 21px;
     border-radius: 3px;
     clear: both;
 }
-.bp-group-social-paper-description > .description-text {
+.cacsp-group-description > .description-text {
 	margin-right: 120px;
 	margin-bottom: 0;
 }
-.bp-group-social-paper-description > .bp-group-new-social-paper {
+.cacsp-group-description > .bp-group-new-social-paper {
 	display: block;
 	padding: 6px 8px;
 	position: absolute;
@@ -21,14 +21,40 @@
 	border: 1px solid #aaa;
 	border-radius: 2px;
 	right: 0;
-	top: 2px;
+	top: 1px;
 	font-weight: bold;
 	color: #555;
 	text-decoration: none;
 }
-.bp-group-social-paper-description > .bp-group-new-social-paper:hover {
+.cacsp-group-description > .bp-group-new-social-paper:hover {
 	background-color: #eee;
 	color: black;
+}
+.cacsp-group-pagination {
+	float: left;
+	line-height: 2.5em;
+}
+.cacsp-group-pagination-count {
+	float: left;
+}
+.cacsp-group-pagination-links {
+	float: right;
+
+}
+.cacsp-group-pagination-links a,
+.cacsp-group-pagination-links span.current {
+    display: block;
+    float: left;
+    padding: 0 5px;
+    margin-left: 5px;
+    border: 1px solid #efefef;
+    text-decoration: none;
+}
+.cacsp-group-pagination-links a:hover,
+.cacsp-group-pagination-links span.current {
+    background: #eee;
+    opacity: 0.8;
+    border: 1px solid #ddd;
 }
 
 body.papers #buddypress ul.item-list li img.avatar {

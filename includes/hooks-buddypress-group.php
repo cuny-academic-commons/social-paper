@@ -55,15 +55,26 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 			'post_type' => 'cacsp_paper',
 			'post_status' => 'publish',
 			'bp_group' => $group_id,
+			'posts_per_page' => 1,
+			'paged' => get_query_var( 'paged' ) >= 1 ? get_query_var( 'paged' ) : 1, 
+		) );
+
+		// Need this to get an accurate count of total comments on papers
+		$group_query_not_paged = new WP_Query( array(
+			'post_type' => 'cacsp_paper',
+			'post_status' => 'publish',
+			'bp_group' => $group_id,
+			'posts_per_page' => -1,
 		) );
 
 		?>
 		<div class="entry-content">
 
 		<?php if ( $group_query->have_posts() ) :
-			$num_papers = count( $group_query->posts );
+			$num_papers = $group_query->found_posts;
 			$num_comments = 0;
-			foreach( $group_query->posts as $paper ) {
+			// Using not_paged query so that we're iterating through all papers, not just the first page
+			foreach( $group_query_not_paged->posts as $paper ) {
 				$num_comments += $paper->comment_count;
 			}
 			$papers_text = sprintf( _n( '%s paper', '%s papers', $num_papers, 'social-paper' ), $num_papers );
@@ -71,9 +82,46 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 
 			$new_group_paper_url = add_query_arg( 'group_id', $group_id, cacsp_get_the_new_paper_link() );
 		?>
-			<div class="bp-group-social-paper-description">
+			<div class="cacsp-group-description">
 				<p class="description-text"><?php echo sprintf( esc_html__( 'This group has %1$s and %2$s.', 'social-paper' ), $papers_text, $comments_text ); ?></p>
 				<a href="<?php echo esc_url( $new_group_paper_url ); ?>" class="bp-group-new-social-paper"><?php esc_html_e( 'Create new paper', 'social-paper' ); ?></a>
+			</div>
+
+			<div class="cacsp-group-pagination">
+				<div class="cacsp-group-pagination-count">
+				<?php
+					// Set pagination values
+					$posts_per_page = $group_query->query_vars['posts_per_page'];
+					$curr_page  = $group_query->query_vars['paged'];
+					$from_num = intval( ( $curr_page - 1 ) * $posts_per_page ) + 1;
+					$to_num    = ( $from_num + $posts_per_page - 1 > $group_query->found_posts ) ? $group_query->found_posts : $from_num + $posts_per_page - 1 ;
+					$total = (int) !empty( $group_query->found_posts ) ? $group_query->found_posts : $group_query->post_count;
+
+					$pagination_string = '';
+					// Several papers in a group with a single page of papers
+					if ( (int)$group_query->max_num_pages == 1 ) {
+						$pagination_string = sprintf( _n( 'Viewing %1$s paper', 'Viewing %1$s papers', $total, 'social-paper' ), $total );
+
+					// Several papers in a group with several pages of papers
+					} else {
+						$pagination_string = sprintf( _n( 'Viewing paper %2$s (of %4$s total)', 'Viewing %1$s papers - %2$s through %3$s (of %4$s total)', $group_query->post_count, 'social-paper' ), $group_query->post_count, $from_num, $to_num, $total );
+					}
+					esc_html_e( $pagination_string );
+				?>
+				</div>
+
+				<div class="cacsp-group-pagination-links">
+					<?php
+						$args = array(
+							'total' => (int)ceil( $group_query->max_num_pages ),
+							'current' => $curr_page,
+							'mid_size' => 1,
+							'prev_text' => is_rtl() ? '&rarr;' : '&larr;',
+							'next_text' => is_rtl() ? '&larr;' : '&rarr;',
+						);
+						echo paginate_links( $args );
+					?>
+				</div>
 			</div>
 
 			<ul class="item-list">
