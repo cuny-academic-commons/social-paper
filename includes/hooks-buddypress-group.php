@@ -55,7 +55,6 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 			'post_type' => 'cacsp_paper',
 			'post_status' => 'publish',
 			'bp_group' => $group_id,
-			'posts_per_page' => 1,
 			'paged' => get_query_var( 'paged' ) >= 1 ? get_query_var( 'paged' ) : 1, 
 		) );
 
