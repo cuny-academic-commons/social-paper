@@ -57,27 +57,28 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 			'bp_group' => $group_id,
 			'paged' => get_query_var( 'paged' ) >= 1 ? get_query_var( 'paged' ) : 1, 
 		) );
-
-		// Need this to get an accurate count of total comments on papers
 		$group_query_not_paged = new WP_Query( array(
 			'post_type' => 'cacsp_paper',
 			'post_status' => 'publish',
 			'bp_group' => $group_id,
 			'posts_per_page' => -1,
 		) );
-
 		?>
 		<div class="entry-content">
 
 		<?php if ( $group_query->have_posts() ) :
 			$num_papers = $group_query->found_posts;
-			$num_comments = 0;
-			// Using not_paged query so that we're iterating through all papers, not just the first page
-			foreach( $group_query_not_paged->posts as $paper ) {
-				$num_comments += $paper->comment_count;
+			
+			$group_paper_comment_count = wp_cache_get( $group_id, 'cacsp_group_paper_comment_counts' );
+			if ( false === $group_paper_comment_count ) {
+				$group_paper_comment_count = 0;
+				foreach( $group_query_not_paged->posts as $paper ) {
+					$group_paper_comment_count += $paper->comment_count;
+				}
+				wp_cache_set( $group_id, $group_paper_comment_count, 'cacsp_group_paper_comment_counts' );			
 			}
 			$papers_text = sprintf( _n( '%s paper', '%s papers', $num_papers, 'social-paper' ), $num_papers );
-			$comments_text = sprintf( _n( '%s comment', '%s comments', $num_comments, 'social-paper' ), $num_comments );
+			$comments_text = sprintf( _n( '%s comment', '%s comments', $group_paper_comment_count, 'social-paper' ), $group_paper_comment_count );
 
 			$new_group_paper_url = add_query_arg( 'group_id', $group_id, cacsp_get_the_new_paper_link() );
 		?>
@@ -150,6 +151,35 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 
 // register our class
 bp_register_group_extension( 'CACSP_Group_Extension' );
+
+/**
+ * Invalidate group social paper comment count when new comments are added, edited, or their status changes
+ *
+ * @param int $comment_id the unique ID of the comment added or changed
+ */
+function cacsp_invalidate_group_paper_comment_count_cache( $comment_id ) {
+	$comment = get_comment( $comment_id );
+	if( ! $comment ) {
+		return;
+	}
+
+	$paper = new CACSP_Paper( $comment->comment_post_ID );
+	if ( ! $paper->exists() ) {
+		return;
+	}
+
+	$group_ids = $paper->get_group_ids();
+	if ( ! is_array( $group_ids ) ) {
+		return;
+	}
+	
+	foreach( $group_ids as $group_id ) {
+		wp_cache_delete( $group_id, 'cacsp_group_paper_comment_counts' );
+	}
+}
+add_action( 'wp_insert_comment', 'cacsp_invalidate_group_paper_comment_count_cache' );
+add_action( 'wp_set_comment_status', 'cacsp_invalidate_group_paper_comment_count_cache' );
+add_action( 'edit_comment', 'cacsp_invalidate_group_paper_comment_count_cache' );
 
 /**
  * Register group connection taxonomy.
