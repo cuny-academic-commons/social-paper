@@ -57,12 +57,6 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 			'bp_group' => $group_id,
 			'paged' => get_query_var( 'paged' ) >= 1 ? get_query_var( 'paged' ) : 1, 
 		) );
-		$group_query_not_paged = new WP_Query( array(
-			'post_type' => 'cacsp_paper',
-			'post_status' => 'publish',
-			'bp_group' => $group_id,
-			'posts_per_page' => -1,
-		) );
 		?>
 		<div class="entry-content">
 
@@ -71,6 +65,12 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 			
 			$group_paper_comment_count = wp_cache_get( $group_id, 'cacsp_group_paper_comment_counts' );
 			if ( false === $group_paper_comment_count ) {
+				$group_query_not_paged = new WP_Query( array(
+					'post_type' => 'cacsp_paper',
+					'post_status' => 'publish',
+					'bp_group' => $group_id,
+					'posts_per_page' => -1,
+				) );
 				$group_paper_comment_count = 0;
 				foreach( $group_query_not_paged->posts as $paper ) {
 					$group_paper_comment_count += $paper->comment_count;
