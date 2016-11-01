@@ -512,3 +512,45 @@ function wp_styles() {
 	return $wp_styles;
 }
 endif;
+
+
+/**
+ * Template tag to output the search URL for Social Paper
+**/
+function cacsp_group_search_url() {
+	echo esc_url( get_cacsp_group_search_url() );
+}
+function get_cacsp_group_search_url() {
+	$url = bp_get_group_permalink( groups_get_current_group() ) . 'papers/search/';
+
+	return apply_filters( 'cacsp_get_group_search_url', $url );
+}
+
+function cacsp_search_terms( $search_terms = '' ) {
+	echo cacsp_get_search_terms( $search_terms );
+}
+function cacsp_get_search_terms( $passed_terms = '' ) {
+
+	// Sanitize terms if they were passed in
+	if ( !empty( $passed_terms ) ) {
+		$search_terms = sanitize_title( $passed_terms );
+
+	// Use query variable if not
+	} elseif ( !empty( $_GET['cacsp_search'] ) ) {
+		$search_terms = $_GET['cacsp_search'];
+	}
+
+	// Trim whitespace and decode, or set explicitly to false if empty
+	$search_terms = !empty( $search_terms ) ? urldecode( trim( $search_terms ) ) : false;
+
+	return apply_filters( 'cacsp_get_search_terms', $search_terms, $passed_terms );
+}
+function cacsp_is_search( $query ) {
+	// Assume false
+	$retval = false;
+
+	if ( isset( $_REQUEST[ 'cacsp_search' ] ) && !empty( $_REQUEST[ 'cacsp_search' ] ) )
+		$retval = true;
+
+	return (bool) apply_filters( 'cacsp_is_search', $retval );
+}

@@ -49,13 +49,18 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 	 * @return void
 	 */
 	public function display( $group_id = null ) {
-
 		// Perform query for this group.
+		$search_query = '';
+		if ( cacsp_is_search() ) {
+			$search_query = cacsp_get_search_terms();
+		}
+
 		$group_query = new WP_Query( array(
 			'post_type' => 'cacsp_paper',
 			'post_status' => 'publish',
 			'bp_group' => $group_id,
 			'paged' => get_query_var( 'paged' ) >= 1 ? get_query_var( 'paged' ) : 1, 
+			's' => $search_query,
 		) );
 		?>
 		<div class="entry-content">
@@ -63,27 +68,33 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 		<?php if ( $group_query->have_posts() ) :
 			$num_papers = $group_query->found_posts;
 			
-			$group_paper_comment_count = wp_cache_get( $group_id, 'cacsp_group_paper_comment_counts' );
-			if ( false === $group_paper_comment_count ) {
-				$group_query_not_paged = new WP_Query( array(
-					'post_type' => 'cacsp_paper',
-					'post_status' => 'publish',
-					'bp_group' => $group_id,
-					'posts_per_page' => -1,
-				) );
-				$group_paper_comment_count = 0;
-				foreach( $group_query_not_paged->posts as $paper ) {
-					$group_paper_comment_count += $paper->comment_count;
+			// Only need total counts, description, new paper button on non-search group paper directories
+			if ( !cacsp_is_search() ) {
+				$group_paper_comment_count = wp_cache_get( $group_id, 'cacsp_group_paper_comment_counts' );
+				if ( false === $group_paper_comment_count ) {
+					$group_query_not_paged = new WP_Query( array(
+						'post_type' => 'cacsp_paper',
+						'post_status' => 'publish',
+						'bp_group' => $group_id,
+						'posts_per_page' => -1,
+					) );
+					$group_paper_comment_count = 0;
+					foreach( $group_query_not_paged->posts as $paper ) {
+						$group_paper_comment_count += $paper->comment_count;
+					}
+					wp_cache_set( $group_id, $group_paper_comment_count, 'cacsp_group_paper_comment_counts' );			
 				}
-				wp_cache_set( $group_id, $group_paper_comment_count, 'cacsp_group_paper_comment_counts' );			
+				$comments_text = sprintf( _n( '%s comment', '%s comments', $group_paper_comment_count, 'social-paper' ), $group_paper_comment_count );
+				$papers_text = sprintf( _n( '%s paper', '%s papers', $num_papers, 'social-paper' ), $num_papers );
+				$description_text = sprintf( esc_html__( 'This group has %1$s and %2$s.', 'social-paper' ), $papers_text, $comments_text );
+				$new_group_paper_url = add_query_arg( 'group_id', $group_id, cacsp_get_the_new_paper_link() );
+			} else {
+				$results_text = sprintf( _n( '%s result', '%s results', $num_papers, 'social-paper' ), $num_papers );
+				$description_text = sprintf( esc_html__( 'Found %1$s for search "%2$s".', 'social-paper' ), $results_text, cacsp_get_search_terms() );
 			}
-			$papers_text = sprintf( _n( '%s paper', '%s papers', $num_papers, 'social-paper' ), $num_papers );
-			$comments_text = sprintf( _n( '%s comment', '%s comments', $group_paper_comment_count, 'social-paper' ), $group_paper_comment_count );
-
-			$new_group_paper_url = add_query_arg( 'group_id', $group_id, cacsp_get_the_new_paper_link() );
-		?>
+			?>
 			<div class="cacsp-group-description">
-				<p class="description-text"><?php echo sprintf( esc_html__( 'This group has %1$s and %2$s.', 'social-paper' ), $papers_text, $comments_text ); ?></p>
+				<p class="description-text"><?php echo $description_text; ?></p>
 				<a href="<?php echo esc_url( $new_group_paper_url ); ?>" class="bp-group-new-social-paper"><?php esc_html_e( 'Create new paper', 'social-paper' ); ?></a>
 			</div>
 
@@ -96,10 +107,10 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 					$from_num = intval( ( $curr_page - 1 ) * $posts_per_page ) + 1;
 					$to_num    = ( $from_num + $posts_per_page - 1 > $group_query->found_posts ) ? $group_query->found_posts : $from_num + $posts_per_page - 1 ;
 					$total = (int) !empty( $group_query->found_posts ) ? $group_query->found_posts : $group_query->post_count;
-
 					$pagination_string = '';
 					// Several papers in a group with a single page of papers
 					if ( (int)$group_query->max_num_pages == 1 ) {
+
 						$pagination_string = sprintf( _n( 'Viewing %1$s paper', 'Viewing %1$s papers', $total, 'social-paper' ), $total );
 
 					// Several papers in a group with several pages of papers
@@ -124,6 +135,8 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 				</div>
 			</div>
 
+			<?php cacsp_get_template_part( 'search-social-paper', 'buddypress' ); ?>
+			
 			<ul class="item-list">
 
 			<?php while ( $group_query->have_posts() ) : $group_query->the_post(); ?>

@@ -56,6 +56,13 @@
     opacity: 0.8;
     border: 1px solid #ddd;
 }
+.cacsp-search-form {
+	float: right;
+}
+.cacsp-search-input {
+	width: 160px;
+	padding: 4px;
+}
 
 body.papers #buddypress ul.item-list li img.avatar {
 	margin-bottom: 5em;
