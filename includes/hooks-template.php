@@ -864,6 +864,34 @@ Comment: %6$s', 'social-paper' ),
 add_filter( 'comment_moderation_text', 'cacsp_filter_comment_moderation_text', 20, 2 );
 
 /**
+ * Prevent comment-moderation emails from going to site admin for Paper comments.
+ *
+ * @since 1.1.0
+ */
+function cacsp_prevent_moderator_emails( $emails, $comment_id ) {
+	$comment = get_comment( $comment_id );
+	if ( ! $comment ) {
+		return $emails;
+	}
+
+	$post = get_post( $comment->comment_post_ID );
+	if ( ! $post ) {
+		return $emails;
+	}
+
+	if ( 'cacsp_paper' === $post->post_type ) {
+		$admin_email = get_option( 'admin_email' );
+		$admin_user = get_user_by( 'email', $admin_email );
+		if ( $admin_user && $post->post_author != $admin_user->ID ) {
+			$emails = array_diff( $emails, array( $admin_email ) );
+		}
+	}
+
+	return $emails;
+}
+add_filter( 'comment_moderation_recipients', 'cacsp_prevent_moderator_emails', 10, 2 );
+
+/**
  * Generate the Paper Status notices for display on single papers.
  *
  * @since 1.0.0
