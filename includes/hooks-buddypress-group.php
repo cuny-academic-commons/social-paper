@@ -59,7 +59,7 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 			'post_type' => 'cacsp_paper',
 			'post_status' => 'publish',
 			'bp_group' => $group_id,
-			'paged' => get_query_var( 'paged' ) >= 1 ? get_query_var( 'paged' ) : 1, 
+			'paged' => get_query_var( 'paged' ) >= 1 ? get_query_var( 'paged' ) : 1,
 			's' => $search_query,
 		) );
 		?>
@@ -67,7 +67,7 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 
 		<?php if ( $group_query->have_posts() ) :
 			$num_papers = $group_query->found_posts;
-			
+
 			// Only need total counts, description, new paper button on non-search group paper directories
 			if ( !cacsp_is_search() ) {
 				$group_paper_comment_count = wp_cache_get( $group_id, 'cacsp_group_paper_comment_counts' );
@@ -82,7 +82,7 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 					foreach( $group_query_not_paged->posts as $paper ) {
 						$group_paper_comment_count += $paper->comment_count;
 					}
-					wp_cache_set( $group_id, $group_paper_comment_count, 'cacsp_group_paper_comment_counts' );			
+					wp_cache_set( $group_id, $group_paper_comment_count, 'cacsp_group_paper_comment_counts' );
 				}
 				$comments_text = sprintf( _n( '%s comment', '%s comments', $group_paper_comment_count, 'social-paper' ), $group_paper_comment_count );
 				$papers_text = sprintf( _n( '%s paper', '%s papers', $num_papers, 'social-paper' ), $num_papers );
@@ -136,7 +136,7 @@ class CACSP_Group_Extension extends BP_Group_Extension {
 			</div>
 
 			<?php cacsp_get_template_part( 'search-social-paper', 'buddypress' ); ?>
-			
+
 			<ul class="item-list">
 
 			<?php while ( $group_query->have_posts() ) : $group_query->the_post(); ?>
@@ -185,7 +185,7 @@ function cacsp_invalidate_group_paper_comment_count_cache( $comment_id ) {
 	if ( ! is_array( $group_ids ) ) {
 		return;
 	}
-	
+
 	foreach( $group_ids as $group_id ) {
 		wp_cache_delete( $group_id, 'cacsp_group_paper_comment_counts' );
 	}
