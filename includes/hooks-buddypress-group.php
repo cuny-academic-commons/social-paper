@@ -331,6 +331,10 @@ function cacsp_filter_activity_args_for_groups( $args ) {
 	}
 
 	// Replace in the query args, and remove original group filters.
+	if ( ! is_array( $args ) ) {
+		$args = array();
+	}
+
 	$args['filter_query'] = $new_filter_query;
 	$args['primary_id'] = '';
 	$args['object'] = '';
