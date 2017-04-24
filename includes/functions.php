@@ -545,7 +545,7 @@ function cacsp_get_search_terms( $passed_terms = '' ) {
 
 	return apply_filters( 'cacsp_get_search_terms', $search_terms, $passed_terms );
 }
-function cacsp_is_search( $query ) {
+function cacsp_is_search() {
 	// Assume false
 	$retval = false;
 
