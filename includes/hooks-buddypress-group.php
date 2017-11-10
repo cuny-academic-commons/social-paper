@@ -581,6 +581,7 @@ function cacsp_paper_group_selector( $paper_id ) {
 	$user_groups = groups_get_groups( array(
 		'user_id' => bp_loggedin_user_id(),
 		'type' => 'alphabetical',
+		'show_hidden' => true,
 	) );
 	$user_group_ids = array_map( 'intval', wp_list_pluck( $user_groups['groups'], 'id' ) );
 
