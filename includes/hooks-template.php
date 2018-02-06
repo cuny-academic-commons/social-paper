@@ -496,10 +496,8 @@ function _cacsp_archive_ob_end( $q ) {
 
 	remove_action( 'loop_end', '_cacsp_archive_ob_end', 999 );
 
-	// rewind posts if papers exist to display them in our template
-	if ( false === Social_Paper::$is_empty_archive ) {
-		$q->rewind_posts();
-	}
+	// Rewind posts since we have to redo the loop in our template.
+	$q->rewind_posts();
 
 	$templates = array();
 	if ( function_exists( 'buddypress' ) ) {
