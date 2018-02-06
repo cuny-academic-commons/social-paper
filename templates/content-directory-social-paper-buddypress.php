@@ -40,29 +40,31 @@
 			</ul>
 		</div><!-- .item-list-tabs -->
 
-		<?php if ( have_posts() ) : ?>
+		<div class="papers">
 
-			<div class="papers">
+			<?php if ( have_posts() ) : ?>
+
 				<?php cacsp_get_template_part( 'loop-social-paper', 'buddypress' ); ?>
-			</div>
 
-		<?php else : ?>
+			<?php else : ?>
 
-			<div id="message" class="info">
+				<div id="message" class="info">
 
-				<?php if ( is_user_logged_in() ) : ?>
+					<?php if ( is_user_logged_in() ) : ?>
 
-					<p><?php printf( __( 'No papers have been written yet.  %sBe the first to write a paper!%s', 'social-paper' ), '<a href="' . cacsp_get_the_new_paper_link() . '">', '</a>' ); ?></p>
+						<p><?php printf( __( 'No papers have been written yet.  %sBe the first to write a paper!%s', 'social-paper' ), '<a href="' . cacsp_get_the_new_paper_link() . '">', '</a>' ); ?></p>
 
-				<?php else : ?>
+					<?php else : ?>
 
-					<p><?php _e( 'No papers have been written yet.', 'social-paper' ); ?></p>
+						<p><?php _e( 'No papers have been written yet.', 'social-paper' ); ?></p>
 
-				<?php endif; ?>
+					<?php endif; ?>
 
-			</div>
+				</div>
 
-		<?php endif; ?>
+			<?php endif; ?>
+
+		</div>
 
 	</div>
 	</div>
