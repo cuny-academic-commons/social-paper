@@ -136,11 +136,11 @@ class Social_Paper {
 
 			}
 
-			add_action( 'admin_notices', create_function( '', "
+			add_action( 'admin_notices', function() use ( $notice ) {
 				if ( current_user_can( 'install_plugins' ) ) {
-					echo '<div class=\"error\"><p>" . $notice . "</p></div>';
+					echo '<div class="error"><p>' . $notice . '</p></div>';
 				}
-			" ) );
+			} );
 			return;
 		}
 
