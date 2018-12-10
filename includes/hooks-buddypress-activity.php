@@ -446,7 +446,41 @@ add_action( 'bp_activity_before_save', 'cacsp_before_activity_save' );
  *
  * Users should not see activity related to papers to which they do not have access.
  */
-function cacsp_access_protection_for_activity_feed( $where_conditions ) {
+function cacsp_access_protection_for_activity_feed( $where_conditions, $r ) {
+	$is_papers_query = true;
+
+	/*
+	 * Err on the side of caution: it's a Papers query if the string appears anywhere,
+	 * or if component + type are empty - ie, no restrictions on query.
+	 */
+	$contains_papers = false;
+	$has_type        = false;
+	$has_component   = false;
+
+	$exclude_clauses = array( 'excluded_types', 'spam_sql', 'hidden_sql' );
+
+	foreach ( $where_conditions as $condition_type => $condition ) {
+		if ( in_array( $condition_type, $exclude_clauses, true ) ) {
+			continue;
+		}
+
+		if ( false !== strpos( $condition, 'cacsp' ) ) {
+			$contains_papers = true;
+		}
+
+		if ( false !== strpos( $condition, 'component' ) ) {
+			$has_component = true;
+		}
+
+		if ( false !== strpos( $condition, 'type' ) ) {
+			$has_type = true;
+		}
+	}
+
+	if ( ! $contains_papers && ( $has_type || $has_component ) ) {
+		return $where_conditions;
+	}
+
 	$protected_paper_ids = cacsp_get_protected_papers_for_user( bp_loggedin_user_id() );
 	if ( ! $protected_paper_ids ) {
 		return $where_conditions;
@@ -474,7 +508,7 @@ function cacsp_access_protection_for_activity_feed( $where_conditions ) {
 
 	return $where_conditions;
 }
-add_filter( 'bp_activity_get_where_conditions', 'cacsp_access_protection_for_activity_feed' );
+add_filter( 'bp_activity_get_where_conditions', 'cacsp_access_protection_for_activity_feed', 10, 2 );
 
 /**
  * Remove activity favorites from paper-related items.
