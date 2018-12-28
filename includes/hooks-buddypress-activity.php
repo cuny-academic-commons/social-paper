@@ -403,6 +403,12 @@ add_action( 'post_updated', 'cacsp_create_edit_activity', 20, 3 );
  * @param int $post_id The paper ID.
  */
 function cacsp_delete_all_activity_items_for_paper( $post_id = 0 ) {
+	$paper = new CACSP_Paper( $post_id );
+	$cp_post_type = $paper->post_type;
+	if ( ! $cp_post_type || 'cacsp_paper' !== $cp_post_type ) {
+		return;
+	}
+
 	// handle edits and comments
 	bp_activity_delete( array(
 		'component' => 'cacsp',
@@ -417,7 +423,7 @@ function cacsp_delete_all_activity_items_for_paper( $post_id = 0 ) {
 		'secondary_item_id' => $post_id
 	) );
 }
-add_action( 'delete_post', 'cacsp_delete_all_activity_items_for_paper', 99 );
+add_action( 'before_delete_post', 'cacsp_delete_all_activity_items_for_paper', 99 );
 
 /**
  * Strip invalid characters from new paper activity items before insertion.
