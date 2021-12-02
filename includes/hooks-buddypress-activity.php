@@ -307,6 +307,11 @@ function cacsp_create_edit_activity( $post_id, WP_Post $post_after, WP_Post $pos
 		return;
 	}
 
+	// Do not record for papers with passwords.
+	if ( ! empty( $post_after->post_password ) ) {
+		return;
+	}
+
 	// The author of the edit is the one who wrote the last revision.
 	if ( $revisions = wp_get_post_revisions( $post_id ) ) {
 		// Grab the last revision, but not an autosave.
