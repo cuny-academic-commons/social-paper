@@ -56,6 +56,19 @@ function cacsp_format_notifications( $action, $paper_id, $secondary_item_id, $co
 
 			break;
 
+		case 'followedpaper_edit' :
+			if ( (int) $count > 1 ) {
+				$text = __( 'Multiple papers you follow have been edited', 'social-paper' );
+
+				$link = bp_loggedin_user_domain() . bp_get_notifications_slug();
+			} else {
+				$paper = new CACSP_Paper( $paper_id );
+				$text = sprintf( __( 'The paper "%s" was edited. You follow this paper', 'social-paper' ), $paper->post_title );
+				$link = get_comment_link( $secondary_item_id );
+			}
+
+			break;
+
 		case 'comment_mention' :
 			if ( (int) $count > 1 ) {
 				$text = __( 'You have been mentioned in papers', 'social-paper' );
