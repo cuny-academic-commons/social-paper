@@ -55,6 +55,7 @@ function cacsp_register_post_types() {
 			'follow_button' => true
 		),
 		'show_in_admin_bar' => false,
+		'show_ui' => false,
 	) );
 }
 
