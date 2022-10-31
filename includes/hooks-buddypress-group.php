@@ -268,7 +268,9 @@ function cacsp_filter_activity_args_for_groups( $args ) {
 	// Distinguish single group streams from "my groups".
 	if ( ! empty( $args['primary_id'] ) ) {
 		$group_ids = array( (int) $args['primary_id'] );
+		$is_scope  = false;
 	} else {
+		$is_scope  = true;
 		$group_ids = cacsp_get_groups_of_user( bp_loggedin_user_id() );
 	}
 
@@ -343,6 +345,11 @@ function cacsp_filter_activity_args_for_groups( $args ) {
 	$args['primary_id'] = '';
 	$args['object'] = '';
 	$args['scope'] = '';
+
+	// Show hidden items if we're using 'groups' activity scope.
+	if ( $is_scope && ! empty( $group_ids ) ) {
+		$args['show_hidden'] = true;
+	}
 
 	return $args;
 }
