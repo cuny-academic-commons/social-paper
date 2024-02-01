@@ -554,3 +554,33 @@ function cacsp_is_search() {
 
 	return (bool) apply_filters( 'cacsp_is_search', $retval );
 }
+
+if ( ! function_exists( 'bp_post_author_avatar' ) ) :
+	/**
+	 * Output a post author's avatar.
+	 *
+	 * @deprecated 12.0.0
+	 */
+	function bp_post_author_avatar() {
+		_deprecated_function( __FUNCTION__, '12.0.0' );
+		global $post;
+
+		echo apply_filters_deprecated(
+			'bp_post_author_avatar',
+			array(
+				bp_core_fetch_avatar(
+					array(
+						'item_id' => $post->post_author,
+						'type'    => 'thumb',
+						'alt'     => sprintf(
+							/* translators: %s: member name */
+							__( 'Profile photo of %s', 'buddypress' ),
+							bp_core_get_user_displayname( $post->post_author )
+						),
+					)
+				)
+			),
+			'12.0.0'
+		);
+	}
+endif;
