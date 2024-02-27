@@ -85,13 +85,13 @@ class CACSP_FEE extends FEE {
 		global $post;
 
 		// Remove 'Read More' button from 'Add a Block' toolbar
-		add_filter( 'fee_tinymce_blocks', create_function( '$retval', '
+		add_filter( 'fee_tinymce_blocks', function( $retval ) {
 			$key = array_search( "wp_more", $retval );
 			if ( false !== $key ) {
 				unset( $retval[$key] );
 			}
 			return $retval;
-		' ) );
+		} );
 
 		// do what FEE does
 		parent::wp_enqueue_scripts();
