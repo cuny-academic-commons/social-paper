@@ -527,7 +527,7 @@ function cacsp_format_activity_action_for_group( $action, $activity, CACSP_Paper
 		}
 
 		if ( $k ) {
-			$groups_to_include[ $k ][ $pg->name ] = bp_get_group_permalink( $pg ) . 'papers/';
+			$groups_to_include[ $k ][ $pg->name ] = bp_get_group_url( $pg ) . 'papers/';
 		}
 	}
 
@@ -684,7 +684,7 @@ function cacsp_get_group_links_for_paper( $paper_id ) {
 	$show_groups = array();
 	foreach ( $groups['groups'] as $group ) {
 		if ( 'public' === $group->status || $group->is_member ) {
-			$show_groups[] = sprintf( '<a href="%s">%s</a>', esc_url( bp_get_group_permalink( $group ) ) . 'papers/', esc_html( stripslashes( $group->name ) ) );
+			$show_groups[] = sprintf( '<a href="%s">%s</a>', esc_url( bp_get_group_url( $group ) ) . 'papers/', esc_html( stripslashes( $group->name ) ) );
 		}
 	}
 

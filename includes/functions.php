@@ -399,9 +399,9 @@ function cacsp_the_loop_author() {
 
 	} else {
 		if ( ! empty( $group_links ) ) {
-			printf( __( 'Written by %s in %s', 'social-paper' ), '<a href="' . bp_core_get_user_domain( $GLOBALS['post']->post_author ) . '">' . bp_core_get_user_displayname( $GLOBALS['post']->post_author )  . '</a>', implode( ', ', $group_links ) );
+			printf( __( 'Written by %s in %s', 'social-paper' ), '<a href="' . bp_members_get_user_url( $GLOBALS['post']->post_author ) . '">' . bp_core_get_user_displayname( $GLOBALS['post']->post_author )  . '</a>', implode( ', ', $group_links ) );
 		} else {
-			printf( __( 'Written by %s', 'social-paper' ), '<a href="' . bp_core_get_user_domain( $GLOBALS['post']->post_author ) . '">' . bp_core_get_user_displayname( $GLOBALS['post']->post_author )  . '</a>' );
+			printf( __( 'Written by %s', 'social-paper' ), '<a href="' . bp_members_get_user_url( $GLOBALS['post']->post_author ) . '">' . bp_core_get_user_displayname( $GLOBALS['post']->post_author )  . '</a>' );
 		}
 	}
 }
@@ -521,7 +521,7 @@ function cacsp_group_search_url() {
 	echo esc_url( get_cacsp_group_search_url() );
 }
 function get_cacsp_group_search_url() {
-	$url = bp_get_group_permalink( groups_get_current_group() ) . 'papers/search/';
+	$url = bp_get_group_url( groups_get_current_group() ) . 'papers/search/';
 
 	return apply_filters( 'cacsp_get_group_search_url', $url );
 }

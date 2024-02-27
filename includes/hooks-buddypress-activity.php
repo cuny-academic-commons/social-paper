@@ -139,14 +139,14 @@ function cacsp_format_activity_action( $action, $activity ) {
 					__( '%1$s added the paper %2$s to the group %3$s', 'social-paper' ),
 					$user_link,
 					sprintf( '<a href="%s">%s</a>', esc_url( $paper_link ), esc_html( $paper_title ) ),
-					sprintf( '<a href="%s">%s</a>', esc_url( bp_get_group_permalink( $group ) ), esc_html( stripslashes( $group->name ) ) )
+					sprintf( '<a href="%s">%s</a>', esc_url( bp_get_group_url( $group ) ), esc_html( stripslashes( $group->name ) ) )
 				);
 			} else {
 				$action = sprintf(
 					__( '%1$s added <a href="%2$s">an untitled paper</a> to the group %3$s', 'social-paper' ),
 					$user_link,
 					esc_url( $paper_link ),
-					sprintf( '<a href="%s">%s</a>', esc_url( bp_get_group_permalink( $group ) ), esc_html( stripslashes( $group->name ) ) )
+					sprintf( '<a href="%s">%s</a>', esc_url( bp_get_group_url( $group ) ), esc_html( stripslashes( $group->name ) ) )
 				);
 			}
 

@@ -128,7 +128,7 @@ function cacsp_follow_format_notifications( $retval, $args ) {
 	} else {
 		$text = sprintf( __( '%s started following your paper "%s"', 'social-paper' ), bp_core_get_user_displayname( $args['secondary_item_id'] ), $paper->post_title );
 
-		$link = add_query_arg( 'spf_read', $paper->id, bp_core_get_user_domain( $args['secondary_item_id'] ) );
+		$link = add_query_arg( 'spf_read', $paper->id, bp_members_get_user_url( $args['secondary_item_id'] ) );
 
 		if ( bp_is_current_action( 'read' ) ) {
 			// If we're in the notifications loop, remove query arg

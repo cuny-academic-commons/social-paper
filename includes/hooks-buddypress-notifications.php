@@ -743,11 +743,11 @@ function cacsp_follow_send_email_notification_to_author( BP_Follow $follow ) {
 '%1$s is now following your paper "%2$s".
 
 View %1$s\'s profile: %3$s
-View your paper: %4$s', 'social-paper' ), $follower_name, $paper->post_title, bp_core_get_user_domain( $follow->follower_id ), get_permalink( $paper->ID ) );
+View your paper: %4$s', 'social-paper' ), $follower_name, $paper->post_title, bp_members_get_user_url( $follow->follower_id ), get_permalink( $paper->ID ) );
 
 	// Add notifications link if settings component is enabled
 	if ( bp_is_active( 'settings' ) ) {
-		$settings_link = bp_core_get_user_domain( $follow->follower_id ) . bp_get_settings_slug() . '/notifications/';
+		$settings_link = bp_members_get_user_url( $follow->follower_id ) . bp_get_settings_slug() . '/notifications/';
 		$message .= "\n\n";
 		$message .= sprintf( __(
 '---------------------

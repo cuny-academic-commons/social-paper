@@ -313,7 +313,7 @@ function cacsp_profile_screen_draft_content() {
  * @return string
  */
 function cacsp_get_user_papers_url( $user_id = 0 ) {
-	return trailingslashit( bp_core_get_user_domain( $user_id ) . 'papers' );
+	return trailingslashit( bp_members_get_user_url( $user_id ) . 'papers' );
 }
 
 /**
