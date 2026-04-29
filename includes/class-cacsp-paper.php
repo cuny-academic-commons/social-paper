@@ -4,6 +4,12 @@
  * Paper object.
  *
  * @since 1.0
+ *
+ * @property-read string $post_author
+ * @property-read string $post_title
+ * @property-read string $post_content
+ * @property-read string $post_excerpt
+ * @property-read string $post_modified_gmt
  */
 class CACSP_Paper {
 	protected $id = 0;
